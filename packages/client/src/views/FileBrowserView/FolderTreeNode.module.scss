@@ -1,0 +1,26 @@
+.variables {
+  --v-folder-tree-item-indent: 8px;
+}
+
+.iconWithChevron {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chevronSlot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.chevron {
+  transition: transform 0.15s ease;
+}
+
+.chevronExpanded {
+  transform: rotate(90deg);
+}

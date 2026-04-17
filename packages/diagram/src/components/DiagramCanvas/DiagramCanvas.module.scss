@@ -1,0 +1,20 @@
+.canvas {
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+  background-repeat: repeat;
+  background-image: radial-gradient(
+    circle,
+    rgba(var(--v-theme-on-surface, 0, 0, 0), 0.1) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+  overflow: auto;
+  border-radius: 8px;
+}
+
+.inner {
+  position: relative;
+  min-width: 1200px;
+  min-height: 800px;
+}

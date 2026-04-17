@@ -1,0 +1,11 @@
+{
+  "description": "output cell: Handlebars expression in outputFilename",
+  "cells": [
+    { "uuid": "cell-1", "type": "logic", "content": "name = 'Entity'" },
+    { "uuid": "cell-2", "type": "output", "content": "", "outputFilename": "{{name}}.ts", "outputContent": "name" }
+  ],
+  "model": { "id": "m", "name": "TestModel", "version": "1.0.0", "packages": [], "elementsOrder": [] },
+  "expectedFiles": [
+    { "outputPath": "Entity.ts", "content": "Entity" }
+  ]
+}

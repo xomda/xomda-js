@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "node_modules/.cache/tsconfig.tsbuildinfo",
+    "paths": {
+      "@xomda/codeeditor": ["../codeeditor/src/index.ts"],
+      "@xomda/icons": ["../icons/src/index.ts"],
+      "@xomda/model": ["../model/src/index.ts"]
+    },
+    "types": ["node"],
+    "declaration": true,
+    "declarationDir": "dist",
+    "rootDir": "../../"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/__tests__/**"]
+}

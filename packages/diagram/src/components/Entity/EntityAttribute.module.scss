@@ -1,0 +1,95 @@
+.attribute {
+  display: flex;
+  align-items: center;
+  padding: 5px 12px;
+  gap: 8px;
+  border-top: 1px solid rgba(var(--v-border-color, 0, 0, 0), var(--v-border-opacity, 0.12));
+  font-size: 13px;
+  line-height: 1.4;
+  background: rgb(var(--v-theme-surface, 255, 255, 255));
+  color: rgb(var(--v-theme-on-surface, 0, 0, 0));
+  transition: background 0.1s;
+}
+
+.attribute:hover {
+  background: rgba(var(--v-theme-on-surface, 0, 0, 0), var(--v-hover-opacity, 0.08));
+  cursor: pointer;
+}
+
+.selected {
+  background: rgba(var(--v-theme-primary, 25, 118, 210), var(--v-idle-opacity, 0.04)) !important;
+  box-shadow: inset 3px 0 0 rgb(var(--v-theme-primary, 25, 118, 210));
+}
+
+.badges {
+  display: flex;
+  gap: 3px;
+  width: 40px;
+  flex-shrink: 0;
+}
+
+.badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.6;
+}
+
+.badge--pk {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.badge--fk {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.badge--uq {
+  background: #ede9fe;
+  color: #5b21b6;
+  border: 1px solid #c4b5fd;
+}
+
+.badge--inh {
+  background: #e5e7eb;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+}
+
+.inherited {
+  opacity: 0.65;
+  font-style: italic;
+}
+
+.name {
+  flex: 1;
+  font-weight: 500;
+  color: inherit;
+  font-family: 'Source Code Pro Variable', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+.required {
+  color: #ef4444;
+  font-size: 11px;
+  margin-left: -4px;
+  align-self: flex-start;
+  line-height: 1.8;
+}
+
+.type {
+  color: rgb(var(--v-theme-primary, 25, 118, 210));
+  font-size: 12px;
+  font-family: 'Source Code Pro Variable', 'Fira Code', 'Cascadia Code', monospace;
+  opacity: 0.85;
+}
+
+.multiValue::after {
+  content: '[]';
+  color: #94a3b8;
+}

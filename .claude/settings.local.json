@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm typecheck *)",
+      "Bash(pnpm --filter @xomda/core typecheck)",
+      "Bash(pnpm --filter @xomda/template test)",
+      "Bash(pnpm --filter @xomda/template typecheck)",
+      "Bash(pnpm --filter @xomda/client typecheck)",
+      "Bash(pnpm --filter @xomda/model typecheck)",
+      "Bash(pnpm --filter @xomda/cli typecheck)",
+      "Bash(pnpm --filter @xomda/unplugin typecheck)",
+      "Bash(pnpm --filter @xomda/template test --run)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.get\\('dependencies',{}\\).keys\\(\\)\\)[:20]\\)\")",
+      "Bash(pnpm --filter @xomda/client add @vueuse/core @vueuse/integrations sortablejs)",
+      "Bash(pnpm --filter @xomda/client add -D @types/sortablejs)",
+      "Bash(mvn test *)",
+      "Bash(pnpm --filter @xomda/ui typecheck)",
+      "Bash(git stash *)",
+      "Bash(pnpm --filter @xomda/client lint)",
+      "Bash(pnpm lint *)"
+    ]
+  }
+}

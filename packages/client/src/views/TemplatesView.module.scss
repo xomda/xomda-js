@@ -1,0 +1,12 @@
+.sidebarHeader {
+  padding: 16px;
+  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  display: flex;
+  align-items: center;
+  background: rgb(var(--v-theme-surface));
+}
+
+.sidebarContent {
+  padding: 20px;
+  flex: 1;
+}

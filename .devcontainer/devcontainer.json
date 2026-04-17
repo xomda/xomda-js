@@ -1,0 +1,60 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/alpine
+{
+  "name": "modelman",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "image": "mcr.microsoft.com/devcontainers/base:alpine-3.22",
+  "features": {
+    "ghcr.io/devcontainers/features/node:2": {
+      "version": "lts"
+    }
+  },
+  // Forward backend, frontend and Storybook ports
+  "forwardPorts": [3000, 5173, 6006],
+  "portsAttributes": {
+    "3000": { "label": "Backend (tRPC / Node)" },
+    "5173": { "label": "Frontend (Vite / Vue)" },
+    "6006": { "label": "Storybook (Diagram)" }
+  },
+  // Install pnpm and project dependencies after the container is created
+  "postCreateCommand": "npm install -g pnpm && pnpm install",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit",
+          "source.fixAll.stylelint": "explicit"
+        },
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "typescript.enablePromptUseWorkspaceTsdk": true,
+        "eslint.useFlatConfig": true
+      },
+      "extensions": [
+        // Vue & Vite
+        "Vue.volar",
+        "antfu.vite",
+        // Testing
+        "vitest.explorer",
+        // Linting & formatting
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "stylelint.vscode-stylelint",
+        "EditorConfig.EditorConfig",
+        // TypeScript
+        "ms-vscode.vscode-typescript-next",
+        // Handlebars (used by @xomda/template)
+        "andrejunges.Handlebars",
+        // SCSS modules
+        "mrmlnc.vscode-scss",
+        // Git
+        "eamodio.gitlens",
+        // Monorepo / pnpm workspace helpers
+        "zyrong.node-modules",
+        // Spell checking
+        "streetsidesoftware.code-spell-checker"
+      ]
+    }
+  }
+}

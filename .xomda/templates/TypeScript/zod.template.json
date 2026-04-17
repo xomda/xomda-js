@@ -1,0 +1,47 @@
+{
+  "uuid": "9de5a5e0-bebf-41df-853c-a218c6c4d30b",
+  "name": "Zod Schema",
+  "description": "Generates per-entity Zod validation schemas. Type mapping is inlined in a logic cell so the handlebars cells stay free of language-specific knowledge.",
+  "version": "1.0.0",
+  "folder": "TypeScript",
+  "cells": [
+    {
+      "uuid": "a1a64019-cfcc-41d0-874b-43517ac2a36c",
+      "type": "provider",
+      "content": "",
+      "variableName": "$entity",
+      "providerSource": "entities"
+    },
+    {
+      "uuid": "f11ea14c-3dca-440f-987d-ee6a71917f6a",
+      "type": "logic",
+      "content": "const prims = ['string','number','boolean','Date','UUID','decimal','date','uuid'];\nconst attrs = attributes || [];\nconst types = attrs.filter(function (a) { return !a.reference; }).map(function (a) { return a.type; }).filter(function (t) { return prims.indexOf(t) === -1; });\nnonPrimitives = Array.from(new Set(types));"
+    },
+    {
+      "uuid": "e1a4b7c2-2222-4000-9000-000000000002",
+      "type": "logic",
+      "content": "const primMap = { string: 'z.string()', number: 'z.number()', boolean: 'z.boolean()', date: 'z.date()', uuid: 'z.string().uuid()', decimal: 'z.number()' };\n// Date/UUID legacy-cased fall through to the type's pascal-cased schema reference; same as primitive entries on the legacy-cased keys.\nprimMap['Date'] = 'z.date()';\nprimMap['UUID'] = 'z.string().uuid()';\nfunction zodFor(a) {\n  let base = primMap[a.type] || (pascalCase(a.type) + 'Schema');\n  if (a.multiValue) { base += '.array()'; }\n  if (!a.required) { base += '.optional()'; }\n  if (a.description) { base += '.describe(\"' + a.description + '\")'; }\n  return base;\n}\n\nattrSpecs = (attributes || []).map(function (a) {\n  return { camel: camelCase(a.name), zodType: zodFor(a) };\n});"
+    },
+    {
+      "uuid": "cfbc1859-3ff8-4808-92c1-248f17c48667",
+      "type": "handlebars",
+      "content": "import { z } from 'zod'\n{{#each nonPrimitives}}\nimport { {{pascalCase this}}Schema } from './{{pascalCase this}}Schema';\n{{/each}}\n\n"
+    },
+    {
+      "uuid": "27ca24a5-4b4a-4629-841e-1dd814dcea5f",
+      "type": "handlebars",
+      "content": "export const {{pascalCase name}}Schema = z.object({\n{{#each attrSpecs}}\n  {{camel}}: {{{zodType}}},\n{{/each}}\n});\n\n"
+    },
+    {
+      "uuid": "060e5ece-2665-4368-9ddf-88053dc49a28",
+      "type": "handlebars",
+      "content": "export type {{pascalCase name}} = z.infer<typeof {{pascalCase name}}Schema>;\n"
+    },
+    {
+      "uuid": "63bbbb7e-fc02-45a8-b212-6823f287ad0e",
+      "type": "output",
+      "content": "",
+      "outputFilename": "target/src/schemas/{{pascalCase name}}Schema.ts"
+    }
+  ]
+}

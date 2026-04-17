@@ -1,0 +1,11 @@
+{
+  "description": "output cell: static filename produces a file",
+  "cells": [
+    { "uuid": "cell-1", "type": "logic", "content": "msg = 'hello'" },
+    { "uuid": "cell-2", "type": "output", "content": "", "outputFilename": "out.txt", "outputContent": "msg" }
+  ],
+  "model": { "id": "m", "name": "TestModel", "version": "1.0.0", "packages": [], "elementsOrder": [] },
+  "expectedFiles": [
+    { "outputPath": "out.txt", "content": "hello" }
+  ]
+}

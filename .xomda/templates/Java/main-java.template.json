@@ -1,0 +1,42 @@
+{
+  "uuid": "f951ceda-977a-4caa-b47e-405d7fcf488b",
+  "name": "Main Template (Java)",
+  "description": "Generates per-entity Java POJOs. The Java type map is inlined in the logic cell — no language-specific helpers in the handlebars layer.",
+  "version": "1.0.0",
+  "folder": "Java",
+  "cells": [
+    {
+      "uuid": "5a7db1cc-ccfb-4081-85cf-199bc77a4866",
+      "type": "provider",
+      "content": "",
+      "variableName": "$entity",
+      "providerSource": "entities"
+    },
+    {
+      "uuid": "75cf1a8a-45fe-400e-8f0f-0e38b7e09a70",
+      "type": "logic",
+      "content": "const javaMap = { string: 'String', number: 'Integer', boolean: 'Boolean', Date: 'Date', UUID: 'UUID', decimal: 'BigDecimal', date: 'Date', uuid: 'UUID' };\nfunction javaType(t) { return javaMap[t] || pascalCase(t || ''); }\nfields = (attributes || []).map(function (attr) {\n  const t = javaType(attr.type);\n  const typed = attr.multiValue ? ('List<' + t + '>') : t;\n  return { camel: camelCase(attr.name), pascal: pascalCase(attr.name), type: typed };\n});"
+    },
+    {
+      "uuid": "9bba32ef-a9a3-43f9-b573-9bbe952b1c9d",
+      "type": "logic",
+      "content": "fieldDecls = fields.map(function (f) { return '  private ' + f.type + ' ' + f.camel + ';'; }).join('\\n');"
+    },
+    {
+      "uuid": "8c1a0000-0000-4000-9000-000000000003",
+      "type": "logic",
+      "content": "accessors = fields.map(function (f) {\n  return (\n    '  public ' + f.type + ' get' + f.pascal + '() {\\n' +\n    '  return this.' + f.camel + ';\\n' +\n    '  }\\n\\n' +\n    '  public void set' + f.pascal + '(' + f.type + ' ' + f.camel + ') {\\n' +\n    '  this.' + f.camel + ' = ' + f.camel + ';\\n' +\n    '  }'\n  );\n}).join('\\n\\n');"
+    },
+    {
+      "uuid": "795849c8-502e-4cc5-8352-ba3d082d1d08",
+      "type": "handlebars",
+      "content": "import java.util.*;\nimport java.math.BigDecimal;\n\npublic class {{pascalCase name}} {\n\n{{{fieldDecls}}}\n\n{{{accessors}}}\n\n}\n"
+    },
+    {
+      "uuid": "b5b70387-e296-4577-9047-0000fa1ae87d",
+      "type": "output",
+      "content": "",
+      "outputFilename": "target/src/main/java/{{pascalCase name}}.java"
+    }
+  ]
+}

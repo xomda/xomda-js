@@ -1,0 +1,635 @@
+---
+description: Coding standards, formatting, linting, and best practices.
+globs: **/*.{ts,tsx,js,jsx,scss,css,vue}
+---
+
+# Coding Standards & Best Practices
+
+Maintain consistency and quality across the xomda.js codebase by following these standards.
+
+## Code Formatting & Linting
+
+### Prettier (Auto-Formatting)
+```bash
+pnpm format  # Run once before committing
+```
+
+**Configuration** (`.prettierrc`):
+- **No semicolons**: Code should not end with `;`
+- **Single quotes**: Use `'string'` not `"string"`
+- **2-space tabs**: Consistent indentation
+- **Trailing commas**: Use ES5-compatible style
+- **Print width**: 100 characters per line
+- **Arrow function parens**: Always include `(x) => x` not `x => x`
+
+### ESLint (Linting)
+```bash
+pnpm lint  # Check for linting errors
+```
+
+**Rules** (`.eslint.config.mjs`):
+- **No explicit `any`**: Use `unknown` or generics instead (warn)
+- **Type imports**: `import type { X }` for types, separate from value imports (error)
+- **Import sorting**: Groups (node → relative → side effects), alphabetically within groups (error)
+- **String literals**: Use template literals, not concatenation (error)
+- **Unused variables**: Allowed only if prefixed with `_` (e.g., `_unused`) (warn)
+
+### Stylelint (CSS/SCSS Linting)
+```bash
+pnpm lint:style  # Check CSS/SCSS files
+```
+
+**Standard CSS linting rules applied**. Key rules:
+- Consistent property order
+- No duplicate selectors
+- Proper selector specificity
+
+### EditorConfig (Universal Editor Settings)
+**Automatic**: Most editors respect `.editorconfig` without configuration
+- 2-space indentation (all files except markdown)
+- Unix line endings (LF, not CRLF)
+
+## Configuration Awareness
+
+**Always check these configuration files** when working with code to understand project preferences:
+
+- **`tsconfig.json`**: TypeScript compiler options, module resolution, JSX settings
+- **`.editorconfig`**: Universal editor settings (indentation, line endings, charset)
+- **`.prettierrc`**: Code formatting preferences (quotes, semicolons, line width)
+- **`eslint.config.mjs`**: Linting rules and import sorting preferences
+- **`.stylelintrc.json`**: CSS/SCSS linting rules and property ordering
+
+**Why?** These files define the project's coding standards and should guide all code changes to maintain consistency.
+- UTF-8 charset
+- Trim trailing whitespace
+- Insert final newline
+
+## TypeScript Standards
+
+### Type Safety
+```typescript
+// ✅ Good
+interface User {
+  id: string
+  email: string
+  name?: string
+}
+
+function getUser(id: string): User {
+  // ...
+}
+
+type Status = 'active' | 'inactive'
+
+// ❌ Bad
+function getUser(id: any): any { }  // Don't use any
+const x: unknown = 5; const y = x + 1  // Don't use unknown without narrowing
+```
+
+### Type Imports
+```typescript
+// ✅ Good - Separate type imports
+import type { User, Entity } from '@xomda/core'
+import { getUserName } from './utils'
+
+// ❌ Bad - Mixed imports
+import { User, Entity, getUserName } from '@xomda/core'
+```
+
+### Explicit Return Types
+```typescript
+// ✅ Good - Public APIs always have explicit return types
+export function validateModel(model: Model): ValidationResult {
+  // ...
+}
+
+// ❌ Bad
+export function validateModel(model) {
+  // ...
+}
+```
+
+### Avoid `any`
+```typescript
+// ✅ Good - Use generics or unknown
+function parse<T>(input: unknown): T {
+  // narrow the type
+}
+
+// ✅ Good - Use discriminated unions
+type Response = { success: true; data: Data } | { success: false; error: string }
+
+// ❌ Bad
+function parse(input: any): any { }
+```
+
+### Variable Naming
+```typescript
+// ✅ Good - Unused variables prefixed with underscore
+const [value, _setValue] = useState(0)
+
+// ✅ Good - Descriptive names
+const userEmailAddress = 'user@example.com'
+
+// ❌ Bad
+const a = 'user@example.com'  // Too generic
+const userEmailAddress = 'user@example.com'  // then unused
+```
+
+## Vue 3 & Component Standards
+
+### TSX Components (Required)
+
+> ⚠️ **No `.vue` SFC files** — all components must be `.tsx` using `defineComponent`.
+
+```typescript
+// ✅ Good - defineComponent with TSX render function
+import { defineComponent, computed } from 'vue'
+import type { PropType } from 'vue'
+import type { Entity } from '@xomda/core'
+import styles from './EntityCard.module.scss'
+
+export const EntityCard = defineComponent({
+  name: 'EntityCard',
+  props: {
+    entity: { type: Object as PropType<Entity>, required: true },
+    editable: { type: Boolean, default: false },
+  },
+  setup(props) {
+    const fullName = computed(() => props.entity.name)
+    return () => (
+      <div class={styles.entity}>
+        <h3>{fullName.value}</h3>
+      </div>
+    )
+  },
+})
+
+// ❌ Bad - .vue SFC files are not used in this project
+// <script setup lang="ts"> ... </script>
+// <template> ... </template>
+```
+
+### Named Exports (Required)
+
+**Never use `export default`** — always use named exports. This applies to all `.ts` and `.tsx` files.
+
+```typescript
+// ✅ Good — named export
+export const HomeView = defineComponent({ ... })
+export const useMyComposable = () => { ... }
+export const myHelper = (x: string) => x.trim()
+
+// ❌ Bad — default export
+export default defineComponent({ ... })
+export default function myHelper() { ... }
+```
+
+**Exceptions** — tool config files that *require* a default export by their tooling contract:
+- `vite.config.ts`, `vitest.config.ts`, `cypress.config.ts`
+- `.storybook/main.ts`, `.storybook/preview.ts`
+- `*.stories.tsx` (Storybook story meta)
+
+> **Why?** Named exports make refactoring safe (rename in one place), enable tree-shaking, and remove the ambiguity of `import Foo from` vs `import { Foo } from`.
+
+### Component Best Practices
+- Keep components focused (single responsibility)
+- Define Props interfaces at the top
+- Extract complex logic to composables or utilities
+- Use `const` and `declare` for state (no `data()` function)
+
+### File & Folder Organisation
+
+**One component per file** — never put multiple components in a single file.
+
+```typescript
+// ✅ Good — each component in its own file
+// CellEditor.tsx
+export const CellEditor = defineComponent({ ... })
+
+// OutputCellForm.tsx
+export const OutputCellForm = defineComponent({ ... })
+
+// ❌ Bad — multiple components in one file
+export const OutputCellForm = defineComponent({ ... })
+export const CellEditor = defineComponent({ ... })
+```
+
+**Folder per composite component** — when a component is composed of extracted sub-components, move them into a folder and add an `index.ts`:
+
+```
+components/
+  CellEditor/
+    index.ts          ← re-exports only the public API
+    CellEditor.tsx    ← main component
+    OutputCellForm.tsx ← internal sub-component (not re-exported)
+```
+
+**`index.ts` in every subfolder (except `__tests__`)** — every subfolder must have an `index.ts` that explicitly lists its public exports. Never use `export *` — always name each symbol. Internal sub-components and helpers are not re-exported.
+
+```typescript
+// ✅ Good — explicit named exports only
+export { CellEditor } from './CellEditor'
+// OutputCellForm is internal — not exported here
+
+// ❌ Bad — wildcard leaks internals and makes the public API opaque
+export * from './CellEditor'
+export * from './OutputCellForm'
+```
+
+**Shortest-route imports** — always import through the nearest available folder index, not through a deeper file path:
+
+```typescript
+// ✅ Good — through the folder index
+import { CellEditor } from './CellEditor'
+import { DynamicForm } from './components'
+
+// ❌ Bad — bypassing an existing folder index
+import { CellEditor } from './CellEditor/CellEditor'
+import { DynamicForm } from './components/DynamicForm'
+```
+
+**No file extensions on `.ts`/`.tsx` imports** — never include `.ts` or `.tsx` in import paths:
+
+```typescript
+// ✅ Good
+import { CellEditor } from './CellEditor'
+
+// ❌ Bad
+import { CellEditor } from './CellEditor.tsx'
+```
+
+### UI Component Priority (Reusability & Consistency)
+When building UI components, prioritize reusable components in this order:
+
+1. **Internal Components** (`@xomda/ui` or `@xomda/diagram`)
+   - `DynamicForm`, `TitleBar`, `FileEntryIcon`, etc.
+   - Domain-specific components from `@xomda/diagram`
+
+2. **Vuetify Components** (Material Design)
+   - `v-btn`, `v-text-field`, `v-card`, `v-dialog`, etc.
+   - Use Vuetify's theming and accessibility features
+
+3. **Plain HTML/Vue Elements** (Last Resort - When No Suitable Alternative Exists)
+   - `<div>`, `<span>`, `<button>`, etc.
+   - Only when no Vuetify component provides the needed functionality
+
+**Why?** This ensures consistency, accessibility, and maintainability across the application.
+
+```vue
+<!-- ✅ Good - Use Vuetify components when available -->
+<v-btn color="primary" @click="save">Save</v-btn>
+<v-text-field v-model="name" label="Name" />
+
+<!-- ❌ Bad - Plain HTML when Vuetify equivalent exists -->
+<button class="btn btn-primary" @click="save">Save</button>
+<input v-model="name" placeholder="Name" />
+
+<!-- ✅ Acceptable - Plain HTML when no Vuetify alternative -->
+<div class="custom-layout">{{ content }}</div>
+```
+
+### UI Layout Patterns (Cards & Panels)
+
+- **No `VNavigationDrawer`** for content panels. Use floating `VCard` components or inline flex panels instead.
+- **Navigation sidebar**: Use the `AppNav` component (`packages/client/src/components/AppNav`). It is a floating `VCard` with two toggle states — icon-only (default) and icon+text. Never replace it with a `VNavigationDrawer`.
+- **Floating panels** (e.g. model designer properties): Use `position: absolute` + `VCard` with elevation. Animate visibility with `opacity` + `transform`, not `width` transitions.
+- **Resizable split panels**: Use `PanelDivider` (`packages/client/src/components/PanelDivider`) between flex siblings and the `usePanelResize` composable (`packages/client/src/composables/usePanelResize`) for width state.
+- **Vuetify size/density rule**:
+  - Components **with** a `size` prop (VTextField, VSelect, VCheckbox, VSwitch, …): `size="small"` + `density="comfortable"` — set globally in `packages/client/src/vuetify.ts`.
+  - **VBtn exception**: `size="small"` + `density="default"` — `comfortable` + `small` together makes buttons too tight; overridden per-component in `vuetify.ts`.
+  - Components **without** a `size` prop (VList, VListItem, VListSubheader, …): `density="compact"` — set per-component in `vuetify.ts`.
+  - Do not override these defaults inline without a clear reason.
+
+## JavaScript/TypeScript Patterns
+
+### Template Literals (Required)
+```typescript
+// ✅ Good
+const greeting = `Hello, ${name}!`
+const multiline = `
+  Line 1
+  Line 2
+`
+
+// ❌ Bad - Linting error
+const greeting = 'Hello, ' + name + '!'
+```
+
+### Import Organization
+```typescript
+// ✅ Good - Organized by groups
+import type { Model, Entity } from '@xomda/core'
+import type { FC } from 'vue'
+
+import { ref } from 'vue'
+import { z } from 'zod'
+
+import { readModel } from '../storage/file-storage'
+import type { RenderContext } from './types'
+import { compile } from './engine'
+
+// ❌ Bad - Chaotic ordering
+import { compile } from './engine'
+import type { RenderContext } from './types'
+import { readModel } from '../storage/file-storage'
+import { ref } from 'vue'
+import type { Model, Entity } from '@xomda/core'
+```
+
+### Error Handling
+```typescript
+// ✅ Good - Validate before use
+import { z } from 'zod'
+
+const UserSchema = z.object({ id: z.string(), email: z.string().email() })
+
+async function processUser(data: unknown) {
+  const user = UserSchema.parse(data)  // Throws if invalid
+  // Now user is typed and safe
+}
+
+// ✅ Good - Use try-catch for async
+async function fetchModel() {
+  try {
+    const model = await readModel()
+    return model
+  } catch (error) {
+    console.error('Failed to read model:', error)
+    throw new Error('Model load failed')
+  }
+}
+
+// ❌ Bad - Unsafe type assertion
+const user = data as User  // Don't trust input
+```
+
+### Zod Validation with Custom Rules
+
+```typescript
+// ✅ Good - Recursive type validation (Package structure)
+import { z } from 'zod'
+
+export const PackageSchema: z.ZodType<Package> = z.lazy(() =>
+  z
+    .object({
+      id: z.string().uuid(),
+      name: z.string().min(1),
+      packages: z.array(PackageSchema).default([]),  // Recursive reference
+      entities: z.array(EntitySchema).default([]),
+      enums: z.array(EnumSchema).default([]),
+    })
+    .superRefine((data, ctx) => {
+      // Custom validation: unique names across items
+      const names = new Set<string>()
+      data.packages.forEach((p, i) => {
+        if (names.has(p.name)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Package name must be unique`,
+            path: ['packages', i, 'name'],
+          })
+        }
+        names.add(p.name)
+      })
+    })
+)
+
+// ✅ Good - Enum with unique value validation
+const EnumSchema = z
+  .object({
+    id: z.string().uuid(),
+    name: z.string().min(1),
+    values: z.array(z.object({ name: z.string() })),
+  })
+  .superRefine((data, ctx) => {
+    const names = new Set<string>()
+    data.values.forEach((val, i) => {
+      if (names.has(val.name)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Enum value must be unique`,
+          path: ['values', i, 'name'],
+        })
+      }
+      names.add(val.name)
+    })
+  })
+
+// ❌ Bad - No validation
+const parseData = (data: any) => data as Package  // Trusts input blindly
+```
+
+## Testing Standards
+
+### Unit Tests (Vitest)
+```typescript
+// ✅ Good - Clear test structure
+import { describe, it, expect } from 'vitest'
+import { validateAttribute } from '../validate'
+
+describe('validateAttribute', () => {
+  it('accepts a valid attribute', () => {
+    const attr = { id: '1', name: 'email', type: 'string', required: true }
+    expect(validateAttribute(attr)).toBe(true)
+  })
+
+  it('rejects an attribute without id', () => {
+    const attr = { name: 'email', type: 'string' }
+    expect(() => validateAttribute(attr)).toThrow()
+  })
+})
+```
+
+### File naming
+- Runtime/behaviour tests: `<Subject>.spec.ts` / `<Subject>.spec.tsx`
+- Type-level tests (`expectTypeOf`, `assertType`): `<Subject>.spec-d.ts`
+
+> ⚠️ Use `.spec.ts` — not `.test.ts`. The `*.test.ts` pattern is not used in this project.
+
+### Placement
+- Tests live in a `__tests__/` subdirectory next to the source they test:
+  ```
+  src/
+    components/
+      DynamicForm.tsx
+      __tests__/
+        DynamicForm.spec.tsx     ← behaviour tests
+        DynamicForm.spec-d.ts    ← type tests (if needed)
+    composables/
+      useAsyncState.ts
+      __tests__/
+        useAsyncState.spec.ts
+  ```
+- Import the subject with a `../` relative path: `import { X } from '../X'`
+
+### Test Naming
+- Use `describe` for grouping related tests
+- Test names state the outcome directly: "returns null when model is null", not "should return null when model is null"
+- Avoid generic names like "test 1", "works"
+
+## Package-Specific Standards
+
+### @xomda/core
+- Only types and constants
+- No runtime logic
+- Export everything explicitly
+- Always documented (JSDoc comments)
+
+### @xomda/model
+- High test coverage (business logic)
+- All procedures validated with Zod schemas
+- Recursive type support (e.g., Package nesting)
+- Custom validation via `superRefine` for cross-field constraints
+- Error handling with TRPCError
+- Database-agnostic (storage layer abstraction)
+
+### @xomda/template
+- Cell-based template format (`.template.json`): a sequence of cells (`logic`, `handlebars`, `output`, `provider`, `provider-logic`, `buffer`, `markdown`)
+- Cell processors well-documented; one processor per cell type under `processors/`
+- Handlebars cells use the helpers in `helpers.ts` (camelCase / pascalCase / eq / required / etc.)
+- Recursive entity extraction for hierarchical models (provider cells walk nested packages)
+- Scope inferred from `provider` cell (preferred) or the legacy `template.scope` (Entity / Enum / Package)
+
+### @xomda/client
+- Components in `src/components/`
+- Views in `src/views/`
+- Routing in `src/router/`
+- tRPC hooks in `src/router/`
+- Utilities in `src/utils.ts`
+- Styles as SCSS modules (*.module.scss)
+
+### @xomda/diagram
+- All components have Storybook stories
+- Props documented in types
+- Exported from `src/index.ts`
+- CSS included in build (vite-plugin-dts)
+
+### @xomda/node
+- Server configuration isolated
+- Middleware documented
+- Tests for server startup
+- Environment variables documented
+
+## Documentation Standards
+
+### JSDoc Comments
+```typescript
+/**
+ * Renders a template with the given context.
+ *
+ * @param templateStr - The Handlebars template string
+ * @param context - The data context for rendering
+ * @returns The rendered output string
+ * @throws If template compilation fails
+ *
+ * @example
+ * const output = render('Hello {{name}}', { name: 'World' })
+ */
+export function render(templateStr: string, context: Record<string, unknown>): string {
+  // ...
+}
+```
+
+### README in Packages
+- Purpose and primary use case
+- Installation/usage examples
+- Exported APIs/components
+- Dependencies overview
+
+### Inline Comments
+- Only comment non-obvious logic
+- Explain "why", not "what"
+- Keep comments near the code they describe
+
+```typescript
+// ✅ Good - Explains why
+// Handlebars requires initialization only once to avoid re-registering helpers
+if (!initialised) {
+  registerHelpers(Handlebars)
+  initialised = true
+}
+
+// ❌ Bad - Obvious from code
+const x = 5  // Set x to 5
+```
+
+## Performance Considerations
+
+### Vue 3
+- Use `computed` for derived state (caching)
+- Use `watchEffect` sparingly (can cause loops)
+- Lazy-load components for large apps
+
+### tRPC
+- Batch related queries when possible
+- Use queries for reads, mutations for writes
+- Implement proper error handling
+
+### Cell-based Templates
+- Avoid nested loops inside `handlebars` cells (performance)
+- Push expensive computation into a `logic` cell (runs once per render); `handlebars` cells just emit pre-computed strings
+- The handlebars engine caches compilation per-string; identical cell content reuses the compiled template
+
+## Security Best Practices
+
+### User Input
+- Always validate with Zod before processing
+- Never trust client input for critical operations
+- Sanitize template output if rendering user content
+
+### Environment Variables
+- Never commit `.env` files
+- Use `.env.example` as template
+- Document required variables in README
+
+### Dependencies
+- Review security advisories: `npm audit`
+- Update regularly: `pnpm update`
+- Check pnpm overrides for forced security versions
+
+## Common Mistakes to Avoid
+
+```typescript
+// ❌ Using any
+const data: any = fetchData()
+
+// ❌ Mixed import types
+import { User, getUserData } from '@xomda/core'  // should separate
+
+// ❌ String concatenation
+const msg = 'Hello ' + name + '!'  // should use template literal
+
+// ❌ No return type
+export function getModel() { }  // should have explicit return type
+
+// ❌ Unused imports not prefixed
+import { unused } from './utils'  // should start with _
+
+// ❌ Default exports (outside tool config files)
+export default defineComponent({ ... })  // use named export instead
+
+// ❌ No Zod validation
+function processUser(data: User) { }  // validate input first
+```
+
+## Pre-Commit Checklist
+
+Before committing code:
+- [ ] `pnpm typecheck` passes
+- [ ] `pnpm lint` passes
+- [ ] `pnpm lint:style` passes
+- [ ] `pnpm format` applied
+- [ ] `pnpm test` passes (or specifically for changed packages)
+- [ ] No `console.log` statements left
+- [ ] Comments added for non-obvious logic
+- [ ] No `any` types or `@ts-ignore` used
+
+## Resources
+
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [Vue 3 Style Guide](https://vuejs.org/style-guide/)
+- [ESLint Rules](https://eslint.org/docs/rules/)
+- [Prettier Options](https://prettier.io/docs/en/options.html)
+- [Zod Documentation](https://zod.dev/)
+- [Vitest Guide](https://vitest.dev/)
