@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "node_modules/.cache/tsconfig.tsbuildinfo",
+    "paths": {
+      "@xomda/icons": ["../icons/src/index.ts"]
+    },
+    "declaration": true,
+    "declarationDir": "dist",
+    "rootDir": "../../"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.stories.*", "**/__tests__/**"]
+}

@@ -1,0 +1,119 @@
+.canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewport {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  background-repeat: repeat;
+  background-image: radial-gradient(
+    circle,
+    rgba(var(--v-theme-on-surface, 0, 0, 0), 0.1) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+  border-radius: 8px;
+}
+
+.inner {
+  position: relative;
+  min-width: 1200px;
+  min-height: 800px;
+}
+
+.zoomControls {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: inline-flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(var(--v-theme-surface, 255, 255, 255), 0.95);
+  border: 1px solid rgba(var(--v-border-color, 0, 0, 0), 0.12);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  user-select: none;
+  z-index: 20;
+  font-size: 12px;
+  transition: padding 0.15s ease;
+}
+
+.zoomExpanded {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-width 0.2s ease, opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.zoomControls:hover .zoomExpanded,
+.zoomControls:focus-within .zoomExpanded {
+  max-width: 220px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.zoomBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: rgb(var(--v-theme-on-surface, 0, 0, 0));
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+}
+
+.zoomBtn:hover:not(:disabled) {
+  background: rgba(var(--v-theme-on-surface, 0, 0, 0), 0.08);
+}
+
+.zoomBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.zoomSlider {
+  width: 120px;
+  cursor: pointer;
+}
+
+.zoomLabel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: rgba(var(--v-theme-on-surface, 0, 0, 0), 0.7);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  padding: 0 6px;
+}
+
+.zoomLabel:hover {
+  background: rgba(var(--v-theme-on-surface, 0, 0, 0), 0.08);
+  color: rgb(var(--v-theme-on-surface, 0, 0, 0));
+}

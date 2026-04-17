@@ -1,0 +1,21 @@
+.v-code-editor {
+  position: relative;
+  overflow: hidden;
+
+  .monaco-editor {
+    padding: 0;
+  }
+}
+
+.v-code-editor--readonly {
+  .monaco-editor {
+    .cursors-layer > .cursor {
+      display: none !important;
+    }
+
+    .view-lines,
+    .monaco-mouse-cursor-text {
+      cursor: default;
+    }
+  }
+}

@@ -1,0 +1,60 @@
+.divider {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  user-select: none;
+  touch-action: none;
+}
+
+.horizontal {
+  width: 8px;
+  cursor: col-resize;
+}
+
+.vertical {
+  width: 100%;
+  height: 8px;
+  cursor: row-resize;
+}
+
+.draggingLeft {
+  cursor: w-resize;
+}
+
+.draggingRight {
+  cursor: e-resize;
+}
+
+.draggingUp {
+  cursor: n-resize;
+}
+
+.draggingDown {
+  cursor: s-resize;
+}
+
+.handle {
+  position: absolute;
+  border-radius: 2px;
+  background: rgba(var(--v-theme-on-surface), 0.3);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.horizontal .handle {
+  left: 50%;
+  width: 4px;
+  height: 32px;
+}
+
+.vertical .handle {
+  top: 50%;
+  width: 32px;
+  height: 4px;
+}
+
+.dragging .handle {
+  background: rgba(var(--v-theme-primary), 0.6);
+}

@@ -1,0 +1,20 @@
+{
+  "uuid": "cf3b3b3b-1111-4222-8333-44444444aaaa",
+  "name": "Spring Boot Application.java",
+  "description": "Generates the Spring Boot application entry point.",
+  "version": "1.0.0",
+  "folder": "SpringBoot",
+  "cells": [
+    {
+      "uuid": "cf3b3b3b-2222-4333-8444-55555555bbbb",
+      "type": "handlebars",
+      "content": "package com.example.blog;\n\nimport org.springframework.boot.SpringApplication;\nimport org.springframework.boot.autoconfigure.SpringBootApplication;\n\n@SpringBootApplication\npublic class {{pascalCase model.name}}Application {\n  public static void main(String[] args) {\n    SpringApplication.run({{pascalCase model.name}}Application.class, args);\n  }\n}\n"
+    },
+    {
+      "uuid": "cf3b3b3b-3333-4444-8555-66666666cccc",
+      "type": "output",
+      "content": "",
+      "outputFilename": "src/main/java/com/example/blog/{{pascalCase model.name}}Application.java"
+    }
+  ]
+}

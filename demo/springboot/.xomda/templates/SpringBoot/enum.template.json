@@ -1,0 +1,34 @@
+{
+  "uuid": "6cda9a33-b898-4b60-aa24-3095c3c506db",
+  "name": "Spring Boot Java Enum",
+  "description": "Generates a Java enum per model enum.",
+  "version": "1.0.0",
+  "folder": "SpringBoot",
+  "cells": [
+    {
+      "uuid": "3f4f183b-134a-49fb-b14d-bf06f4aa61a2",
+      "type": "loop",
+      "content": "",
+      "variableName": "$enum",
+      "loopSource": "enums",
+      "children": [
+        {
+          "uuid": "168691b3-b268-4364-b717-837fa1bd458f",
+          "type": "logic",
+          "content": "\nvalueList = (values || []).map(function (v) { return '  ' + constantCase(v.name); }).join(',\\n') + ';';\n"
+        },
+        {
+          "uuid": "808f776a-f9af-411a-9837-e4764d1f7507",
+          "type": "handlebars",
+          "content": "package com.example.blog.enums;\n\npublic enum {{pascalCase name}} {\n{{{valueList}}}\n}\n"
+        },
+        {
+          "uuid": "aecb1956-cad0-4808-b316-8dc4afb8c0d5",
+          "type": "output",
+          "content": "",
+          "outputFilename": "src/main/java/com/example/blog/enums/{{pascalCase name}}.java"
+        }
+      ]
+    }
+  ]
+}

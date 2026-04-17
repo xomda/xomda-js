@@ -1,0 +1,9 @@
+{
+  "description": "logic cell: assignment from expression sets variable",
+  "cells": [
+    { "uuid": "cell-1", "type": "logic", "content": "x = 1 + 2" }
+  ],
+  "model": { "id": "m", "name": "TestModel", "version": "1.0.0", "packages": [], "elementsOrder": [] },
+  "expectedContextDiff": { "x": 3 },
+  "expectedOutput": ""
+}

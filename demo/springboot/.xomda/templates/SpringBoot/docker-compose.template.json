@@ -1,0 +1,20 @@
+{
+  "uuid": "7dc6b1eb-69e0-4802-9d2f-4ea7ab61923f",
+  "name": "Spring Boot docker-compose (Postgres)",
+  "description": "Generates docker-compose.yml with a Postgres 16 service for local development.",
+  "version": "1.0.0",
+  "folder": "SpringBoot",
+  "cells": [
+    {
+      "uuid": "7630e7e1-64da-48b6-a2c4-d02f3a0e6cc0",
+      "type": "handlebars",
+      "content": "services:\n  postgres:\n    image: postgres:16-alpine\n    container_name: {{kebabCase model.name}}-postgres\n    environment:\n      POSTGRES_DB: {{snakeCase model.name}}\n      POSTGRES_USER: app\n      POSTGRES_PASSWORD: app\n    ports:\n      - \"5432:5432\"\n    volumes:\n      - {{kebabCase model.name}}-pgdata:/var/lib/postgresql/data\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U app -d {{snakeCase model.name}}\"]\n      interval: 5s\n      timeout: 5s\n      retries: 5\n\nvolumes:\n  {{kebabCase model.name}}-pgdata:\n"
+    },
+    {
+      "uuid": "142b760f-04d3-43a7-8d89-e32e37eb29bf",
+      "type": "output",
+      "content": "",
+      "outputFilename": "docker-compose.yml"
+    }
+  ]
+}
