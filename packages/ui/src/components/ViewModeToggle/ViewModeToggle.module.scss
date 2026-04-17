@@ -1,0 +1,13 @@
+.toggle {
+  height: 26px;
+
+  :global(.v-btn) {
+    height: 26px;
+    min-width: 30px;
+    padding-inline: 6px;
+  }
+
+  :global(.v-btn .v-icon) {
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,42 @@
+.cellFormFields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  :global {
+    .v-field__input,
+    .v-field__field input,
+    .v-field__field .v-select__selection-text {
+      padding-top: 5px;
+      padding-bottom: 4px;
+    }
+
+    .v-field {
+      --v-field-padding-top: 4px;
+      --v-field-padding-bottom: 4px;
+      --v-input-control-height: 32px;
+    }
+
+    .v-field__outline {
+      --v-field-border-opacity: 0.24;
+    }
+
+    .v-label {
+    }
+
+    .v-input__details {
+      padding-top: 2px;
+      min-height: 0;
+    }
+
+    .v-messages {
+      font-size: 0.7rem;
+      min-height: 0;
+      line-height: 1.2;
+    }
+
+    .v-input--density-compact {
+      --v-input-control-height: 32px;
+    }
+  }
+}

@@ -1,0 +1,62 @@
+.cell {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  margin: 6px 0;
+
+  &:hover,
+  &:has(:focus-visible),
+  &.menuOpen {
+    .gutter,
+    .addAbove,
+    .addBelow {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+}
+
+.gutter {
+  width: 32px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding-top: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.bodyHeader {
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 4px;
+  gap: 8px;
+}
+
+.addAbove,
+.addBelow {
+  position: absolute;
+  left: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+  z-index: 2;
+}
+
+.addAbove {
+  top: -10px;
+}
+
+.addBelow {
+  bottom: -10px;
+}

@@ -1,0 +1,124 @@
+.entity {
+  display: inline-flex;
+  flex-direction: column;
+  border: 1.5px solid rgba(var(--v-border-color, 0, 0, 0), var(--v-border-opacity, 0.12));
+  border-radius: 8px;
+  font-family: 'Source Code Pro Variable', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  min-width: 220px;
+  background: rgb(var(--v-theme-surface, 255, 255, 255));
+  color: rgb(var(--v-theme-on-surface, 0, 0, 0));
+  box-shadow: var(--v-shadow-key-umbra-opacity, 0 1px 3px rgba(0, 0, 0, 0.08));
+  overflow: hidden;
+  user-select: none;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+
+.entity:hover {
+  box-shadow: var(--v-shadow-key-penumbra-opacity, 0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.selected {
+  border-color: rgb(var(--v-theme-primary, 25, 118, 210));
+  box-shadow: 0 0 0 2px rgb(var(--v-theme-primary, 25, 118, 210));
+}
+
+.header {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgb(var(--v-theme-primary, 25, 118, 210));
+  color: rgb(var(--v-theme-on-primary, 255, 255, 255));
+  gap: 8px;
+  min-height: 42px;
+}
+
+.titleClickable {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.headerClickable {
+  cursor: pointer;
+}
+
+.nameDraggable {
+  cursor: grab;
+}
+
+.nameDraggable:active {
+  cursor: grabbing;
+}
+
+.entityDragging {
+  opacity: 0.85;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  z-index: 50;
+}
+
+.entityName {
+  flex: 1;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(var(--v-theme-on-primary, 255, 255, 255), 0.1);
+  color: rgb(var(--v-theme-on-primary, 255, 255, 255));
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s,
+  transform 0.1s;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+}
+
+.addButton:hover {
+  background: rgba(var(--v-theme-on-primary, 255, 255, 255), 0.2);
+  transform: scale(1.05);
+}
+
+.addButton:active {
+  transform: scale(0.95);
+}
+
+.attributes {
+  display: flex;
+  flex-direction: column;
+}
+
+.attributeRow {
+  display: flex;
+  align-items: stretch;
+  cursor: grab;
+}
+
+.attributeRow:active {
+  cursor: grabbing;
+}
+
+.dragging {
+  opacity: 0.5;
+  background: rgba(var(--v-theme-primary, 25, 118, 210), 0.1);
+}
+
+.dragOver {
+  border-top: 2px solid rgb(var(--v-theme-primary, 25, 118, 210));
+}
+
+.attributeRow > * {
+  flex: 1;
+}

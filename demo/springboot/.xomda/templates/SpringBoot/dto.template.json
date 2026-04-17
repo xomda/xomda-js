@@ -1,0 +1,39 @@
+{
+  "uuid": "92ec2c03-002b-460e-891f-a9b61f956964",
+  "name": "Spring Boot DTO",
+  "description": "Generates a Java record DTO per entity. Entity references are flattened to their FK id.",
+  "version": "1.0.0",
+  "folder": "SpringBoot",
+  "cells": [
+    {
+      "uuid": "1df3b4e9-e16e-4328-9ffa-cb2b7bbbc4ce",
+      "type": "loop",
+      "content": "",
+      "variableName": "$entity",
+      "loopSource": "entities",
+      "children": [
+        {
+          "uuid": "0b52c58a-7ef7-4b64-825e-1fb742bfd039",
+          "type": "logic",
+          "content": "\nconst javaPrim = { string:'String', number:'Long', boolean:'Boolean', decimal:'java.math.BigDecimal', date:'java.time.LocalDateTime', uuid:'java.util.UUID' };\nconst sqlPrim = { string:'TEXT', number:'BIGINT', boolean:'BOOLEAN', decimal:'NUMERIC(19,4)', date:'TIMESTAMP', uuid:'UUID' };\nenumNames = new Set();\nentityNames = new Set();\nfor (const pkg of (model.packages || [])) {\n  for (const e of (pkg.enums || [])) enumNames.add(e.name);\n  for (const e of (pkg.entities || [])) entityNames.add(e.name);\n}\njavaTypeOf = function (t) {\n  if (Object.prototype.hasOwnProperty.call(javaPrim, t)) {\n    const fq = javaPrim[t]; const dot = fq.lastIndexOf('.');\n    return dot >= 0 ? fq.slice(dot + 1) : fq;\n  }\n  return pascalCase(t);\n};\njavaFqType = function (t) { return javaPrim[t] || ('com.example.blog.' + (enumNames.has(t) ? 'enums.' : 'entity.') + pascalCase(t)); };\nsqlTypeOf = function (t) { return sqlPrim[t] || 'TEXT'; };\nisPrim = function (t) { return Object.prototype.hasOwnProperty.call(javaPrim, t); };\nisEnumType = function (t) { return enumNames.has(t); };\nisEntityType = function (t) { return entityNames.has(t); };\n"
+        },
+        {
+          "uuid": "58cc6f15-de07-4274-94a9-4c59f9a3b897",
+          "type": "logic",
+          "content": "\nfields = (attributes || []).map(function (a) {\n  let typeName;\n  if (isEntityType(a.type)) typeName = 'java.util.UUID';\n  else if (isEnumType(a.type)) typeName = pascalCase(a.type);\n  else typeName = javaTypeOf(a.type);\n  return {\n    camel: a.type && isEntityType(a.type) ? camelCase(a.name) + 'Id' : camelCase(a.name),\n    type: typeName,\n    isEnum: isEnumType(a.type),\n    rawType: a.type,\n  };\n});\n\nconst importSet = new Set();\nfor (const f of fields) {\n  if (f.type === 'java.util.UUID' || f.type === 'UUID') importSet.add('java.util.UUID');\n  if (f.rawType === 'decimal') importSet.add('java.math.BigDecimal');\n  if (f.rawType === 'date') importSet.add('java.time.LocalDateTime');\n  if (f.isEnum) importSet.add('com.example.blog.enums.' + pascalCase(f.rawType));\n}\nimportLines = Array.from(importSet).sort().map(function (i) { return 'import ' + i + ';'; }).join('\\n');\n\nparamList = fields.map(function (f) {\n  const t = f.type === 'java.util.UUID' ? 'UUID' : f.type;\n  return '    ' + t + ' ' + f.camel;\n}).join(',\\n');\n"
+        },
+        {
+          "uuid": "8ff67d33-0309-49ee-850b-8e9b7b299c1b",
+          "type": "handlebars",
+          "content": "package com.example.blog.dto;\n\n{{{importLines}}}\n\npublic record {{pascalCase name}}Dto(\n{{{paramList}}}\n) {}\n"
+        },
+        {
+          "uuid": "954cc6d4-9cbd-4a4f-8b4c-9316735eef4b",
+          "type": "output",
+          "content": "",
+          "outputFilename": "src/main/java/com/example/blog/dto/{{pascalCase name}}Dto.java"
+        }
+      ]
+    }
+  ]
+}
