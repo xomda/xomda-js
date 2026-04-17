@@ -1,0 +1,37 @@
+{
+  "name": "xΟΔ",
+  "versions": {
+    "head": null,
+    "versions": []
+  },
+  "settings": {
+    "restrictWritesToProjectRoot": true,
+    "isRoot": true,
+    "excludeFromScan": [
+      ".git",
+      ".idea",
+      ".vscode",
+      ".xomda",
+      "build",
+      "dist",
+      "node_modules",
+      "out",
+      "target"
+    ],
+    "diagramMaxEntityAttributes": 10,
+    "diagramMaxEnumValues": 10
+  },
+  "plugins": [
+    "eslint",
+    "gradle",
+    "intellij",
+    "maven",
+    "node",
+    "prettier",
+    "stylelint",
+    "typescript",
+    "vite",
+    "vscode",
+    "xomda"
+  ]
+}

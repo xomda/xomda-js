@@ -1,0 +1,91 @@
+name: Publish xomda
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    # prevents this action from running on forks
+    if: github.repository == 'JorisAerts/modelman'
+    runs-on: ubuntu-latest
+    permissions:
+      # `contents: read` is enough — we don't push code.
+      contents: read
+      # `id-token: write` is what unlocks npm provenance + the verified-publisher
+      # badge on npmjs.com.
+      id-token: write
+    environment: Release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org/
+          package-manager-cache: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Unit tests across the workspace. @xomda/bundle's suite runs both
+      # build.spec.ts (structural assertions on the tarball) and
+      # install-smoke.spec.ts (npm install <tarball> in a tmpdir, boot the
+      # binary, hit /, /vendor/lodash-es/lodash.js, etc). If that suite
+      # passes, the artifact at target/npm/xomda-<version>.tgz is the one
+      # we'll publish.
+      - name: Run unit + integration tests
+        run: pnpm test
+
+      # `pnpm build:publish` is the single source of truth for what gets
+      # published. It runs the SPA build (XOMDA_BUILD=publish), the
+      # @xomda/bundle Vite build, stages into target/npm/xomda/, and runs
+      # `npm pack` into target/npm/. Running this here (rather than
+      # re-implementing the steps in YAML) guarantees the artifact published
+      # from CI is byte-identical to what `pnpm build:publish` produces
+      # locally. The previous test step already invokes the same script
+      # internally, but we re-run it here to be explicit about what's
+      # published and to handle the case where tests skip the build via
+      # an opt-out.
+      - name: Build publishable xomda artifact
+        run: pnpm build:publish
+
+      - name: Resolve tarball + tag
+        id: artifact
+        run: |
+          TARBALL=$(ls target/npm/xomda-*.tgz)
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PRERELEASE=$(node -e "
+              const v=[...('${TAG_VERSION}'.matchAll(/[-.]([a-z]+)?[-.](\d+)?$/g))][0];
+              console.log(v?.[1] ?? '')
+          ")
+          TAG=${PRERELEASE:-latest}
+          echo "tarball=${TARBALL}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG_VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to npm
+        run: |
+          echo "Publishing ${{ steps.artifact.outputs.tarball }} as xomda@${{ steps.artifact.outputs.version }} (tag: ${{ steps.artifact.outputs.tag }})"
+          npm publish "${{ steps.artifact.outputs.tarball }}" \
+            --access public \
+            --provenance \
+            --tag "${{ steps.artifact.outputs.tag }}"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Upload tarball as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: xomda-${{ steps.artifact.outputs.version }}
+          path: target/npm/xomda-${{ steps.artifact.outputs.version }}.tgz
+          retention-days: 30

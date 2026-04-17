@@ -1,0 +1,8 @@
+.row {
+  border-radius: 6px;
+  transition: background-color 120ms ease;
+
+  &:hover {
+    background-color: rgba(var(--v-theme-on-surface), 0.04);
+  }
+}

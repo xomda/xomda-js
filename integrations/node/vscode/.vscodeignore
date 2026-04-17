@@ -1,0 +1,12 @@
+.vscode/**
+.vscode-test/**
+src/**
+test/**
+**/__tests__/**
+**/*.spec.ts
+**/*.spec.tsx
+node_modules/**
+tsconfig.json
+rolldown.config.ts
+.eslintrc**
+*.map

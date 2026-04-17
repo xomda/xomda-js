@@ -1,0 +1,23 @@
+{
+  "name": "@xomda/demo-springboot",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@xomda/core": "workspace:*",
+    "@xomda/model": "workspace:*",
+    "@xomda/template": "workspace:*",
+    "@xomda/unplugin": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "25.9.0",
+    "tsx": "4.22.2",
+    "vite": "8.0.13",
+    "vitest": "4.1.6"
+  }
+}

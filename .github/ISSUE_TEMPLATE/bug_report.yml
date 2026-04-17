@@ -1,0 +1,79 @@
+name: Bug report
+description: Report a defect or unexpected behaviour in xomda
+title: "[bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report! Please fill in the sections below so we can reproduce and fix it.
+        Search [existing issues](https://github.com/JorisAerts/modelman/issues) first to avoid duplicates.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: A clear and concise description of the bug.
+      placeholder: When I do X, I expect Y, but Z happens instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: A minimal, reliable set of steps. A repo or code snippet is ideal.
+      placeholder: |
+        1. Run `pnpm install`
+        2. Open `…`
+        3. Click `…`
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: Include error messages, stack traces, or screenshots if relevant.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: xomda version / commit
+      placeholder: "e.g. 0.1.0 or commit sha"
+    validations:
+      required: true
+
+  - type: input
+    id: node
+    attributes:
+      label: Node.js and pnpm versions
+      placeholder: "node 20.11.0, pnpm 10.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: "macOS 14.5, Ubuntu 22.04, Windows 11, …"
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Anything else that might help — related issues, workarounds you tried, etc.
+    validations:
+      required: false

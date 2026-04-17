@@ -1,0 +1,5 @@
+.upcomingField :global(input) {
+  font-family: 'Source Code Pro Variable', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  // Slightly more weight so the version reads like a code value, not a label.
+  letter-spacing: 0.01em;
+}

@@ -1,0 +1,27 @@
+.xomda/templates/**/*.hbs
+node_modules/
+pnpm-lock.yaml
+
+# Markdown: Prettier mangles bold-inside-lists (escapes `**` to `\*\*`),
+# breaking the rendered output in AGENTS.md and docs/. Hand-formatted
+# markdown is the convention; lint with stylistic intent, not auto-fix.
+**/*.md
+**/*.yml
+
+# Build outputs and generated trees — mirror eslint.config.mjs ignores
+# so the two formatters can't disagree about what counts as user code.
+dist/
+**/build/
+**/out/
+**/target/
+**/generated/
+**/.m2-repo/
+demo/*/output/
+.claude/worktrees/
+
+# @xomda/icons: auto-emitted by scripts/generate.ts on postinstall.
+# Source of truth is the generator + src/aliases.ts. Mirrors the same
+# entries in eslint.config.mjs.
+packages/icons/src/index.ts
+packages/icons/src/icons/devicons.ts
+packages/icons/src/icons/material/**

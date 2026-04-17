@@ -1,0 +1,73 @@
+# ai
+.claude
+
+# dependencies
+node_modules
+.pnpm-store
+
+# build output
+dist
+*.tsbuildinfo
+
+# test / coverage
+coverage
+**/cypress/videos
+**/cypress/screenshots
+**/cypress/downloads
+
+# vite
+*.local
+.vite
+
+# env
+.env
+.env.*
+!.env.example
+
+# editor
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Java / Maven / Gradle
+target/
+*.class
+*.jar
+*.war
+*.ear
+# Keep Gradle wrapper jars — they're required to run ./gradlew on CI / fresh clones.
+!**/gradle/wrapper/gradle-wrapper.jar
+# Ignore IDE/wrapper-generated contents inside any nested .mvn/, but keep
+# the repo-root marker (presence of root .mvn/ is what makes Maven set
+# ${maven.multiModuleProjectDirectory} to the repo root for every module).
+.mvn/wrapper/
+.mvn/extensions.xml
+**/integrations/**/.mvn/
+.factorypath
+# Gradle build/cache output under integrations/jvm/*
+integrations/jvm/**/build/
+integrations/jvm/**/.gradle/
+integrations/jvm/**/bin/
+# IntelliJ Platform Gradle plugin caches
+integrations/jvm/**/.intellijPlatform/
+integrations/jvm/**/.kotlin/
+# Project-local Maven repo used by the IntelliJ/Eclipse plugins
+integrations/jvm/.m2-repo/
+
+# VS Code extension package output
+integrations/node/vscode/*.vsix
+integrations/node/vscode/out/
+
+# code generation output (run `pnpm generate` to recreate)
+generated/
+
+# claude worktrees
+.claude/worktrees
+packages/e2e-tests/.xomda/

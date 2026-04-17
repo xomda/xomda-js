@@ -1,0 +1,20 @@
+{
+  "uuid": "7638ab41-e060-41c3-a620-d6b66ca4e3a1",
+  "name": "Spring Boot 4 pom.xml",
+  "description": "Generates a Maven pom.xml for Spring Boot 4 with JPA, Postgres, Flyway, and Web starters.",
+  "version": "1.0.0",
+  "folder": "SpringBoot",
+  "cells": [
+    {
+      "uuid": "b25b83c3-ef01-4b09-a657-f6ecdfc3b1f2",
+      "type": "handlebars",
+      "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd\">\n  <modelVersion>4.0.0</modelVersion>\n\n  <parent>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-parent</artifactId>\n    <version>4.0.0</version>\n    <relativePath/>\n  </parent>\n\n  <groupId>com.example</groupId>\n  <artifactId>{{kebabCase model.name}}</artifactId>\n  <version>0.0.1-SNAPSHOT</version>\n  <name>{{model.name}}</name>\n\n  <properties>\n    <java.version>21</java.version>\n  </properties>\n\n  <dependencies>\n    <dependency>\n      <groupId>org.springframework.boot</groupId>\n      <artifactId>spring-boot-starter-web</artifactId>\n    </dependency>\n    <dependency>\n      <groupId>org.springframework.boot</groupId>\n      <artifactId>spring-boot-starter-data-jpa</artifactId>\n    </dependency>\n    <dependency>\n      <groupId>org.flywaydb</groupId>\n      <artifactId>flyway-core</artifactId>\n    </dependency>\n    <dependency>\n      <groupId>org.flywaydb</groupId>\n      <artifactId>flyway-database-postgresql</artifactId>\n    </dependency>\n    <dependency>\n      <groupId>org.postgresql</groupId>\n      <artifactId>postgresql</artifactId>\n      <scope>runtime</scope>\n    </dependency>\n    <dependency>\n      <groupId>org.springframework.boot</groupId>\n      <artifactId>spring-boot-starter-test</artifactId>\n      <scope>test</scope>\n    </dependency>\n  </dependencies>\n\n  <build>\n    <plugins>\n      <plugin>\n        <groupId>org.springframework.boot</groupId>\n        <artifactId>spring-boot-maven-plugin</artifactId>\n      </plugin>\n    </plugins>\n  </build>\n</project>\n"
+    },
+    {
+      "uuid": "b68fdc4a-9f79-4870-831c-fb3550c9214b",
+      "type": "output",
+      "content": "",
+      "outputFilename": "pom.xml"
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+.menu {
+  padding: 4px;
+  min-width: 160px;
+  border-radius: 8px;
+
+  // Tighter, menu-tuned rows. Targets both <MenuItem> and any plain <VListItem>
+  // a caller may still pass via the default slot.
+  :global(.v-list-item) {
+    min-height: 28px;
+    padding-inline: 8px;
+    margin: 1px 0;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    line-height: 1.25;
+  }
+
+  :global(.v-list-item__prepend) {
+    min-width: 24px;
+    margin-inline-end: 8px;
+
+    > :global(.v-icon) {
+      font-size: 18px;
+      opacity: 0.85;
+    }
+  }
+
+  :global(.v-list-item__append) {
+    margin-inline-start: 12px;
+  }
+
+  :global(.v-list-item-title) {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  :global(.v-list-item-subtitle) {
+    font-size: 0.75rem;
+    opacity: 0.65;
+  }
+
+  :global(.v-list-item--active) {
+    font-weight: 600;
+  }
+}
+
+.shortcut {
+  font-size: 0.6875rem;
+  opacity: 0.55;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.subheader {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+  padding: 4px 8px 2px;
+  min-height: 0;
+}
+
+.divider {
+  margin: 4px 0;
+  opacity: 0.5;
+}
+
+.inert {
+  cursor: default;
+
+  &:hover::before {
+    opacity: 0;
+  }
+}
+
+.group {
+  display: contents;
+}
+
+.prependCluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.checkSlot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.checkPlaceholder {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+}
+
+.iconSlot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

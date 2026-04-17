@@ -1,0 +1,20 @@
+{
+  "description": "handlebars cell: renders template and exposes result as variable",
+  "cells": [
+    {
+      "uuid": "cell-1",
+      "type": "handlebars",
+      "content": "hello {{model.name}}",
+      "variableName": "hbs"
+    },
+    {
+      "uuid": "cell-2",
+      "type": "output",
+      "content": "",
+      "outputFilename": "h.txt",
+      "outputContent": "hbs"
+    }
+  ],
+  "model": { "id": "m", "name": "TestModel", "version": "1.0.0", "packages": [] },
+  "expectedFiles": [{ "outputPath": "h.txt", "content": "hello TestModel" }]
+}

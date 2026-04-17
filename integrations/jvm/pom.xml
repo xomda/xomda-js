@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.xomda</groupId>
+  <artifactId>xomda-jvm-aggregator</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>xomda JVM integrations aggregator</name>
+  <description>
+    Maven multi-module aggregator for the JVM-side xomda integrations.
+    Covers Maven modules only — the Gradle plugin and the IntelliJ
+    plugin live alongside under integrations/jvm/ but build with Gradle
+    and must be invoked separately. The Eclipse plugin has its own
+    aggregator pom under integrations/jvm/eclipse/.
+    Use `pnpm test:jvm` from the repo root to run everything.
+  </description>
+
+  <modules>
+    <module>generator-core</module>
+    <module>maven</module>
+  </modules>
+</project>

@@ -1,0 +1,16 @@
+{
+  "description": "output cell: outputDirectory prefixes the rendered outputFilename (TS + JVM parity)",
+  "cells": [
+    { "uuid": "cell-1", "type": "logic", "content": "$out.write('hello')" },
+    {
+      "uuid": "cell-2",
+      "type": "output",
+      "content": "",
+      "outputType": "file",
+      "outputDirectory": "src/gen",
+      "outputFilename": "{{pascalCase model.name}}.ts"
+    }
+  ],
+  "model": { "id": "m", "name": "demo", "version": "1.0.0", "packages": [] },
+  "expectedFiles": [{ "outputPath": "src/gen/Demo.ts", "content": "hello" }]
+}

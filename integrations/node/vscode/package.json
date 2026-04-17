@@ -1,0 +1,121 @@
+{
+  "name": "xomda-vscode",
+  "displayName": "xomda",
+  "description": "Edit xomda models and templates directly in VS Code. Auto-detects the .xomda folder in your workspace.",
+  "version": "0.0.1",
+  "publisher": "xomda",
+  "private": true,
+  "type": "module",
+  "main": "out/extension.cjs",
+  "engines": {
+    "vscode": "^1.95.0",
+    "node": ">=20"
+  },
+  "categories": [
+    "Other",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "xomda",
+    "codegen",
+    "mda",
+    "model",
+    "template"
+  ],
+  "author": "Joris Aerts, 3611758+JorisAerts@users.noreply.github.com",
+  "license": "MIT",
+  "activationEvents": [
+    "workspaceContains:**/.xomda/model.json"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "xomda.generate",
+        "title": "Xomda: Generate",
+        "category": "Xomda",
+        "icon": "$(play)"
+      },
+      {
+        "command": "xomda.openModel",
+        "title": "Xomda: Open Model",
+        "category": "Xomda",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "xomda.watch.start",
+        "title": "Xomda: Start Watching",
+        "category": "Xomda",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "xomda.watch.stop",
+        "title": "Xomda: Stop Watching",
+        "category": "Xomda",
+        "icon": "$(eye-closed)"
+      },
+      {
+        "command": "xomda.refresh",
+        "title": "Xomda: Refresh",
+        "category": "Xomda",
+        "icon": "$(refresh)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "xomda",
+          "title": "Xomda",
+          "icon": "$(symbol-class)"
+        }
+      ]
+    },
+    "views": {
+      "xomda": [
+        {
+          "id": "xomda.tree",
+          "name": "Model",
+          "when": "xomda.hasProject"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "xomda.generate",
+          "when": "view == xomda.tree",
+          "group": "navigation@1"
+        },
+        {
+          "command": "xomda.refresh",
+          "when": "view == xomda.tree",
+          "group": "navigation@2"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "build": "rolldown -c rolldown.config.ts",
+    "watch": "rolldown -c rolldown.config.ts --watch",
+    "package": "pnpm build && vsce package --no-dependencies",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "vscode-test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@xomda/cli": "workspace:*",
+    "@xomda/core": "workspace:*",
+    "@xomda/model": "workspace:*",
+    "@xomda/template": "workspace:*",
+    "@xomda/util": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "25.9.0",
+    "@types/vscode": "1.120.0",
+    "@vscode/test-cli": "0.0.12",
+    "@vscode/vsce": "3.9.1",
+    "rolldown": "1.0.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.6"
+  }
+}
