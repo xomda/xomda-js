@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: xomda
+Bundle-SymbolicName: org.xomda.eclipse;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-Vendor: Joris Aerts
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.ui;bundle-version="3.0.0",
+ org.eclipse.core.runtime;bundle-version="3.0.0",
+ org.eclipse.core.resources;bundle-version="3.0.0",
+ org.eclipse.ui.workbench;bundle-version="3.0.0"
+Import-Package: com.fasterxml.jackson.core,
+ com.fasterxml.jackson.databind,
+ org.xomda.generator,
+ org.xomda.generator.template
+Automatic-Module-Name: org.xomda.eclipse

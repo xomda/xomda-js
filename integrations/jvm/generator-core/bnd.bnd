@@ -1,0 +1,21 @@
+Bundle-SymbolicName: org.xomda.generator-core
+Bundle-Name: ${project.name}
+Bundle-Description: ${project.description}
+Bundle-Version: ${replace;${project.version};-SNAPSHOT;.qualifier}
+Bundle-Vendor: Joris Aerts
+
+# Export all of generator-core's public packages so downstream OSGi
+# consumers (Eclipse plugin) can Import-Package them.
+Export-Package: org.xomda.generator.*
+
+# Let BND auto-compute Import-Package, but mark the heavyweight
+# template-engine deps as optional: a consumer that only needs the
+# `XomdaGenerator` entry point (Eclipse plugin) shouldn't have to
+# provide the full handlebars/jackson/graalvm stack just to load the
+# bundle. They're still required at runtime if the corresponding
+# code paths are exercised.
+Import-Package: \
+    org.graalvm.*;resolution:=optional, \
+    com.github.jknack.*;resolution:=optional, \
+    com.fasterxml.jackson.*;resolution:=optional, \
+    *

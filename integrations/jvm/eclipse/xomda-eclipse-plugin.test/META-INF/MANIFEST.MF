@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: xomda Eclipse plugin tests
+Bundle-SymbolicName: org.xomda.eclipse.tests
+Bundle-Version: 0.0.1.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Fragment-Host: org.xomda.eclipse
+Require-Bundle: junit-jupiter-api;bundle-version="5.10.0",
+ junit-jupiter-engine;bundle-version="5.10.0",
+ junit-platform-engine;bundle-version="1.10.0",
+ junit-platform-launcher;bundle-version="1.10.0"

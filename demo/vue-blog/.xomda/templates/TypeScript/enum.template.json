@@ -1,0 +1,35 @@
+{
+  "uuid": "c7e1f5d2-5a48-4d3c-90d1-1b8e7e4c1a01",
+  "name": "TypeScript Enum",
+  "description": "Per-Enum file: emits a Zod enum schema plus a TypeScript literal-union type. One file per Enum declared anywhere in the model. Colocated with entity schemas under target/src/schemas/ so per-entity schemas can resolve `import { FooSchema } from './FooSchema'` without an extra folder hop.",
+  "version": "1.0.0",
+  "folder": "TypeScript",
+  "cells": [
+    {
+      "uuid": "c7e1f5d2-5a48-4d3c-90d1-1b8e7e4c1a02",
+      "type": "loop",
+      "content": "",
+      "variableName": "$enum",
+      "loopSource": "enums",
+      "children": [
+        {
+          "uuid": "c7e1f5d2-5a48-4d3c-90d1-1b8e7e4c1a03",
+          "type": "logic",
+          "content": "valueLiterals = (values || []).map(function (v) { return \"'\" + v.name + \"'\"; }).join(', ');\nvalueNames = (values || []).map(function (v) { return v.name; });"
+        },
+        {
+          "uuid": "c7e1f5d2-5a48-4d3c-90d1-1b8e7e4c1a04",
+          "type": "handlebars",
+          "content": "import { z } from 'zod'\n\nexport const {{pascalCase name}}Values = [{{{valueLiterals}}}] as const\n\nexport const {{pascalCase name}}Schema = z.enum({{pascalCase name}}Values)\n\nexport type {{pascalCase name}} = z.infer<typeof {{pascalCase name}}Schema>\n"
+        },
+        {
+          "uuid": "c7e1f5d2-5a48-4d3c-90d1-1b8e7e4c1a05",
+          "type": "output",
+          "content": "",
+          "outputType": "file",
+          "outputFilename": "target/src/schemas/{{pascalCase name}}Schema.ts"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.input {
+  display: inline-flex;
+  width: 16.8ch;
+  transition: width var(--xomda-dur-base) var(--xomda-ease-standard);
+
+  // VTextField is width: 100% of its parent — driving the wrapper width
+  // here lets us animate it smoothly between rest and focused sizes.
+  :global(.v-input) {
+    width: 100%;
+  }
+
+  input {
+    min-height: 28px;
+  }
+}
+
+.wrapFocused .input {
+  width: 225px;
+  background: rgb(var(--v-theme-surface));
+  border-radius: 6px;
+}
+
+.panel {
+  max-height: min(70vh, 560px);
+  overflow-y: auto;
+  border-radius: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover,
+  &.active {
+    background: rgba(var(--v-theme-on-surface), 0.06);
+  }
+}
+
+.icon {
+  flex: 0 0 auto;
+  opacity: 0.75;
+}
+
+.body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.title {
+  font-size: 0.875rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subtitle {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.2);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.empty {
+  padding: 16px;
+  text-align: center;
+  font-size: 0.875rem;
+  opacity: 0.6;
+}

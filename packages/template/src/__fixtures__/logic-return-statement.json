@@ -1,0 +1,7 @@
+{
+  "description": "logic cell: bare assignment sets variable",
+  "cells": [{ "uuid": "cell-1", "type": "logic", "content": "msg = 'hello'" }],
+  "model": { "id": "m", "name": "TestModel", "version": "1.0.0", "packages": [] },
+  "expectedContextDiff": { "msg": "hello" },
+  "expectedOutput": ""
+}

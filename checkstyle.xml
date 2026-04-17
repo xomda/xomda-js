@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+  "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+  "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+  xomda Java style rules (Checkstyle).
+
+  Scope:
+    - Code-style rules only. Pure formatting (spacing, wrapping, braces) is
+      handled by the Eclipse JDT formatter (eclipse-formatter.xml at repo root).
+    - Targets modern Java (records, switch expressions, sealed types, streams,
+      lambdas). No rules that fight functional style or builder DSLs.
+
+  Used by:
+    - maven-checkstyle-plugin in every Maven module under integrations/jvm/
+    - IDE Checkstyle plugins (IntelliJ "CheckStyle-IDEA", Eclipse Checkstyle)
+-->
+<module name="Checker">
+  <property name="charset" value="UTF-8"/>
+  <property name="severity" value="error"/>
+  <property name="fileExtensions" value="java"/>
+
+  <!-- Files must end with a newline -->
+  <module name="NewlineAtEndOfFile">
+    <property name="lineSeparator" value="lf"/>
+  </module>
+
+  <!-- No trailing whitespace -->
+  <module name="RegexpSingleline">
+    <property name="format" value="\s+$"/>
+    <property name="minimum" value="0"/>
+    <property name="maximum" value="0"/>
+    <property name="message" value="Line has trailing whitespace."/>
+  </module>
+
+  <!-- No tab characters (formatter uses spaces) -->
+  <module name="FileTabCharacter">
+    <property name="eachLine" value="true"/>
+  </module>
+
+  <!-- File length sanity cap -->
+  <module name="FileLength">
+    <property name="max" value="2500"/>
+  </module>
+
+  <module name="TreeWalker">
+    <!-- Imports -->
+    <module name="AvoidStarImport"/>
+    <module name="RedundantImport"/>
+    <module name="UnusedImports">
+      <property name="processJavadoc" value="true"/>
+    </module>
+    <module name="IllegalImport">
+      <property name="illegalPkgs" value="sun, com.sun.istack"/>
+    </module>
+
+    <!--
+      Naming (modern Java; lenient on type params for generics).
+
+      `$` is allowed at the start of identifiers because the cell-based
+      template engine uses `$out` as a sigil for the output buffer (mirrors
+      the JS-side template DSL: the JVM and JS sides share the convention).
+
+      MethodName allows snake_case so JUnit test methods can use readable
+      descriptive names like `aggregates_loop_output_when_output_is_after_the_loop`
+      — the dominant convention in the existing test suite.
+    -->
+    <module name="PackageName">
+      <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
+    </module>
+    <module name="TypeName"/>
+    <module name="ConstantName"/>
+    <module name="StaticVariableName"/>
+    <module name="MemberName">
+      <property name="format" value="^\$?[a-z][a-zA-Z0-9_]*$"/>
+    </module>
+    <module name="MethodName">
+      <!-- Allows `$` anywhere so bean-style accessors of `$`-sigil fields
+           (e.g. `get$out` for `$out`) pass. -->
+      <property name="format" value="^[a-zA-Z\$][a-zA-Z0-9_\$]*$"/>
+    </module>
+    <module name="ParameterName">
+      <property name="format" value="^\$?[a-z][a-zA-Z0-9_]*$"/>
+    </module>
+    <module name="LocalVariableName">
+      <property name="format" value="^\$?[a-z][a-zA-Z0-9_]*$|^_$"/>
+      <property name="allowOneCharVarInForLoop" value="true"/>
+    </module>
+    <module name="LocalFinalVariableName">
+      <property name="format" value="^\$?[a-z][a-zA-Z0-9_]*$"/>
+    </module>
+    <module name="ClassTypeParameterName">
+      <property name="format" value="^[A-Z][0-9]?$|^[A-Z][a-zA-Z0-9]*$"/>
+    </module>
+    <module name="MethodTypeParameterName">
+      <property name="format" value="^[A-Z][0-9]?$|^[A-Z][a-zA-Z0-9]*$"/>
+    </module>
+
+    <!-- Modifiers -->
+    <module name="ModifierOrder"/>
+    <module name="RedundantModifier"/>
+
+    <!-- Blocks -->
+    <module name="EmptyBlock">
+      <property name="option" value="text"/>
+      <property name="tokens" value="LITERAL_WHILE, LITERAL_TRY, LITERAL_FINALLY, LITERAL_DO, LITERAL_IF, LITERAL_ELSE, LITERAL_FOR, STATIC_INIT, LITERAL_SWITCH"/>
+    </module>
+    <!--
+      NeedBraces deliberately omitted. The codebase consistently uses
+      brace-free single-statement bodies (`if (cond) doX();`, often
+      across multiple lines) for early-returns, guards and short control
+      flow inside streams/lambdas. Re-introducing the rule would conflict
+      with the chosen style.
+    -->
+    <module name="LeftCurly"/>
+    <module name="RightCurly"/>
+
+    <!-- Common bug patterns -->
+    <module name="EmptyStatement"/>
+    <module name="EqualsHashCode"/>
+    <!--
+      MissingSwitchDefault deliberately omitted: it false-fires on modern
+      exhaustive switch expressions over sealed types and enums where
+      adding `default` would be unreachable.
+    -->
+    <module name="FallThrough"/>
+    <module name="SimplifyBooleanExpression"/>
+    <module name="SimplifyBooleanReturn"/>
+    <module name="StringLiteralEquality"/>
+    <module name="DefaultComesLast"/>
+    <module name="HiddenField">
+      <property name="ignoreConstructorParameter" value="true"/>
+      <property name="ignoreSetter" value="true"/>
+      <property name="setterCanReturnItsClass" value="true"/>
+    </module>
+    <module name="IllegalThrows"/>
+    <module name="ReturnCount">
+      <!-- Functional code often early-returns; keep generous -->
+      <property name="max" value="8"/>
+    </module>
+
+    <!-- Annotations -->
+    <module name="MissingOverride"/>
+    <module name="AnnotationUseStyle"/>
+
+    <!-- Conventions -->
+    <module name="UpperEll"/>
+    <module name="ArrayTypeStyle"/>
+    <module name="OuterTypeFilename"/>
+    <module name="OneTopLevelClass"/>
+
+    <!-- Per-file suppression via `// CHECKSTYLE:OFF` / `:ON` -->
+    <module name="SuppressionCommentFilter"/>
+  </module>
+
+  <!--
+    Suppress generated/build output and Mojo-generated sources.
+    Module aggregator paths under integrations/jvm/* are resolved
+    relative to each module's basedir, not repo root.
+  -->
+  <module name="SuppressionSingleFilter">
+    <property name="files" value="[\\/]target[\\/]"/>
+    <property name="checks" value=".*"/>
+  </module>
+  <module name="SuppressionSingleFilter">
+    <property name="files" value="[\\/]build[\\/]"/>
+    <property name="checks" value=".*"/>
+  </module>
+  <module name="SuppressionSingleFilter">
+    <property name="files" value="[\\/]generated-sources[\\/]"/>
+    <property name="checks" value=".*"/>
+  </module>
+</module>

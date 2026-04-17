@@ -1,0 +1,22 @@
+.version {
+  font-family: 'Source Code Pro Variable', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.chip {
+  font-family: 'Source Code Pro Variable', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.link:hover .version,
+.link:focus-visible .version {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

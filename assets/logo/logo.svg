@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="-1 -1 2 2" shape-rendering="geometricPrecision">
+<defs>
+<radialGradient id="diamondGrad" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="rgb(230,209,255)"/><stop offset="55%" stop-color="rgb(140,107,235)"/><stop offset="100%" stop-color="rgb(76,38,153)"/></radialGradient>
+<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur in="SourceGraphic" stdDeviation="0.025" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<g transform="scale(1 -1)">
+<path d="M -0.1 0.55 L -0.5793 0.0707 Q -0.65 0 -0.5793 -0.0707 L -0.1 -0.55" fill="none" stroke="rgb(84,84,224)" stroke-width="0.18" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 0.1 0.55 L 0.5793 0.0707 Q 0.65 0 0.5793 -0.0707 L 0.1 -0.55" fill="none" stroke="rgb(158,74,199)" stroke-width="0.18" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="0,0.3 0.3,0 0,-0.3 -0.3,0" fill="url(#diamondGrad)" filter="url(#glow)"/>
+</g>
+</svg>

@@ -1,0 +1,60 @@
+// Intentionally NOT a *.module.scss file: this stylesheet has to reach into
+// Monaco's own DOM (`.monaco-editor`, `.cursors-layer`, `.view-lines`) which
+// the editor renders with un-renameable global class names. CSS-module hashing
+// would break those selectors. Scope is contained by the `.v-code-editor`
+// root class we own.
+.v-code-editor {
+  // Normalised Monaco scrollbars. Override per-instance by setting these vars
+  // on the host element or any ancestor.
+  --v-code-editor-scrollbar-slider: rgb(var(--v-theme-on-surface), 0.22);
+  --v-code-editor-scrollbar-slider-hover: rgb(var(--v-theme-on-surface), 0.38);
+  --v-code-editor-scrollbar-slider-active: rgb(var(--v-theme-on-surface), 0.55);
+  --v-code-editor-scrollbar-radius: 6px;
+
+  position: relative;
+  overflow: hidden;
+
+  .monaco-editor {
+    padding: 0;
+
+    // Hide Monaco's default chunky track background; keep overlay-style sliders only.
+    .monaco-scrollable-element > .scrollbar {
+      background: transparent;
+
+      > .slider {
+        background: var(--v-code-editor-scrollbar-slider);
+        border-radius: var(--v-code-editor-scrollbar-radius);
+        transition: background-color 120ms ease;
+      }
+
+      &:hover > .slider,
+      > .slider:hover {
+        background: var(--v-code-editor-scrollbar-slider-hover);
+      }
+
+      > .slider.active {
+        background: var(--v-code-editor-scrollbar-slider-active);
+      }
+    }
+
+    // Corner where vertical + horizontal scrollbars meet.
+    .monaco-scrollable-element > .shadow.top,
+    .monaco-scrollable-element > .shadow.left,
+    .monaco-scrollable-element > .shadow.top-left-corner {
+      box-shadow: none;
+    }
+  }
+}
+
+.v-code-editor--readonly {
+  .monaco-editor {
+    .cursors-layer > .cursor {
+      display: none !important;
+    }
+
+    .view-lines,
+    .monaco-mouse-cursor-text {
+      cursor: default;
+    }
+  }
+}

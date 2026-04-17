@@ -1,0 +1,37 @@
+<idea-plugin>
+    <id>org.xomda.intellij</id>
+    <name>xomda</name>
+    <vendor email="3611758+JorisAerts@users.noreply.github.com" url="https://xomda.org">Joris Aerts</vendor>
+
+    <description><![CDATA[
+        Edit xomda models and templates directly in IntelliJ IDEA.
+        Auto-detects the <code>.xomda</code> folder in your project and shows a
+        tool window with the model tree and template list. Run code generation
+        without leaving the IDE.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow
+            id="Xomda"
+            anchor="right"
+            icon="AllIcons.Toolwindows.ToolWindowStructure"
+            factoryClass="org.xomda.intellij.XomdaToolWindowFactory"/>
+        <notificationGroup id="Xomda" displayType="BALLOON"/>
+    </extensions>
+
+    <actions>
+        <group id="org.xomda.intellij.MainGroup" text="Xomda" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action id="org.xomda.intellij.Generate"
+                    class="org.xomda.intellij.actions.GenerateAction"
+                    text="Generate"
+                    description="Run xomda code generation for the current project"/>
+            <action id="org.xomda.intellij.Refresh"
+                    class="org.xomda.intellij.actions.RefreshAction"
+                    text="Refresh Model"
+                    description="Reload the .xomda model tree"/>
+        </group>
+    </actions>
+</idea-plugin>

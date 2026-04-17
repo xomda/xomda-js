@@ -1,0 +1,20 @@
+{
+  "name": "@xomda/demo-maven-plain",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Plain Java + Maven + JUnit 5 demo — pins the layout convention every JVM demo follows.",
+  "type": "module",
+  "scripts": {
+    "model": "tsx scripts/build-model.ts",
+    "generate": "pnpm model && xomda generate",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "xomda": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "25.9.1",
+    "tsx": "4.22.3",
+    "vitest": "4.1.7"
+  }
+}

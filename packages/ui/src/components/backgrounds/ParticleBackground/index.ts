@@ -1,0 +1,6 @@
+export type { CameraConfig, ParticleBackgroundProps } from './ParticleBackground'
+export { ParticleBackground } from './ParticleBackground'
+export type { FieldFunction, FieldFunctionId, FieldParams } from './particleField'
+export { fields, resolveField } from './particleField'
+export type { ParticleBackgroundPreset, PresetName } from './presets'
+export { presets } from './presets'

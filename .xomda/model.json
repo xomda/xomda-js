@@ -1,0 +1,1043 @@
+{
+  "id": "0f17d0be-fde0-4df1-a582-a44291b1a70f",
+  "name": "Main Model",
+  "version": "1.0.0",
+  "packages": [
+    {
+      "id": "4942822f-1f51-4301-8b64-af446c6c017e",
+      "name": "xomda",
+      "packages": [
+        {
+          "id": "b3359d29-5e38-4c4f-ad2f-3e23f1718c11",
+          "name": "model",
+          "packages": [],
+          "enums": [
+            {
+              "id": "72906dec-862c-43c1-a6b7-b728947bd32d",
+              "name": "Attribute Type",
+              "values": [
+                {
+                  "id": "2fca8d4c-1692-4dc0-8bf7-e0d88db7a317",
+                  "name": "string"
+                },
+                {
+                  "id": "ec977f55-7c22-4cd6-b3d9-05fa40af1517",
+                  "name": "number"
+                },
+                {
+                  "id": "909a6123-dea6-4670-b433-0570a8696542",
+                  "name": "decimal"
+                },
+                {
+                  "id": "b30a9a7f-2ac0-4348-9a82-1be8c401f3c5",
+                  "name": "boolean"
+                },
+                {
+                  "id": "11a6aba5-dc2b-42cb-be56-ecc1b3cd2729",
+                  "name": "date"
+                },
+                {
+                  "id": "fbeff835-55a6-4ea8-81c6-e4684c28e036",
+                  "name": "uuid"
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000040",
+                  "name": "entity"
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000041",
+                  "name": "enum"
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000042",
+                  "name": "package"
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000043",
+                  "name": "attribute"
+                }
+              ],
+              "description": "Built-in primitive types and meta-types an Attribute can have. Meta-types (entity, enum, package, attribute) point at modelling primitives by UUID via the corresponding target* extension field. Custom user-defined names are still accepted as legacy free strings and resolved by name at codegen time."
+            },
+            {
+              "id": "e0e7c0de-0000-4000-8000-000000000001",
+              "name": "Entity Kind",
+              "values": [
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000002",
+                  "name": "default"
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000003",
+                  "name": "abstract"
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000004",
+                  "name": "interface"
+                }
+              ],
+              "description": "The kind of an Entity: 'default' (concrete, instantiable), 'abstract' (cannot be instantiated, only extended), or 'interface' (typed contract implemented by other entities). Coexists with the legacy 'abstract' boolean."
+            },
+            {
+              "id": "e0e7c0de-0000-4000-8000-000000000020",
+              "name": "Visibility",
+              "values": [
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000021",
+                  "name": "public"
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000022",
+                  "name": "package-private"
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000023",
+                  "name": "model-private"
+                }
+              ],
+              "description": "Visibility across the project graph. 'public' is visible everywhere. 'package-private' is visible within the defining package and its descendants, across all models in the same project. 'model-private' is visible only within the defining model."
+            },
+            {
+              "id": "e0e7c0de-0000-4000-8000-000000000060",
+              "name": "Aggregation Kind",
+              "values": [
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000061",
+                  "name": "composite"
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000062",
+                  "name": "none"
+                }
+              ],
+              "description": "UML 2 aggregation kind for an entity-typed Attribute. 'composite' means the parent owns the related instances (one-to-many / one-to-one); 'none' is a plain association (many-to-many / many-to-one). Combined with multiValue it captures all four MDA cardinalities without inventing new vocabulary. Forbidden on primitive types and on the 'enum' meta-type."
+            }
+          ],
+          "entities": [
+            {
+              "id": "525f2fe6-89c4-4384-926b-e2e09fd9d721",
+              "name": "Enum",
+              "attributes": [
+                {
+                  "id": "aa91751a-1bd6-4d7f-9c0b-ac65d6d10595",
+                  "name": "id",
+                  "type": "uuid",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": true,
+                  "unique": true
+                },
+                {
+                  "id": "2a0fb3f6-b52c-4294-8f62-728d763fd82a",
+                  "name": "name",
+                  "type": "string",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": true,
+                  "uniqueScope": "parent"
+                },
+                {
+                  "id": "ce2cb99c-db4f-4046-ac7b-fe06dc95c171",
+                  "name": "values",
+                  "type": "Enum Value",
+                  "required": true,
+                  "multiValue": true,
+                  "primaryKey": false,
+                  "unique": false
+                },
+                {
+                  "id": "6382a532-5f86-4818-a2e8-8f203871668e",
+                  "name": "description",
+                  "type": "string",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false
+                }
+              ],
+              "description": "A named set of constant values.",
+              "kind": "default"
+            },
+            {
+              "id": "1a7ac8cd-8479-41f7-b8ba-acd8a1246b60",
+              "name": "Package",
+              "attributes": [
+                {
+                  "id": "63779618-93a6-4e1e-bfdf-911335700568",
+                  "name": "id",
+                  "type": "uuid",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": true,
+                  "unique": true
+                },
+                {
+                  "id": "db65c1b8-a994-4d99-8118-bcb8810c4b71",
+                  "name": "name",
+                  "type": "string",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": true,
+                  "uniqueScope": "parent"
+                },
+                {
+                  "id": "5fe5f415-ca33-4f5a-8d13-d63e4f442b2d",
+                  "name": "packages",
+                  "type": "Package",
+                  "required": false,
+                  "multiValue": true,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Nested sub-packages (recursive)."
+                },
+                {
+                  "id": "f187af23-9945-4593-b5f4-ef9365fceef1",
+                  "name": "enums",
+                  "type": "Enum",
+                  "required": false,
+                  "multiValue": true,
+                  "primaryKey": false,
+                  "unique": false
+                },
+                {
+                  "id": "c3739202-56cd-41b2-a2dd-5015a997c40d",
+                  "name": "entities",
+                  "type": "Entity",
+                  "required": false,
+                  "multiValue": true,
+                  "primaryKey": false,
+                  "unique": false
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000030",
+                  "name": "visibility",
+                  "type": "Visibility",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Visibility across the project graph. Defaults to 'public' on legacy read; new packages created via the router default to 'package-private'."
+                },
+                {
+                  "id": "8dc6beac-2296-40df-a87b-a968ee362ec4",
+                  "name": "description",
+                  "type": "string",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false
+                }
+              ],
+              "description": "A namespace grouping Entities, Enums and nested Packages.",
+              "kind": "default"
+            },
+            {
+              "id": "50fc99cf-3510-4492-b8e4-18394e9450fa",
+              "name": "Attribute",
+              "attributes": [
+                {
+                  "id": "ccffdf5f-01e4-4f11-bf8e-88bc9799d27f",
+                  "name": "id",
+                  "type": "uuid",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": true,
+                  "unique": true
+                },
+                {
+                  "id": "2e3ea156-e208-445f-9deb-0ba7a3548b79",
+                  "name": "name",
+                  "type": "string",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": true,
+                  "uniqueScope": "parent",
+                  "description": "Unique within the parent Entity."
+                },
+                {
+                  "id": "adca08b5-4120-4445-b93b-deee1fcaabed",
+                  "name": "type",
+                  "type": "string",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Either an Attribute Type primitive or the name of an Entity/Enum."
+                },
+                {
+                  "id": "100f59bb-5522-4fe8-abb3-6b81c534bd07",
+                  "name": "required",
+                  "type": "boolean",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false
+                },
+                {
+                  "id": "b1eb9c7c-4180-477c-ad7c-cab7eabe32df",
+                  "name": "multiValue",
+                  "type": "boolean",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "If true, the attribute is a collection of its type."
+                },
+                {
+                  "id": "ddd8f332-7558-4af7-94e8-e956efe0e7b8",
+                  "name": "primaryKey",
+                  "type": "boolean",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false
+                },
+                {
+                  "id": "ce63f8ef-e2a3-4a68-b868-4d1b88a80c6e",
+                  "name": "unique",
+                  "type": "boolean",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false
+                },
+                {
+                  "id": "0fc77e89-c8a2-4791-8477-deebcd5ca6a9",
+                  "name": "defaultValue",
+                  "type": "string",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Optional literal default value used in code generation."
+                },
+                {
+                  "id": "9a4c5f31-5b72-4f3d-9b45-2c81e7f0c3ad",
+                  "name": "uniqueScope",
+                  "type": "string",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Scope for the `unique` flag in generated schemas: 'global' (default) or 'parent' for uniqueness among siblings within the parent entity."
+                },
+                {
+                  "id": "ad788e7a-f236-4771-86a5-95f14434c4a0",
+                  "name": "aggregation",
+                  "type": "Aggregation Kind",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "UML aggregation kind for an entity-typed attribute: 'composite' (parent owns the related instances) or 'none' (plain association). Combined with multiValue, expresses one-to-many, many-to-many, one-to-one, and many-to-one. Only meaningful when type resolves to an Entity.",
+                  "defaultValue": "none"
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000050",
+                  "name": "targetEntity",
+                  "type": "Entity",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "aggregation": "none",
+                  "description": "UUID of the Entity this attribute references. Required when type === 'entity'; ignored for other types. Resolves through the project graph (visibility-aware)."
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000051",
+                  "name": "targetEnum",
+                  "type": "Enum",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "aggregation": "none",
+                  "description": "UUID of the Enum this attribute references. Required when type === 'enum'; ignored for other types."
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000052",
+                  "name": "length",
+                  "type": "number",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Maximum length for type === 'string'. Optional codegen hint."
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000053",
+                  "name": "precision",
+                  "type": "number",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Total digit count for type === 'decimal' (SQL precision). Optional codegen hint."
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000054",
+                  "name": "scale",
+                  "type": "number",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Digits after the decimal point for type === 'decimal'. Must not exceed precision when both are set."
+                },
+                {
+                  "id": "f39ba34a-6b15-40ca-805e-b9e73b1f00bf",
+                  "name": "config",
+                  "type": "string",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Open container for type-specific sub-data (validation thresholds, reference cascade rules, column hints, ...). JSON object serialised as a string in this self-model representation — the runtime schema uses Record<string, unknown>."
+                },
+                {
+                  "id": "4401ae0c-af63-450f-95f4-4c25be940e37",
+                  "name": "description",
+                  "type": "string",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false
+                }
+              ],
+              "description": "A typed field on an Entity.",
+              "kind": "default"
+            },
+            {
+              "id": "4a79f52a-e8b5-44b6-8924-1b0fe549a795",
+              "name": "Enum Value",
+              "attributes": [
+                {
+                  "id": "d4518b1e-3821-4a16-978b-9d5621381212",
+                  "name": "id",
+                  "type": "uuid",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": true,
+                  "unique": true
+                },
+                {
+                  "id": "f779ee6d-c07b-4584-8f37-1942eba8c57a",
+                  "name": "name",
+                  "type": "string",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": true,
+                  "uniqueScope": "parent"
+                }
+              ],
+              "description": "A single constant within an Enum.",
+              "kind": "default"
+            },
+            {
+              "id": "913b8352-e06c-4ec5-8d47-f24e288dc03f",
+              "name": "Entity",
+              "attributes": [
+                {
+                  "id": "62d4d40d-d16f-4379-a017-b0ab06ab58c1",
+                  "name": "id",
+                  "type": "uuid",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": true,
+                  "unique": true,
+                  "description": "Stable unique identifier."
+                },
+                {
+                  "id": "55b54237-c76b-4cb9-916c-6ed9187bdda0",
+                  "name": "name",
+                  "type": "string",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": true,
+                  "uniqueScope": "parent",
+                  "description": "Human-readable name; unique within its package."
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000010",
+                  "name": "kind",
+                  "type": "Entity Kind",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "The kind of this entity: 'default' (concrete), 'abstract' (only extendable), or 'interface' (typed contract, implementable via 'implements').",
+                  "defaultValue": "default"
+                },
+                {
+                  "id": "766c4cfe-fc3a-442e-a021-419d0cc67c88",
+                  "name": "extends",
+                  "type": "Entity",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "aggregation": "none",
+                  "description": "Parent Entity whose attributes are inherited."
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000011",
+                  "name": "implements",
+                  "type": "Entity",
+                  "required": false,
+                  "multiValue": true,
+                  "primaryKey": false,
+                  "unique": false,
+                  "aggregation": "none",
+                  "description": "UUIDs of Interface entities this entity composes. Allowed only when kind is 'default' or 'abstract'; an 'interface' itself must not implement (it 'extends' another interface instead)."
+                },
+                {
+                  "id": "41379489-7b3d-4793-b636-55ea580d652a",
+                  "name": "attributes",
+                  "type": "Attribute",
+                  "required": true,
+                  "multiValue": true,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "The attributes of this entity. Names must be unique within an entity."
+                },
+                {
+                  "id": "e0e7c0de-0000-4000-8000-000000000012",
+                  "name": "visibility",
+                  "type": "Visibility",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Visibility across the project graph. Defaults to 'public' on legacy read; new entities created via the router default to 'package-private'."
+                },
+                {
+                  "id": "f2369057-f80c-4111-9ac6-4b7914aaf04d",
+                  "name": "description",
+                  "type": "string",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false
+                }
+              ],
+              "description": "A named structural type composed of Attributes. The fundamental MDA unit.",
+              "kind": "default"
+            }
+          ]
+        },
+        {
+          "id": "efb0161c-940f-48f0-9065-7c2f00af4f6e",
+          "name": "template",
+          "packages": [],
+          "enums": [
+            {
+              "id": "aaaaaaaa-0002-4000-b000-000000000001",
+              "name": "Template Language",
+              "values": [
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-000000000002",
+                  "name": "handlebars"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-000000000003",
+                  "name": "typescript"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-000000000004",
+                  "name": "javascript"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-000000000005",
+                  "name": "java"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-000000000006",
+                  "name": "python"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-000000000007",
+                  "name": "go"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-000000000008",
+                  "name": "rust"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-000000000009",
+                  "name": "csharp"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-00000000000a",
+                  "name": "cpp"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-00000000000b",
+                  "name": "c"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-00000000000c",
+                  "name": "xml"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-00000000000d",
+                  "name": "html"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-00000000000e",
+                  "name": "css"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-00000000000f",
+                  "name": "scss"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-000000000010",
+                  "name": "json"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-000000000011",
+                  "name": "yaml"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-000000000012",
+                  "name": "markdown"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-000000000013",
+                  "name": "sql"
+                },
+                {
+                  "id": "aaaaaaaa-0002-4000-b000-000000000014",
+                  "name": "graphql"
+                }
+              ],
+              "description": "Target language of the generated output, used as a syntax-highlight hint."
+            },
+            {
+              "id": "cccccccc-0001-4000-b000-000000000001",
+              "name": "Cell Type",
+              "values": [
+                {
+                  "id": "cccccccc-0001-4000-b000-000000000002",
+                  "name": "logic"
+                },
+                {
+                  "id": "cccccccc-0001-4000-b000-000000000003",
+                  "name": "markdown"
+                },
+                {
+                  "id": "cccccccc-0001-4000-b000-000000000004",
+                  "name": "handlebars"
+                },
+                {
+                  "id": "cccccccc-0001-4000-b000-000000000005",
+                  "name": "buffer"
+                },
+                {
+                  "id": "cccccccc-0001-4000-b000-000000000006",
+                  "name": "output"
+                }
+              ],
+              "description": "The type of a Template cell, determining how its content is processed."
+            }
+          ],
+          "entities": [
+            {
+              "id": "bbbbbbbb-0002-4000-b000-000000000001",
+              "name": "Template Folder",
+              "attributes": [
+                {
+                  "id": "bbbbbbbb-0002-4000-b000-000000000002",
+                  "name": "path",
+                  "type": "string",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": true,
+                  "unique": true,
+                  "description": "Relative path from the templates root directory."
+                },
+                {
+                  "id": "bbbbbbbb-0002-4000-b000-000000000003",
+                  "name": "name",
+                  "type": "string",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false
+                },
+                {
+                  "id": "bbbbbbbb-0002-4000-b000-000000000005",
+                  "name": "tags",
+                  "type": "string",
+                  "required": false,
+                  "multiValue": true,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Optional tags for categorization."
+                },
+                {
+                  "id": "bbbbbbbb-0002-4000-b000-000000000004",
+                  "name": "description",
+                  "type": "string",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false
+                }
+              ],
+              "description": "A folder organising Template files within the templates directory.",
+              "kind": "default"
+            },
+            {
+              "id": "dddddddd-0001-4000-b000-000000000001",
+              "name": "Template Cell",
+              "attributes": [
+                {
+                  "id": "dddddddd-0001-4000-b000-000000000002",
+                  "name": "uuid",
+                  "type": "uuid",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": true,
+                  "unique": true
+                },
+                {
+                  "id": "dddddddd-0001-4000-b000-000000000003",
+                  "name": "type",
+                  "type": "Cell Type",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false
+                },
+                {
+                  "id": "dddddddd-0001-4000-b000-000000000004",
+                  "name": "content",
+                  "type": "string",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Cell source code or markup."
+                },
+                {
+                  "id": "dddddddd-0001-4000-b000-000000000005",
+                  "name": "variableName",
+                  "type": "string",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Name of the context variable this cell defines (logic / buffer cells)."
+                },
+                {
+                  "id": "dddddddd-0001-4000-b000-000000000006",
+                  "name": "outputFilename",
+                  "type": "string",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "JS template-literal expression for the output filename (output cells)."
+                },
+                {
+                  "id": "dddddddd-0001-4000-b000-000000000008",
+                  "name": "outputContent",
+                  "type": "string",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Variable name of the buffer to write. Defaults to all preceding cell outputs."
+                }
+              ],
+              "description": "A single cell in a Template.",
+              "kind": "default"
+            },
+            {
+              "id": "eeeeeeee-0001-4000-b000-000000000001",
+              "name": "Template",
+              "attributes": [
+                {
+                  "id": "eeeeeeee-0001-4000-b000-000000000002",
+                  "name": "uuid",
+                  "type": "uuid",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": true,
+                  "unique": true
+                },
+                {
+                  "id": "eeeeeeee-0001-4000-b000-000000000003",
+                  "name": "name",
+                  "type": "string",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false
+                },
+                {
+                  "id": "eeeeeeee-0001-4000-b000-000000000005",
+                  "name": "version",
+                  "type": "string",
+                  "required": true,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "defaultValue": "1.0.0"
+                },
+                {
+                  "id": "eeeeeeee-0001-4000-b000-000000000007",
+                  "name": "cells",
+                  "type": "Template Cell",
+                  "required": true,
+                  "multiValue": true,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "Ordered list of cells that make up this template."
+                },
+                {
+                  "id": "eeeeeeee-0001-4000-b000-000000000008",
+                  "name": "extends",
+                  "type": "uuid",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "UUID of the parent template this template inherits from."
+                },
+                {
+                  "id": "eeeeeeee-0001-4000-b000-000000000004",
+                  "name": "description",
+                  "type": "string",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false
+                },
+                {
+                  "id": "eeeeeeee-0001-4000-b000-000000000009",
+                  "name": "disabled",
+                  "type": "boolean",
+                  "required": false,
+                  "multiValue": false,
+                  "primaryKey": false,
+                  "unique": false,
+                  "description": "When true, this template is skipped during code generation."
+                }
+              ],
+              "description": "A cell-based advanced template stored as a .template.json file.",
+              "kind": "default"
+            }
+          ]
+        }
+      ],
+      "enums": [],
+      "entities": [
+        {
+          "id": "948dd4b5-f03b-472c-9e28-7ecdae5d9055",
+          "name": "Model",
+          "attributes": [
+            {
+              "id": "bc54511a-c23b-4231-8df9-f7fd505e30bf",
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": true,
+              "unique": true
+            },
+            {
+              "id": "38f170a3-6aff-42c3-8215-8c86c3589b7c",
+              "name": "name",
+              "type": "string",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "4481896e-8d4c-4a68-9cb8-4ae726a2da06",
+              "name": "version",
+              "type": "string",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "cbaf7eac-dd67-49cd-b5c7-d7c5574a978d",
+              "name": "packages",
+              "type": "Package",
+              "required": false,
+              "multiValue": true,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "478a0dd1-ee5c-4a83-8af6-09404f2da1e5",
+              "name": "createdAt",
+              "type": "date",
+              "required": false,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "7b15f961-b8f3-42ac-bce5-11446a5579da",
+              "name": "updatedAt",
+              "type": "date",
+              "required": false,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            }
+          ],
+          "description": "Root container for the entire model definition.",
+          "kind": "default"
+        },
+        {
+          "id": "f1f1f1f1-0001-4000-b000-000000000001",
+          "name": "Project",
+          "attributes": [
+            {
+              "id": "f1f1f1f1-0001-4000-b000-000000000002",
+              "name": "name",
+              "type": "string",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": true,
+              "unique": true
+            },
+            {
+              "id": "f1f1f1f1-0001-4000-b000-000000000003",
+              "name": "description",
+              "type": "string",
+              "required": false,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "f1f1f1f1-0001-4000-b000-000000000004",
+              "name": "isRoot",
+              "type": "boolean",
+              "required": false,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false,
+              "description": "When true, this project is a workspace boundary — recursive walks list but do not descend into it."
+            },
+            {
+              "id": "f1f1f1f1-0001-4000-b000-000000000005",
+              "name": "models",
+              "type": "Model",
+              "required": false,
+              "multiValue": true,
+              "primaryKey": false,
+              "unique": false,
+              "description": "Models that belong to this project. A primary model lives at .xomda/model.json; secondary models live under .xomda/models/<id>.json."
+            }
+          ],
+          "description": "A xomda project rooted at a directory containing .xomda/. Owns one or more Models and zero or more Templates.",
+          "kind": "default"
+        }
+      ],
+      "description": "Self-describing core model: xomda's own structural types defined within xomda."
+    }
+  ],
+  "updatedAt": "2026-05-22T18:49:33.101Z",
+  "layout": {
+    "4942822f-1f51-4301-8b64-af446c6c017e": {
+      "x": 24,
+      "y": 24,
+      "width": 1992,
+      "height": 936
+    },
+    "948dd4b5-f03b-472c-9e28-7ecdae5d9055": {
+      "x": 0,
+      "y": 240
+    },
+    "b3359d29-5e38-4c4f-ad2f-3e23f1718c11": {
+      "x": 264,
+      "y": 0,
+      "width": 840,
+      "height": 864
+    },
+    "efb0161c-940f-48f0-9065-7c2f00af4f6e": {
+      "x": 1128,
+      "y": 0,
+      "width": 816,
+      "height": 552
+    },
+    "525f2fe6-89c4-4384-926b-e2e09fd9d721": {
+      "x": 0,
+      "y": 336
+    },
+    "1a7ac8cd-8479-41f7-b8ba-acd8a1246b60": {
+      "x": 264,
+      "y": 0
+    },
+    "50fc99cf-3510-4492-b8e4-18394e9450fa": {
+      "x": 528,
+      "y": 0
+    },
+    "4a79f52a-e8b5-44b6-8924-1b0fe549a795": {
+      "x": 264,
+      "y": 312
+    },
+    "72906dec-862c-43c1-a6b7-b728947bd32d": {
+      "x": 528,
+      "y": 360
+    },
+    "bbbbbbbb-0002-4000-b000-000000000001": {
+      "x": 264,
+      "y": 0
+    },
+    "dddddddd-0001-4000-b000-000000000001": {
+      "x": 0,
+      "y": 240
+    },
+    "eeeeeeee-0001-4000-b000-000000000001": {
+      "x": 264,
+      "y": 216
+    },
+    "aaaaaaaa-0001-4000-b000-000000000001": {
+      "x": 528,
+      "y": 384
+    },
+    "aaaaaaaa-0002-4000-b000-000000000001": {
+      "x": 528,
+      "y": 0
+    },
+    "cccccccc-0001-4000-b000-000000000001": {
+      "x": 0,
+      "y": 0
+    },
+    "913b8352-e06c-4ec5-8d47-f24e288dc03f": {
+      "x": 0,
+      "y": 0
+    },
+    "f1f1f1f1-0001-4000-b000-000000000001": {
+      "x": 0,
+      "y": 48
+    },
+    "e0e7c0de-0000-4000-8000-000000000020": {
+      "x": 264,
+      "y": 456
+    },
+    "e0e7c0de-0000-4000-8000-000000000001": {
+      "x": 264,
+      "y": 624
+    },
+    "e0e7c0de-0000-4000-8000-000000000060": {
+      "x": 0,
+      "y": 600
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "node_modules/.cache/tsconfig.tsbuildinfo",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "dist",
+    "paths": {},
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/__tests__/**"],
+  "references": [
+    {
+      "path": "../analysis/client"
+    },
+    {
+      "path": "../analysis/core"
+    },
+    {
+      "path": "../analysis/plugins-client"
+    },
+    {
+      "path": "../codeeditor"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../diagram"
+    },
+    {
+      "path": "../icons"
+    },
+    {
+      "path": "../model"
+    },
+    {
+      "path": "../template"
+    },
+    {
+      "path": "../ui"
+    },
+    {
+      "path": "../util"
+    },
+    {
+      "path": "../../integrations/node/unplugin"
+    }
+  ]
+}

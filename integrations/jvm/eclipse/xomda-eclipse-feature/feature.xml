@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature id="org.xomda.eclipse.feature"
+         label="xomda"
+         version="0.0.1.qualifier"
+         provider-name="Joris Aerts">
+
+    <description>Edit xomda models and templates directly in Eclipse.</description>
+    <copyright>MIT License</copyright>
+    <license>https://opensource.org/licenses/MIT</license>
+
+    <plugin id="org.xomda.eclipse"
+            download-size="0"
+            install-size="0"
+            version="0.0.0"
+            unpack="false"/>
+</feature>

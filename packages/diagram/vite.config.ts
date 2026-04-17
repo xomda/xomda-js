@@ -1,0 +1,34 @@
+import { fileURLToPath, URL } from 'node:url'
+
+import vueJsx from '@vitejs/plugin-vue-jsx'
+import { defineConfig } from 'vite'
+import dts from 'vite-plugin-dts'
+
+export default defineConfig({
+  plugins: [vueJsx(), dts({ tsconfigPath: './tsconfig.json', exclude: ['**/*.stories.*'] })],
+  resolve: {
+    // `@xomda/icons` is intentionally not aliased — it resolves via the
+    // pnpm workspace symlink in `node_modules`, which makes it eligible
+    // for `optimizeDeps` pre-bundling below.
+    alias: {},
+  },
+  optimizeDeps: {
+    // `@xomda/icons`' barrel re-exports ~15k Material Symbols. Without
+    // pre-bundling, Storybook's Vite dev server would fetch every
+    // re-export target file up-front when any story imports from it.
+    // Pre-bundling collapses the barrel into a single optimized module.
+    include: ['@xomda/icons'],
+  },
+  build: {
+    lib: {
+      entry: fileURLToPath(new URL('src/index.ts', import.meta.url)),
+      name: 'XomdaDiagram',
+      fileName: 'index',
+      formats: ['es'],
+    },
+    rollupOptions: {
+      external: ['vue'],
+    },
+    cssCodeSplit: false,
+  },
+})

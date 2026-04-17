@@ -1,0 +1,53 @@
+.hexView {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: 'Source Code Pro Variable', monospace;
+  font-size: 0.75rem;
+  color: rgb(var(--v-theme-on-surface));
+  background: rgb(var(--v-theme-surface));
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  font-size: 0.75rem;
+  color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+}
+
+.truncated {
+  color: rgb(var(--v-theme-warning));
+}
+
+.body {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 8px 12px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 9ch 1fr 17ch;
+  gap: 24px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.offset {
+  color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+}
+
+.hex {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.byte + .byte {
+  margin-left: 0;
+}
+
+.ascii {
+  color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+}

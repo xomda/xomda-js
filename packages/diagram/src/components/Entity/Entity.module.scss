@@ -1,0 +1,137 @@
+.entity {
+  display: inline-flex;
+  flex-direction: column;
+  border: 1.5px solid rgba(var(--v-border-color, 0, 0, 0), var(--v-border-opacity, 0.12));
+  border-radius: 8px;
+  font-family: 'Source Code Pro Variable', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  // Grid-aligned floor (10 × --grid-size = 240px). Pure CSS can't round a
+  // content-derived width to a grid multiple without JS measurement, so
+  // wider entities still bleed past the grid until/unless we persist a
+  // size — but at least the common case lines up.
+  min-width: calc(var(--grid-size, 24px) * 10);
+  background: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
+  box-shadow: var(--v-shadow-key-umbra-opacity, 0 1px 3px rgba(0, 0, 0, 0.08));
+  overflow: hidden;
+  user-select: none;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+
+.entity:hover {
+  box-shadow: var(--v-shadow-key-penumbra-opacity, 0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.selected,
+.selected:hover {
+  // Compound + explicit hover variant so `.entity:hover`'s shadow can't
+  // override the primary ring (same specificity, but hover comes later
+  // in the stylesheet).
+  //
+  // Glow stack: tight solid ring (the "border") + two soft halos at
+  // decreasing opacity / increasing blur to fake a light source. Listed
+  // tightest-first so the solid ring sits on top of the halos.
+  border-color: rgb(var(--v-theme-primary));
+  box-shadow:
+    0 0 0 2px rgb(var(--v-theme-primary)),
+    0 0 12px 2px rgba(var(--v-theme-primary), 0.45),
+    0 0 24px 6px rgba(var(--v-theme-primary), 0.2);
+}
+
+.dimmed {
+  // Opacity controlled by the canvas-level `--xomda-dim-opacity` var so the
+  // user's `diagramDimAmount` preference flows through without per-component
+  // plumbing. Falls back to 0.35 when the var is unset (e.g. Storybook).
+  opacity: var(--xomda-dim-opacity, 0.35);
+  transition: opacity 0.2s ease;
+}
+
+.dimmed:hover {
+  opacity: calc(var(--xomda-dim-opacity, 0.35) + (1 - var(--xomda-dim-opacity, 0.35)) * 0.6);
+}
+
+.header {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
+  gap: 8px;
+  min-height: 42px;
+}
+
+.titleClickable {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.headerClickable {
+  cursor: pointer;
+}
+
+.nameDraggable {
+  cursor: pointer;
+}
+
+.nameDraggable:active {
+  cursor: grabbing;
+}
+
+.entityDragging {
+  opacity: 0.85;
+  // Theme shadow tokens — legible in both light and dark mode (the
+  // previous hardcoded near-black dropped out against dark surfaces).
+  box-shadow: 0 8px 24px
+    rgba(var(--v-shadow-key-umbra-color, 0, 0, 0), var(--v-shadow-key-umbra-opacity, 0.18));
+  z-index: 50;
+}
+
+.entityName {
+  flex: 1;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+.attributes {
+  display: flex;
+  flex-direction: column;
+  // Cap the list at N rows before scrolling kicks in. N is supplied by
+  // the host app via --diagram-max-entity-attributes (defaults to 10) and
+  // the row height is a fixed approximation that matches the
+  // EntityAttribute row (5+5 padding + 13px × 1.4 line-height ≈ 28px).
+  // See Enum.module.scss `.values` for the same pattern.
+  --attribute-row-height: 28px;
+
+  max-height: calc(var(--diagram-max-entity-attributes, 10) * var(--attribute-row-height));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.attributeRow {
+  display: flex;
+  align-items: stretch;
+  cursor: grab;
+}
+
+.attributeRow:active {
+  cursor: grabbing;
+}
+
+.dragging {
+  opacity: 0.5;
+  background: rgba(var(--v-theme-primary), 0.1);
+}
+
+.dragOver {
+  border-top: 2px solid rgb(var(--v-theme-primary));
+}
+
+.attributeRow > * {
+  flex: 1;
+}

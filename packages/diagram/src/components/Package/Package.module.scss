@@ -1,0 +1,184 @@
+.package {
+  display: inline-flex;
+  flex-direction: column;
+  // Drawn as an inset outline (offset: -1.5px) instead of a CSS border so it
+  // costs zero layout space — a 1.5px border on a content-box element shifts
+  // nested children's world-Y by 1.5px per nesting level, which the snap
+  // math can't see and which the visible grid lines do see. Outline is
+  // visually identical, follows `border-radius`, and is purely cosmetic.
+  outline: 1.5px dashed rgba(var(--v-border-color, 0, 0, 0), var(--v-border-opacity, 0.12));
+  outline-offset: -1.5px;
+  border-radius: 12px;
+  font-family: 'Source Code Pro Variable', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  background: rgba(var(--v-theme-surface), 0.05);
+  color: rgb(var(--v-theme-on-surface));
+  user-select: none;
+  position: relative;
+  // Sides + bottom padding = one grid cell. Top padding is 0 so the header
+  // (pinned to 2 cells) IS the whole vertical "header zone" — total from
+  // outer-top to content-top = 2 grid units. Sourced from --grid-size on
+  // the canvas by DiagramCanvas so the snap math and CSS share one knob.
+  padding: 0 var(--grid-size, 24px) var(--grid-size, 24px);
+  transition:
+    outline-color 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
+  //min-width: 250px;
+  min-height: 80px;
+  width: fit-content;
+  align-self: flex-start;
+}
+
+.package:hover {
+  background: rgba(var(--v-theme-surface), 0.1);
+  outline-color: rgba(var(--v-border-color, 0, 0, 0), 0.2);
+}
+
+.selected,
+.selected:hover {
+  // Hover variant so `.package:hover`'s outline-color can't dim the
+  // primary outline (both have specificity 20 — source order wins).
+  // Layered halo around the outline gives the same glow Entity/Enum use.
+  outline-color: rgb(var(--v-theme-primary));
+  outline-style: solid;
+  background: rgba(var(--v-theme-primary), 0.05);
+  box-shadow:
+    0 0 14px 2px rgba(var(--v-theme-primary), 0.45),
+    0 0 28px 6px rgba(var(--v-theme-primary), 0.2);
+}
+
+.dragOver {
+  outline-color: rgb(var(--v-theme-primary));
+  outline-style: dashed;
+  background: rgba(var(--v-theme-primary), 0.15);
+  box-shadow: 0 0 10px rgba(var(--v-theme-primary), 0.3);
+}
+
+.dimmed {
+  // Opacity controlled by the canvas-level `--xomda-dim-opacity` var so
+  // the user's `diagramDimAmount` preference flows through without
+  // per-component plumbing. Falls back to 0.35 when the var is unset
+  // (e.g. Storybook stories).
+  opacity: var(--xomda-dim-opacity, 0.35);
+  transition: opacity 0.2s ease;
+}
+
+.dimmed:hover {
+  // Bring the hovered card halfway between dim and full so the user can
+  // still inspect content without losing the selection emphasis.
+  opacity: calc(var(--xomda-dim-opacity, 0.35) + (1 - var(--xomda-dim-opacity, 0.35)) * 0.6);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  // Header total height pinned to 2 grid cells so `.content`'s top edge
+  // lands on a world-grid line at every nesting depth. Driven by the
+  // canvas-level --grid-size CSS var so a change to GRID_SIZE in TS
+  // propagates to the layout. No vertical padding — `align-items: center`
+  // distributes the natural row content (icon, title, buttons) evenly in
+  // the 48px box instead of stacking it to the top.
+  box-sizing: border-box;
+  min-height: calc(var(--grid-size, 24px) * 2);
+  padding: 0;
+  gap: 12px;
+}
+
+.titleClickable {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.packageName {
+  flex: 1;
+  font-weight: 700;
+  font-size: 18px;
+  color: rgba(var(--v-theme-on-surface), 0.9);
+  letter-spacing: 0.02em;
+}
+
+.selected .packageName {
+  color: rgb(var(--v-theme-primary));
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.content {
+  position: relative;
+  overflow: visible;
+}
+
+.empty {
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(var(--v-theme-on-surface), 0.3);
+  padding: 8px 0;
+}
+
+.dropZone {
+  width: 16px;
+  min-height: 40px;
+  align-self: stretch;
+  transition: all 0.3s;
+  border-radius: 4px;
+  margin: 0 -8px;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropZoneActive {
+  width: 120px;
+  background: rgba(var(--v-theme-primary), 0.1);
+  border: 2px dashed rgba(var(--v-theme-primary), 0.5);
+  margin: 0 8px;
+}
+
+.dropZoneActive::after {
+  content: 'Drop here';
+  font-size: 12px;
+  color: rgb(var(--v-theme-primary));
+  font-weight: bold;
+}
+
+.headerClickable {
+  cursor: pointer;
+}
+
+.nameDraggable {
+  cursor: pointer;
+}
+
+.nameDraggable:active {
+  cursor: grabbing;
+}
+
+.dragging {
+  opacity: 0.85;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+}
+
+.resizeHandle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  cursor: se-resize;
+  background: linear-gradient(135deg, transparent 50%, rgba(var(--v-theme-on-surface), 0.25) 50%);
+  border-bottom-right-radius: 12px;
+}
+
+.resizeHandle:hover {
+  background: linear-gradient(135deg, transparent 50%, rgba(var(--v-theme-primary), 0.5) 50%);
+}

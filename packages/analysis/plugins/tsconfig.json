@@ -1,0 +1,72 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "node_modules/.cache/tsconfig.tsbuildinfo",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "outDir": "dist",
+    "rootDir": "src",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "paths": {}
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../ant"
+    },
+    {
+      "path": "../binary"
+    },
+    {
+      "path": "../eslint"
+    },
+    {
+      "path": "../gradle"
+    },
+    {
+      "path": "../intellij"
+    },
+    {
+      "path": "../markdown"
+    },
+    {
+      "path": "../maven"
+    },
+    {
+      "path": "../node"
+    },
+    {
+      "path": "../prettier"
+    },
+    {
+      "path": "../rust"
+    },
+    {
+      "path": "../stylelint"
+    },
+    {
+      "path": "../typescript"
+    },
+    {
+      "path": "../visualstudio"
+    },
+    {
+      "path": "../vite"
+    },
+    {
+      "path": "../vscode"
+    },
+    {
+      "path": "../webpack"
+    },
+    {
+      "path": "../xomda"
+    }
+  ]
+}

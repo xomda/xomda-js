@@ -1,0 +1,38 @@
+.bar {
+  // Sticky to the bottom of the SettingsView scroll viewport. Width
+  // follows the parent content column (max 720px), so the bar reads
+  // like a floating card instead of an edge-to-edge banner — matches
+  // the visual weight of the section cards above it. `bottom: 0`
+  // lets the scroll container's py-2 padding be the only gap, so the
+  // bar hugs the bottom the same way regular views do.
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 10px 16px;
+  margin: 12px 16px 0;
+  background: rgba(var(--v-theme-surface), 0.96);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: 12px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.06);
+  z-index: 2;
+}
+
+.status {
+  margin-right: auto;
+  font-size: 0.8125rem;
+  color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+}
+
+.dirty {
+  color: rgb(var(--v-theme-warning));
+}
+
+.saved {
+  color: rgb(var(--v-theme-success));
+}

@@ -1,0 +1,59 @@
+{
+  "uuid": "c4f1e6a0-3a8e-4d10-b5c7-1f3e9d8c2a01",
+  "name": "Web TypeScript DTOs",
+  "description": "Emits one TypeScript `type` alias per entity into `frontend/src/generated/` — the wire shape the hand-written Vue frontend consumes when it talks to the BlogController. Same source-of-truth model as the Java DTOs; the two stay in sync because both are generated from `.xomda/model.json`.",
+  "version": "1.0.0",
+  "folder": "SpringBoot",
+  "cells": [
+    {
+      "uuid": "c4f1e6a0-3a8e-4d10-b5c7-1f3e9d8c2a02",
+      "type": "loop",
+      "content": "",
+      "variableName": "$entity",
+      "loopSource": "entities",
+      "children": [
+        {
+          "uuid": "c4f1e6a0-3a8e-4d10-b5c7-1f3e9d8c2a03",
+          "type": "logic",
+          "content": "const primMap = { string:'string', number:'number', boolean:'boolean', decimal:'number', date:'string', uuid:'string' };\nenumNames = new Set();\nentityNames = new Set();\nfor (const pkg of (model.packages || [])) {\n  for (const e of (pkg.enums || [])) enumNames.add(e.name);\n  for (const e of (pkg.entities || [])) entityNames.add(e.name);\n}\nfunction tsTypeOf(a) {\n  if (Object.prototype.hasOwnProperty.call(primMap, a.type)) return primMap[a.type];\n  if (entityNames.has(a.type)) return 'string';\n  if (enumNames.has(a.type)) return pascalCase(a.type);\n  return 'unknown';\n}\nfields = (attributes || []).map(function (a) {\n  const isEntityRef = entityNames.has(a.type);\n  return {\n    name: isEntityRef ? camelCase(a.name) + 'Id' : camelCase(a.name),\n    required: !!a.required,\n    type: tsTypeOf(a),\n    rawType: a.type,\n    isEnum: enumNames.has(a.type),\n  };\n});\nconst enumImports = Array.from(new Set(fields.filter(function (f) { return f.isEnum; }).map(function (f) { return pascalCase(f.rawType); })));\nimportLines = enumImports.length === 0 ? '' : enumImports.map(function (n) { return 'import type { ' + n + ' } from \\'./' + n + '\\''; }).join('\\n') + '\\n';\nfieldDecls = fields.map(function (f) { return '  ' + f.name + (f.required ? '' : '?') + ': ' + f.type; }).join('\\n');\n"
+        },
+        {
+          "uuid": "c4f1e6a0-3a8e-4d10-b5c7-1f3e9d8c2a04",
+          "type": "handlebars",
+          "content": "{{{importLines}}}\nexport type {{pascalCase name}} = {\n{{{fieldDecls}}}\n}\n"
+        },
+        {
+          "uuid": "c4f1e6a0-3a8e-4d10-b5c7-1f3e9d8c2a05",
+          "type": "output",
+          "content": "",
+          "outputFilename": "frontend/src/generated/{{pascalCase name}}.ts"
+        }
+      ]
+    },
+    {
+      "uuid": "c4f1e6a0-3a8e-4d10-b5c7-1f3e9d8c2a10",
+      "type": "loop",
+      "content": "",
+      "variableName": "$enum",
+      "loopSource": "enums",
+      "children": [
+        {
+          "uuid": "c4f1e6a0-3a8e-4d10-b5c7-1f3e9d8c2a11",
+          "type": "logic",
+          "content": "valueLiterals = (values || []).map(function (v) { return '  | \\'' + v.name + '\\''; }).join('\\n');\n"
+        },
+        {
+          "uuid": "c4f1e6a0-3a8e-4d10-b5c7-1f3e9d8c2a12",
+          "type": "handlebars",
+          "content": "export type {{pascalCase name}} =\n{{{valueLiterals}}}\n"
+        },
+        {
+          "uuid": "c4f1e6a0-3a8e-4d10-b5c7-1f3e9d8c2a13",
+          "type": "output",
+          "content": "",
+          "outputFilename": "frontend/src/generated/{{pascalCase name}}.ts"
+        }
+      ]
+    }
+  ]
+}

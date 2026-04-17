@@ -1,0 +1,132 @@
+{
+  "id": "00000000-0000-4000-8000-000000000017",
+  "name": "TodoService",
+  "version": "1.0.0",
+  "packages": [
+    {
+      "id": "00000000-0000-4000-8000-000000000016",
+      "name": "todos",
+      "packages": [],
+      "enums": [
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "name": "Priority",
+          "values": [
+            {
+              "id": "00000000-0000-4000-8000-000000000001",
+              "name": "LOW"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000002",
+              "name": "MEDIUM"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000003",
+              "name": "HIGH"
+            }
+          ]
+        }
+      ],
+      "entities": [
+        {
+          "id": "00000000-0000-4000-8000-000000000008",
+          "name": "TodoList",
+          "attributes": [
+            {
+              "id": "00000000-0000-4000-8000-000000000005",
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": true,
+              "unique": true
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000006",
+              "name": "name",
+              "type": "string",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000007",
+              "name": "createdAt",
+              "type": "date",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            }
+          ],
+          "kind": "default",
+          "implements": []
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000015",
+          "name": "Todo",
+          "attributes": [
+            {
+              "id": "00000000-0000-4000-8000-000000000009",
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": true,
+              "unique": true
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000010",
+              "name": "title",
+              "type": "string",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000011",
+              "name": "done",
+              "type": "boolean",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000012",
+              "name": "priority",
+              "type": "Priority",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000013",
+              "name": "list",
+              "type": "TodoList",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000014",
+              "name": "createdAt",
+              "type": "date",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            }
+          ],
+          "kind": "default",
+          "implements": []
+        }
+      ]
+    }
+  ],
+  "updatedAt": "2026-05-22T13:04:28.180Z"
+}

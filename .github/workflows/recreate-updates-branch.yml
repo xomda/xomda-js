@@ -1,0 +1,25 @@
+name: Recreate updates branch
+
+on:
+  delete:
+
+permissions:
+  contents: write
+
+jobs:
+  recreate:
+    if: github.event.ref_type == 'branch' && github.event.ref == 'updates'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recreate updates from main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          SHA=$(gh api "repos/$REPO/git/ref/heads/main" --jq .object.sha)
+          echo "Creating refs/heads/updates at $SHA"
+          gh api -X POST "repos/$REPO/git/refs" \
+            -f ref="refs/heads/updates" \
+            -f sha="$SHA" \
+            || echo "Branch may already exist; ignoring."

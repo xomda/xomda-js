@@ -1,0 +1,39 @@
+{
+  "uuid": "f1a9c2ea-4d3e-4f01-9c8b-2d4f6a1a9b00",
+  "name": "Spring Data Elasticsearch Document",
+  "description": "Emits one `@Document(indexName = \"<entity>\")` POJO per non-interface entity for projection into Elasticsearch. Primitive fields map to ES `Text` / `Keyword` / `Long` / `Double` / `Boolean` / `Date`. Entity references serialise as `Keyword`-typed UUID strings — the search projection denormalises the FK, it doesn't navigate it. Enums become `Keyword`. The mapper from JPA entity → document is hand-written in the demo (see the README); the POJO emitted here is the wire shape both sides agree on.",
+  "version": "1.0.0",
+  "folder": "SpringBoot",
+  "cells": [
+    {
+      "uuid": "f1a9c2ea-4d3e-4f01-9c8b-2d4f6a1a9b01",
+      "type": "loop",
+      "content": "",
+      "variableName": "$entity",
+      "loopSource": "entities",
+      "children": [
+        {
+          "uuid": "f1a9c2ea-4d3e-4f01-9c8b-2d4f6a1a9b02",
+          "type": "logic",
+          "content": "const javaPrim = { string:'String', number:'Long', boolean:'Boolean', decimal:'java.math.BigDecimal', date:'java.time.LocalDateTime', uuid:'java.util.UUID' };\nconst esField = { string:'Text', number:'Long', boolean:'Boolean', decimal:'Double', date:'Date', uuid:'Keyword' };\nenumNames = new Set();\nentityNames = new Set();\nfor (const pkg of (model.packages || [])) {\n  for (const e of (pkg.enums || [])) enumNames.add(e.name);\n  for (const e of (pkg.entities || [])) entityNames.add(e.name);\n}\njavaTypeOf = function (t) {\n  if (Object.prototype.hasOwnProperty.call(javaPrim, t)) {\n    const fq = javaPrim[t]; const dot = fq.lastIndexOf('.');\n    return dot >= 0 ? fq.slice(dot + 1) : fq;\n  }\n  return entityNames.has(t) ? 'UUID' : 'String';\n};\nesTypeOf = function (t) {\n  if (Object.prototype.hasOwnProperty.call(esField, t)) return esField[t];\n  return 'Keyword';\n};"
+        },
+        {
+          "uuid": "f1a9c2ea-4d3e-4f01-9c8b-2d4f6a1a9b03",
+          "type": "logic",
+          "content": "fields = (attributes || []).map(function (a) {\n  return {\n    name: a.name,\n    camel: camelCase(a.name),\n    pascal: pascalCase(a.name),\n    primaryKey: !!a.primaryKey,\n    javaType: javaTypeOf(a.type),\n    esType: esTypeOf(a.type),\n    multiValue: !!a.multiValue,\n  };\n});\n\nconst importSet = new Set([\n  'org.springframework.data.annotation.Id',\n  'org.springframework.data.elasticsearch.annotations.Document',\n  'org.springframework.data.elasticsearch.annotations.Field',\n  'org.springframework.data.elasticsearch.annotations.FieldType'\n]);\nfor (const f of fields) {\n  if (f.javaType === 'UUID') importSet.add('java.util.UUID');\n  if (f.javaType === 'LocalDateTime') importSet.add('java.time.LocalDateTime');\n  if (f.javaType === 'BigDecimal') importSet.add('java.math.BigDecimal');\n  if (f.multiValue) importSet.add('java.util.List');\n}\nimportLines = Array.from(importSet).sort().map(function (i) { return 'import ' + i + ';'; }).join('\\n');\n\nfieldDecls = fields.map(function (f) {\n  const lines = [];\n  if (f.primaryKey) lines.push('  @Id');\n  lines.push('  @Field(type = FieldType.' + f.esType + ')');\n  const javaType = f.multiValue ? ('List<' + f.javaType + '>') : f.javaType;\n  lines.push('  private ' + javaType + ' ' + f.camel + ';');\n  return lines.join('\\n');\n}).join('\\n\\n');\n\naccessors = fields.map(function (f) {\n  const javaType = f.multiValue ? ('List<' + f.javaType + '>') : f.javaType;\n  return (\n    '  public ' + javaType + ' get' + f.pascal + '() { return ' + f.camel + '; }\\n' +\n    '  public void set' + f.pascal + '(' + javaType + ' ' + f.camel + ') { this.' + f.camel + ' = ' + f.camel + '; }'\n  );\n}).join('\\n\\n');\n\nindexName = snakeCase(name);\n"
+        },
+        {
+          "uuid": "f1a9c2ea-4d3e-4f01-9c8b-2d4f6a1a9b04",
+          "type": "handlebars",
+          "content": "package com.example.blog.search;\n\n{{{importLines}}}\n\n@Document(indexName = \"{{indexName}}\")\npublic class {{pascalCase name}}Document {\n\n{{{fieldDecls}}}\n\n  public {{pascalCase name}}Document() {}\n\n{{{accessors}}}\n}\n"
+        },
+        {
+          "uuid": "f1a9c2ea-4d3e-4f01-9c8b-2d4f6a1a9b05",
+          "type": "output",
+          "content": "",
+          "outputFilename": "src/main/generated/com/example/blog/search/{{pascalCase name}}Document.java"
+        }
+      ]
+    }
+  ]
+}

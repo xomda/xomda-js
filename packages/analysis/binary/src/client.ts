@@ -1,0 +1,10 @@
+import type { AnalysisPluginClient } from '@xomda/analysis-client'
+import { registerAnalysisPluginClient } from '@xomda/analysis-client'
+import { PluginBinaryIcon } from '@xomda/icons'
+
+export const binaryClient: AnalysisPluginClient = {
+  id: 'binary',
+  icon: PluginBinaryIcon,
+}
+
+registerAnalysisPluginClient(binaryClient)

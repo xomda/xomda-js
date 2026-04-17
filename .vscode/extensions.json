@@ -1,0 +1,26 @@
+{
+  "recommendations": [
+    "Vue.volar",
+    "antfu.vite",
+    "vitest.explorer",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "stylelint.vscode-stylelint",
+    "EditorConfig.EditorConfig",
+    "andrejunges.Handlebars",
+    "mrmlnc.vscode-scss",
+    "eamodio.gitlens",
+    "zyrong.node-modules",
+    "streetsidesoftware.code-spell-checker",
+    "vscjava.vscode-java-pack",
+    "vscjava.vscode-gradle",
+    "fwcd.kotlin",
+    "redhat.vscode-xml",
+    "shengchen.vscode-checkstyle",
+    "github.vscode-github-actions",
+    "redhat.vscode-yaml",
+    "tamasfe.even-better-toml",
+    "DavidAnson.vscode-markdownlint",
+    "amodio.tsl-problem-matcher"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "description": "output cell: Handlebars expression in outputFilename",
+  "cells": [
+    { "uuid": "cell-1", "type": "logic", "content": "name = 'Entity'; $out.write('Entity')" },
+    {
+      "uuid": "cell-2",
+      "type": "output",
+      "content": "",
+      "outputType": "file",
+      "outputFilename": "{{name}}.ts"
+    }
+  ],
+  "model": { "id": "m", "name": "TestModel", "version": "1.0.0", "packages": [] },
+  "expectedFiles": [{ "outputPath": "Entity.ts", "content": "Entity" }]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@xomda/demo-gradle-plain",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Plain Java + Gradle + JUnit 5 demo — same model as maven-plain, different build tool, pins the regenerate-then-build-then-test loop for Gradle consumers.",
+  "type": "module",
+  "scripts": {
+    "model": "tsx scripts/build-model.ts",
+    "generate": "pnpm model && xomda generate",
+    "test": "vitest run",
+    "test:jvm": "gradle test"
+  },
+  "dependencies": {
+    "xomda": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "25.9.1",
+    "tsx": "4.22.3",
+    "vitest": "4.1.7"
+  }
+}

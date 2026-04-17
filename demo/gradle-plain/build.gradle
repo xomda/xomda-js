@@ -1,0 +1,47 @@
+plugins {
+  id 'java'
+  id 'application'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+// Pin build output to ./build/ explicitly so the IDE never picks an
+// unrelated folder name (e.g. `lib/`) as a default sink. Matches the
+// convention enforced for every Gradle module in integrations/jvm/.
+layout.buildDirectory = layout.projectDirectory.dir('build')
+
+java {
+  toolchain { languageVersion = JavaLanguageVersion.of(21) }
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  testImplementation platform('org.junit:junit-bom:5.11.3')
+  testImplementation 'org.junit.jupiter:junit-jupiter'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// Add `src/main/generated/` (xomda-produced Java) as an additional source
+// root so `gradle compileJava` picks up records alongside hand-written code.
+// Per the layout convention pinned in docs/.backlog/demo-projects.md:
+// generated under `generated/`, hand-written under `main/java/`, tests
+// under `test/java/` — never overlapping.
+sourceSets {
+  main {
+    java {
+      srcDirs 'src/main/java', 'src/main/generated'
+    }
+  }
+}
+
+application {
+  mainClass = 'com.example.App'
+}
+
+tasks.named('test', Test) {
+  useJUnitPlatform()
+}

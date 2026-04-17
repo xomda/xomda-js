@@ -1,0 +1,39 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "node_modules/.cache/tsconfig.tsbuildinfo",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "noEmit": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "dist",
+    "paths": {},
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/__tests__/**"],
+  "references": [
+    {
+      "path": "../cli"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../model"
+    },
+    {
+      "path": "../node"
+    },
+    {
+      "path": "../template"
+    },
+    {
+      "path": "../util"
+    }
+  ]
+}

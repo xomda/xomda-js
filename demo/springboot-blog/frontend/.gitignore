@@ -1,0 +1,7 @@
+# xomda emits the TS DTOs from the parent demo's `xomda generate` run.
+# Don't commit the regenerated tree; it must always be reproducible.
+src/generated/
+
+# Vite / Vue build outputs
+dist/
+node_modules/

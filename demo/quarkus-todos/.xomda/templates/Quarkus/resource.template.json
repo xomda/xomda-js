@@ -1,0 +1,34 @@
+{
+  "uuid": "b2c2d2e2-2222-4002-8002-bbbbbbbbbbbb",
+  "name": "Quarkus JAX-RS Resource",
+  "description": "Generates a JAX-RS resource per entity with list / get / create / delete operations against the Panache entity.",
+  "version": "1.0.0",
+  "folder": "Quarkus",
+  "cells": [
+    {
+      "uuid": "b2c2d2e2-2222-4102-8102-bbbbbbbbbbbb",
+      "type": "loop",
+      "content": "",
+      "variableName": "$entity",
+      "loopSource": "entities",
+      "children": [
+        {
+          "uuid": "b2c2d2e2-2222-4202-8202-bbbbbbbbbbbb",
+          "type": "logic",
+          "content": "\npathSegment = kebabCase(name);\n"
+        },
+        {
+          "uuid": "b2c2d2e2-2222-4302-8302-bbbbbbbbbbbb",
+          "type": "handlebars",
+          "content": "package com.example.todos.resource;\n\nimport com.example.todos.entity.{{pascalCase name}};\nimport io.quarkus.panache.common.Sort;\nimport jakarta.transaction.Transactional;\nimport jakarta.ws.rs.Consumes;\nimport jakarta.ws.rs.DELETE;\nimport jakarta.ws.rs.GET;\nimport jakarta.ws.rs.NotFoundException;\nimport jakarta.ws.rs.POST;\nimport jakarta.ws.rs.Path;\nimport jakarta.ws.rs.PathParam;\nimport jakarta.ws.rs.Produces;\nimport jakarta.ws.rs.core.MediaType;\nimport jakarta.ws.rs.core.Response;\nimport java.util.List;\nimport java.util.UUID;\n\n@Path(\"/api/{{pathSegment}}\")\n@Produces(MediaType.APPLICATION_JSON)\n@Consumes(MediaType.APPLICATION_JSON)\npublic class {{pascalCase name}}Resource {\n\n  @GET\n  public List<{{pascalCase name}}> list() {\n    return {{pascalCase name}}.listAll(Sort.by(\"id\"));\n  }\n\n  @GET\n  @Path(\"/{id}\")\n  public {{pascalCase name}} get(@PathParam(\"id\") UUID id) {\n    {{pascalCase name}} entity = {{pascalCase name}}.findById(id);\n    if (entity == null) throw new NotFoundException();\n    return entity;\n  }\n\n  @POST\n  @Transactional\n  public Response create({{pascalCase name}} entity) {\n    if (entity.id == null) entity.id = UUID.randomUUID();\n    entity.persist();\n    return Response.status(Response.Status.CREATED).entity(entity).build();\n  }\n\n  @DELETE\n  @Path(\"/{id}\")\n  @Transactional\n  public Response delete(@PathParam(\"id\") UUID id) {\n    boolean removed = {{pascalCase name}}.deleteById(id);\n    return removed ? Response.noContent().build() : Response.status(Response.Status.NOT_FOUND).build();\n  }\n}\n"
+        },
+        {
+          "uuid": "b2c2d2e2-2222-4402-8402-bbbbbbbbbbbb",
+          "type": "output",
+          "content": "",
+          "outputFilename": "src/main/generated/com/example/todos/resource/{{pascalCase name}}Resource.java"
+        }
+      ]
+    }
+  ]
+}

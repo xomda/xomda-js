@@ -1,0 +1,35 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "node_modules/.cache/tsconfig.tsbuildinfo",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node", "vscode"],
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "dist",
+    "paths": {},
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "out"],
+  "references": [
+    {
+      "path": "../../../packages/cli"
+    },
+    {
+      "path": "../../../packages/core"
+    },
+    {
+      "path": "../../../packages/model"
+    },
+    {
+      "path": "../../../packages/template"
+    },
+    {
+      "path": "../../../packages/util"
+    }
+  ]
+}

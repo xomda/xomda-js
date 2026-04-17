@@ -1,0 +1,8 @@
+// Override Vuetify's default `padding-inline: 16px` on the right edge so the
+// append slot (typically a MoreIcon menu button) lines up with the matching
+// menu button in `ViewCardHeader` above it — which sits 4px from the panel's
+// right edge. Without this override the row's overflow-menu drifts inward by
+// 12px and the eye reads two unrelated columns.
+.item {
+  padding-inline-end: 4px;
+}

@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: todo-service-postgres
+    environment:
+      POSTGRES_DB: todo_service
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    ports:
+      - "5432:5432"
+    volumes:
+      - todo-service-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d todo_service"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  todo-service-pgdata:

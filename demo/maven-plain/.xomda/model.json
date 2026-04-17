@@ -1,0 +1,87 @@
+{
+  "id": "00000000-0000-4000-8000-000000000010",
+  "name": "MavenPlain",
+  "version": "1.0.0",
+  "packages": [
+    {
+      "id": "00000000-0000-4000-8000-000000000009",
+      "name": "com.example.model",
+      "packages": [],
+      "enums": [],
+      "entities": [
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "name": "User",
+          "attributes": [
+            {
+              "id": "00000000-0000-4000-8000-000000000001",
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": true,
+              "unique": true
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000002",
+              "name": "name",
+              "type": "string",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000003",
+              "name": "email",
+              "type": "string",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": true
+            }
+          ],
+          "kind": "default",
+          "implements": []
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000008",
+          "name": "Order",
+          "attributes": [
+            {
+              "id": "00000000-0000-4000-8000-000000000005",
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": true,
+              "unique": true
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000006",
+              "name": "user",
+              "type": "User",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false,
+              "reference": true
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000007",
+              "name": "total",
+              "type": "decimal",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            }
+          ],
+          "kind": "default",
+          "implements": []
+        }
+      ]
+    }
+  ],
+  "updatedAt": "2026-05-22T14:46:55.086Z"
+}

@@ -1,0 +1,16 @@
+.row {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.icon + .icon {
+  // tiny negative overlap reads as "stacked" without obscuring either
+  margin-left: -3px;
+}
+
+.overflow {
+  font-family: 'Source Code Pro Variable', monospace;
+  color: rgba(var(--v-theme-on-surface), 0.55);
+  margin-left: 2px;
+}

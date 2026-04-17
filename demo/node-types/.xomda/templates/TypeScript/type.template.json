@@ -1,0 +1,36 @@
+{
+  "uuid": "11111111-2222-4333-9444-555555555555",
+  "name": "TypeScript Type Alias",
+  "description": "Per default-kind entity, emit a plain TypeScript `type` alias under `src/generated/`. Primitive types map straight; multi-valued attributes become arrays. Reference attributes (aggregation: 'none') serialize as UUID strings; composite or unset aggregation embeds the target type.",
+  "version": "1.0.0",
+  "folder": "TypeScript",
+  "cells": [
+    {
+      "uuid": "11111111-2222-4333-9444-555555555556",
+      "type": "loop",
+      "content": "",
+      "variableName": "$entity",
+      "loopSource": "entities",
+      "loopFilter": "item.kind !== 'interface'",
+      "children": [
+        {
+          "uuid": "11111111-2222-4333-9444-555555555557",
+          "type": "logic",
+          "content": "const primMap = { string: 'string', number: 'number', boolean: 'boolean', date: 'Date', uuid: 'string', decimal: 'number' };\nfunction tsTypeFor(a) {\n  let base = primMap[a.type];\n  if (base === undefined) {\n    base = a.aggregation === 'none' ? 'string' : pascalCase(a.type);\n  }\n  if (a.multiValue) { base += '[]'; }\n  return base;\n}\nconst attrs = attributes || [];\nattrSpecs = attrs.map(function (a) {\n  return {\n    camel: camelCase(a.name),\n    required: !!a.required,\n    tsType: tsTypeFor(a)\n  };\n});\nconst prims = ['string','number','boolean','date','uuid','decimal'];\nconst importTargets = attrs\n  .filter(function (a) { return a.aggregation !== 'none'; })\n  .map(function (a) { return a.type; })\n  .filter(function (t) { return prims.indexOf(t) === -1 && t !== name; });\nnonPrimitives = Array.from(new Set(importTargets));"
+        },
+        {
+          "uuid": "11111111-2222-4333-9444-555555555558",
+          "type": "handlebars",
+          "content": "{{#each nonPrimitives}}\nimport type { {{pascalCase this}} } from './{{pascalCase this}}'\n{{/each}}\n\nexport type {{pascalCase name}} = {\n{{#each attrSpecs}}\n  {{camel}}{{#unless required}}?{{/unless}}: {{{tsType}}}\n{{/each}}\n}\n"
+        },
+        {
+          "uuid": "11111111-2222-4333-9444-555555555559",
+          "type": "output",
+          "content": "",
+          "outputType": "file",
+          "outputFilename": "src/generated/{{pascalCase name}}.ts"
+        }
+      ]
+    }
+  ]
+}

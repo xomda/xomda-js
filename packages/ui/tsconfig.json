@@ -1,0 +1,29 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "node_modules/.cache/tsconfig.tsbuildinfo",
+    "declaration": true,
+    "declarationDir": "dist",
+    "composite": true,
+    "declarationMap": true,
+    "outDir": "dist",
+    "paths": {},
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.stories.*", "**/__tests__/**"],
+  "references": [
+    {
+      "path": "../codeeditor"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../icons"
+    },
+    {
+      "path": "../util"
+    }
+  ]
+}

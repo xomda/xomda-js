@@ -1,0 +1,39 @@
+{
+  "uuid": "a1b1c1d1-1111-4001-8001-aaaaaaaaaaaa",
+  "name": "Quarkus Panache Entity",
+  "description": "Generates a Panache entity per model entity (extends PanacheEntityBase, public fields, UUID @Id).",
+  "version": "1.0.0",
+  "folder": "Quarkus",
+  "cells": [
+    {
+      "uuid": "a1b1c1d1-1111-4101-8101-aaaaaaaaaaaa",
+      "type": "loop",
+      "content": "",
+      "variableName": "$entity",
+      "loopSource": "entities",
+      "children": [
+        {
+          "uuid": "a1b1c1d1-1111-4201-8201-aaaaaaaaaaaa",
+          "type": "logic",
+          "content": "\nconst javaPrim = { string:'String', number:'Long', boolean:'Boolean', decimal:'java.math.BigDecimal', date:'java.time.LocalDateTime', uuid:'java.util.UUID' };\nconst sqlPrim = { string:'TEXT', number:'BIGINT', boolean:'BOOLEAN', decimal:'NUMERIC(19,4)', date:'TIMESTAMP', uuid:'UUID' };\nenumNames = new Set();\nentityNames = new Set();\nfor (const pkg of (model.packages || [])) {\n  for (const e of (pkg.enums || [])) enumNames.add(e.name);\n  for (const e of (pkg.entities || [])) entityNames.add(e.name);\n}\njavaTypeOf = function (t) {\n  if (Object.prototype.hasOwnProperty.call(javaPrim, t)) {\n    const fq = javaPrim[t]; const dot = fq.lastIndexOf('.');\n    return dot >= 0 ? fq.slice(dot + 1) : fq;\n  }\n  return pascalCase(t);\n};\nsqlTypeOf = function (t) { return sqlPrim[t] || 'TEXT'; };\nisPrim = function (t) { return Object.prototype.hasOwnProperty.call(javaPrim, t); };\nisEnumType = function (t) { return enumNames.has(t); };\nisEntityType = function (t) { return entityNames.has(t); };\n"
+        },
+        {
+          "uuid": "a1b1c1d1-1111-4301-8301-aaaaaaaaaaaa",
+          "type": "logic",
+          "content": "\nfields = (attributes || []).filter(function (a) { return !a.primaryKey; }).map(function (a) {\n  return {\n    name: a.name,\n    camel: camelCase(a.name),\n    column: snakeCase(a.name),\n    rawType: a.type,\n    javaType: javaTypeOf(a.type),\n    required: !!a.required,\n    unique: !!a.unique,\n    isPrim: isPrim(a.type),\n    isEnum: isEnumType(a.type),\n    isEntity: isEntityType(a.type),\n  };\n});\n\nconst importSet = new Set([\n  'io.quarkus.hibernate.orm.panache.PanacheEntityBase',\n  'jakarta.persistence.*',\n  'java.util.UUID',\n]);\nfor (const f of fields) {\n  if (f.rawType === 'decimal') importSet.add('java.math.BigDecimal');\n  if (f.rawType === 'date') importSet.add('java.time.LocalDateTime');\n  if (f.isEnum) importSet.add('com.example.todos.enums.' + pascalCase(f.rawType));\n}\nimportLines = Array.from(importSet).sort().map(function (i) { return 'import ' + i + ';'; }).join('\\n');\n\nfieldDecls = fields.map(function (f) {\n  const lines = [];\n  if (f.isEntity) {\n    lines.push('  @ManyToOne(fetch = FetchType.LAZY' + (f.required ? ', optional = false' : '') + ')');\n    lines.push('  @JoinColumn(name = \"' + f.column + '_id\"' + (f.required ? ', nullable = false' : '') + ')');\n  } else if (f.isEnum) {\n    lines.push('  @Enumerated(EnumType.STRING)');\n    const parts = ['name = \"' + f.column + '\"'];\n    if (f.required) parts.push('nullable = false');\n    if (f.unique) parts.push('unique = true');\n    lines.push('  @Column(' + parts.join(', ') + ')');\n  } else {\n    const parts = ['name = \"' + f.column + '\"'];\n    if (f.required) parts.push('nullable = false');\n    if (f.unique) parts.push('unique = true');\n    lines.push('  @Column(' + parts.join(', ') + ')');\n  }\n  lines.push('  public ' + f.javaType + ' ' + f.camel + ';');\n  return lines.join('\\n');\n}).join('\\n\\n');\n\ntableName = snakeCase(name);\n"
+        },
+        {
+          "uuid": "a1b1c1d1-1111-4401-8401-aaaaaaaaaaaa",
+          "type": "handlebars",
+          "content": "package com.example.todos.entity;\n\n{{{importLines}}}\n\n@Entity\n@Table(name = \"{{tableName}}\")\npublic class {{pascalCase name}} extends PanacheEntityBase {\n\n  @Id\n  @Column(name = \"id\")\n  public UUID id;\n\n{{{fieldDecls}}}\n\n  public {{pascalCase name}}() {}\n}\n"
+        },
+        {
+          "uuid": "a1b1c1d1-1111-4501-8501-aaaaaaaaaaaa",
+          "type": "output",
+          "content": "",
+          "outputFilename": "src/main/generated/com/example/todos/entity/{{pascalCase name}}.java"
+        }
+      ]
+    }
+  ]
+}

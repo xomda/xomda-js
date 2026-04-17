@@ -1,0 +1,98 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://containers.dev
+{
+  "name": "modelman",
+  "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "configureZshAsDefaultShell": "true"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "24"
+    },
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21",
+      "jdkDistro": "tem",
+      "installMaven": "true",
+      "mavenVersion": "latest",
+      "installGradle": "true",
+      "gradleVersion": "latest"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  // Forward backend, frontend and Storybook ports
+  "forwardPorts": [6431, 5173, 6006],
+  "portsAttributes": {
+    "6431": { "label": "Backend (tRPC / Node)" },
+    "5173": { "label": "Frontend (Vite / Vue)" },
+    "6006": { "label": "Storybook (Diagram)" }
+  },
+  // Activate the exact pnpm version pinned by packageManager in package.json, then install
+  "postCreateCommand": "corepack enable && corepack prepare pnpm@11.1.1 --activate && pnpm install",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit",
+          "source.fixAll.stylelint": "explicit"
+        },
+        "files.eol": "\n",
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "typescript.enablePromptUseWorkspaceTsdk": true,
+        "eslint.useFlatConfig": true,
+        "java.configuration.runtimes": [
+          {
+            "name": "JavaSE-21",
+            "path": "${env:JAVA_HOME}",
+            "default": true
+          }
+        ],
+        "java.compile.nullAnalysis.mode": "automatic",
+        "java.format.settings.url": "${workspaceFolder}/eclipse-formatter.xml",
+        "java.format.settings.profile": "xomda",
+        "java.checkstyle.configuration": "${workspaceFolder}/checkstyle.xml",
+        "java.checkstyle.version": "10.21.0",
+        "[java]": { "editor.defaultFormatter": "redhat.java" },
+        "[kotlin]": { "editor.defaultFormatter": "fwcd.kotlin" },
+        "[xml]": { "editor.defaultFormatter": "redhat.vscode-xml" }
+      },
+      "extensions": [
+        // Vue & Vite
+        "Vue.volar",
+        "antfu.vite",
+        // Testing
+        "vitest.explorer",
+        // Linting & formatting
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "stylelint.vscode-stylelint",
+        "EditorConfig.EditorConfig",
+        // Handlebars (used by @xomda/template)
+        "andrejunges.Handlebars",
+        // SCSS modules
+        "mrmlnc.vscode-scss",
+        // Git
+        "eamodio.gitlens",
+        // Monorepo / pnpm workspace helpers
+        "zyrong.node-modules",
+        // Spell checking
+        "streetsidesoftware.code-spell-checker",
+        // Java / Kotlin / JVM build (integrations/jvm/*)
+        "vscjava.vscode-java-pack",
+        "vscjava.vscode-gradle",
+        "fwcd.kotlin",
+        "redhat.vscode-xml",
+        "shengchen.vscode-checkstyle",
+        // CI / config / docs
+        "github.vscode-github-actions",
+        "redhat.vscode-yaml",
+        "tamasfe.even-better-toml",
+        "DavidAnson.vscode-markdownlint",
+        // VS Code extension dev (integrations/node/vscode)
+        "amodio.tsl-problem-matcher"
+      ]
+    }
+  }
+}

@@ -1,0 +1,187 @@
+// Read-only preview styling for `.md` files. Sized for the file
+// browser preview pane: comfortable reading column, fenced code
+// stretches edge-to-edge, tables are horizontally scrollable when
+// they overflow. Colors come from Vuetify CSS variables so the
+// preview tracks light/dark theme without an explicit switch.
+//
+// Class naming: kebab-case (no `__` / `--` BEM separators) to comply
+// with the repo's stylelint policy.
+
+.md-preview {
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.md-preview-body {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 3rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+    line-height: 1.25;
+    margin-top: 1.75em;
+    margin-bottom: 0.5em;
+  }
+
+  h1 {
+    font-size: 1.9em;
+    border-bottom: 1px solid rgb(var(--v-theme-on-surface), 0.12);
+    padding-bottom: 0.3em;
+  }
+
+  h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid rgb(var(--v-theme-on-surface), 0.08);
+    padding-bottom: 0.3em;
+  }
+
+  h3 {
+    font-size: 1.25em;
+  }
+
+  h4 {
+    font-size: 1em;
+  }
+
+  h5 {
+    font-size: 0.9em;
+  }
+
+  h6 {
+    font-size: 0.85em;
+    opacity: 0.85;
+  }
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  p {
+    margin: 0 0 1em;
+  }
+
+  a {
+    color: rgb(var(--v-theme-primary));
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  ul,
+  ol {
+    margin: 0 0 1em;
+    padding-left: 1.75em;
+  }
+
+  li {
+    margin: 0.15em 0;
+  }
+
+  blockquote {
+    margin: 0 0 1em;
+    padding: 0.25em 1em;
+    border-left: 0.25em solid rgb(var(--v-theme-on-surface), 0.2);
+    color: rgb(var(--v-theme-on-surface), 0.75);
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid rgb(var(--v-theme-on-surface), 0.15);
+    margin: 1.5em 0;
+  }
+
+  // Inline code — distinct from the editor-rendered fenced blocks.
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.88em;
+    padding: 0.15em 0.35em;
+    border-radius: 4px;
+    background-color: rgb(var(--v-theme-on-surface), 0.08);
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+}
+
+.md-preview-code {
+  margin: 0 0 1em;
+  border: 1px solid rgb(var(--v-theme-on-surface), 0.12);
+  border-radius: 6px;
+  overflow: hidden;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.md-preview-table-wrap {
+  overflow-x: auto;
+  margin: 0 0 1em;
+}
+
+.md-preview-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9em;
+
+  th,
+  td {
+    padding: 0.45em 0.75em;
+    border: 1px solid rgb(var(--v-theme-on-surface), 0.15);
+    vertical-align: top;
+  }
+
+  th {
+    background-color: rgb(var(--v-theme-on-surface), 0.04);
+    font-weight: 600;
+    text-align: left;
+  }
+
+  tr:nth-child(even) td {
+    background-color: rgb(var(--v-theme-on-surface), 0.02);
+  }
+}
+
+// Unsupported syntax — visible but unobtrusive. The point is "you
+// can see your input wasn't rendered the way you might have hoped",
+// not "this is an error".
+.md-preview-unsupported {
+  display: block;
+  margin: 0 0 1em;
+  padding: 0.5em 0.75em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background-color: rgb(var(--v-theme-warning), 0.08);
+  border-left: 3px solid rgb(var(--v-theme-warning));
+  color: rgb(var(--v-theme-on-surface), 0.85);
+  cursor: help;
+}
+
+.md-preview-unsupported-inline {
+  display: inline;
+  margin: 0;
+  padding: 0 0.3em;
+  border-left: none;
+  border-bottom: 1px dashed rgb(var(--v-theme-warning));
+}

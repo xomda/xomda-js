@@ -1,0 +1,199 @@
+{
+  "id": "00000000-0000-4000-8000-000000000024",
+  "name": "Blog",
+  "version": "1.0.0",
+  "packages": [
+    {
+      "id": "00000000-0000-4000-8000-000000000023",
+      "name": "blog",
+      "packages": [],
+      "enums": [
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "name": "PostStatus",
+          "values": [
+            {
+              "id": "00000000-0000-4000-8000-000000000001",
+              "name": "draft"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000002",
+              "name": "published"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000003",
+              "name": "archived"
+            }
+          ]
+        }
+      ],
+      "entities": [
+        {
+          "id": "00000000-0000-4000-8000-000000000008",
+          "name": "Author",
+          "attributes": [
+            {
+              "id": "00000000-0000-4000-8000-000000000005",
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": true,
+              "unique": true
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000006",
+              "name": "name",
+              "type": "string",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000007",
+              "name": "email",
+              "type": "string",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": true
+            }
+          ],
+          "kind": "default",
+          "implements": []
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000017",
+          "name": "Post",
+          "attributes": [
+            {
+              "id": "00000000-0000-4000-8000-000000000009",
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": true,
+              "unique": true
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000010",
+              "name": "title",
+              "type": "string",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000011",
+              "name": "content",
+              "type": "string",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000012",
+              "name": "status",
+              "type": "PostStatus",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000013",
+              "name": "author",
+              "type": "Author",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false,
+              "aggregation": "none"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000014",
+              "name": "tags",
+              "type": "string",
+              "required": false,
+              "multiValue": true,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000015",
+              "name": "comments",
+              "type": "Comment",
+              "required": false,
+              "multiValue": true,
+              "primaryKey": false,
+              "unique": false,
+              "aggregation": "composite"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000016",
+              "name": "relatedPosts",
+              "type": "Post",
+              "required": false,
+              "multiValue": true,
+              "primaryKey": false,
+              "unique": false,
+              "aggregation": "none"
+            }
+          ],
+          "kind": "default",
+          "implements": []
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000022",
+          "name": "Comment",
+          "attributes": [
+            {
+              "id": "00000000-0000-4000-8000-000000000018",
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": true,
+              "unique": true
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000019",
+              "name": "body",
+              "type": "string",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000020",
+              "name": "post",
+              "type": "Post",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false,
+              "aggregation": "none"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000021",
+              "name": "author",
+              "type": "Author",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false,
+              "aggregation": "none"
+            }
+          ],
+          "kind": "default",
+          "implements": []
+        }
+      ]
+    }
+  ],
+  "updatedAt": "2026-05-22T14:52:46.086Z"
+}
