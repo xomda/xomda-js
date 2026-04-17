@@ -1,0 +1,27 @@
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.addRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input {
+  flex: 1 1 auto;
+  padding: 6px 10px;
+  background: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: rgb(var(--v-theme-primary));
+}

@@ -1,0 +1,39 @@
+{
+  "uuid": "7e70eeaa-d983-4bd4-b1d5-1258c4a10f43",
+  "name": "Spring Boot JPA Entity",
+  "description": "Generates a JPA @Entity class per entity, with @Id, @Column, @ManyToOne, and @Enumerated annotations.",
+  "version": "1.0.0",
+  "folder": "SpringBoot",
+  "cells": [
+    {
+      "uuid": "ac3d8f1f-428d-4bc1-ab4f-aa85beef4af3",
+      "type": "loop",
+      "content": "",
+      "variableName": "$entity",
+      "loopSource": "entities",
+      "children": [
+        {
+          "uuid": "2fd3cad8-aaac-49e8-9a2c-0d8ce07c1e89",
+          "type": "logic",
+          "content": "\nconst javaPrim = { string:'String', number:'Long', boolean:'Boolean', decimal:'java.math.BigDecimal', date:'java.time.LocalDateTime', uuid:'java.util.UUID' };\nconst sqlPrim = { string:'TEXT', number:'BIGINT', boolean:'BOOLEAN', decimal:'NUMERIC(19,4)', date:'TIMESTAMP', uuid:'UUID' };\nenumNames = new Set();\nentityNames = new Set();\nfor (const pkg of (model.packages || [])) {\n  for (const e of (pkg.enums || [])) enumNames.add(e.name);\n  for (const e of (pkg.entities || [])) entityNames.add(e.name);\n}\njavaTypeOf = function (t) {\n  if (Object.prototype.hasOwnProperty.call(javaPrim, t)) {\n    const fq = javaPrim[t]; const dot = fq.lastIndexOf('.');\n    return dot >= 0 ? fq.slice(dot + 1) : fq;\n  }\n  return pascalCase(t);\n};\njavaFqType = function (t) { return javaPrim[t] || ('com.example.blog.' + (enumNames.has(t) ? 'enums.' : 'entity.') + pascalCase(t)); };\nsqlTypeOf = function (t) { return sqlPrim[t] || 'TEXT'; };\nisPrim = function (t) { return Object.prototype.hasOwnProperty.call(javaPrim, t); };\nisEnumType = function (t) { return enumNames.has(t); };\nisEntityType = function (t) { return entityNames.has(t); };\n"
+        },
+        {
+          "uuid": "85d1d930-7d52-4f96-9345-513e0806bdb0",
+          "type": "logic",
+          "content": "\nfields = (attributes || []).map(function (a) {\n  return {\n    name: a.name,\n    camel: camelCase(a.name),\n    pascal: pascalCase(a.name),\n    column: snakeCase(a.name),\n    rawType: a.type,\n    javaType: javaTypeOf(a.type),\n    required: !!a.required,\n    primaryKey: !!a.primaryKey,\n    unique: !!a.unique,\n    multiValue: !!a.multiValue,\n    isPrim: isPrim(a.type),\n    isEnum: isEnumType(a.type),\n    isEntity: isEntityType(a.type),\n  };\n});\n\nconst importSet = new Set(['jakarta.persistence.*']);\nfor (const f of fields) {\n  if (f.rawType === 'decimal') importSet.add('java.math.BigDecimal');\n  if (f.rawType === 'date') importSet.add('java.time.LocalDateTime');\n  if (f.rawType === 'uuid') importSet.add('java.util.UUID');\n  if (f.isEnum) importSet.add('com.example.blog.enums.' + pascalCase(f.rawType));\n}\nimportLines = Array.from(importSet).sort().map(function (i) { return 'import ' + i + ';'; }).join('\\n');\n\nfieldDecls = fields.map(function (f) {\n  const lines = [];\n  if (f.primaryKey) lines.push('  @Id');\n  if (f.isEntity) {\n    lines.push('  @ManyToOne(fetch = FetchType.LAZY' + (f.required ? ', optional = false' : '') + ')');\n    lines.push('  @JoinColumn(name = \"' + f.column + '_id\"' + (f.required ? ', nullable = false' : '') + ')');\n  } else if (f.isEnum) {\n    lines.push('  @Enumerated(EnumType.STRING)');\n    const parts = ['name = \"' + f.column + '\"'];\n    if (f.required) parts.push('nullable = false');\n    if (f.unique) parts.push('unique = true');\n    lines.push('  @Column(' + parts.join(', ') + ')');\n  } else {\n    const parts = ['name = \"' + f.column + '\"'];\n    if (f.required) parts.push('nullable = false');\n    if (f.unique) parts.push('unique = true');\n    lines.push('  @Column(' + parts.join(', ') + ')');\n  }\n  lines.push('  private ' + f.javaType + ' ' + f.camel + ';');\n  return lines.join('\\n');\n}).join('\\n\\n');\n\naccessors = fields.map(function (f) {\n  return (\n    '  public ' + f.javaType + ' get' + f.pascal + '() { return ' + f.camel + '; }\\n' +\n    '  public void set' + f.pascal + '(' + f.javaType + ' ' + f.camel + ') { this.' + f.camel + ' = ' + f.camel + '; }'\n  );\n}).join('\\n\\n');\n\ntableName = snakeCase(name);\n"
+        },
+        {
+          "uuid": "73b92164-e918-493c-97ec-d1f2332b853a",
+          "type": "handlebars",
+          "content": "package com.example.blog.entity;\n\n{{{importLines}}}\n\n@Entity\n@Table(name = \"{{tableName}}\")\npublic class {{pascalCase name}} {\n\n{{{fieldDecls}}}\n\n  public {{pascalCase name}}() {}\n\n{{{accessors}}}\n}\n"
+        },
+        {
+          "uuid": "02bc613f-bc6d-4592-80e8-2d5791306d36",
+          "type": "output",
+          "content": "",
+          "outputFilename": "src/main/java/com/example/blog/entity/{{pascalCase name}}.java"
+        }
+      ]
+    }
+  ]
+}

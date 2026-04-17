@@ -1,0 +1,29 @@
+{
+  "uuid": "0ba04927-487f-426f-86dc-a705c0b93ad2",
+  "name": "Spring Boot Service",
+  "description": "Generates a basic CRUD service per entity, delegating to the repository.",
+  "version": "1.0.0",
+  "folder": "SpringBoot",
+  "cells": [
+    {
+      "uuid": "bf6379ce-6de7-4bc6-8e25-64788825e9f3",
+      "type": "loop",
+      "content": "",
+      "variableName": "$entity",
+      "loopSource": "entities",
+      "children": [
+        {
+          "uuid": "45ae7a8f-74cf-43f1-9380-f5bfacf92737",
+          "type": "handlebars",
+          "content": "package com.example.blog.service;\n\nimport com.example.blog.entity.{{pascalCase name}};\nimport com.example.blog.repository.{{pascalCase name}}Repository;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.UUID;\nimport org.springframework.stereotype.Service;\nimport org.springframework.transaction.annotation.Transactional;\n\n@Service\n@Transactional\npublic class {{pascalCase name}}Service {\n  private final {{pascalCase name}}Repository repository;\n\n  public {{pascalCase name}}Service({{pascalCase name}}Repository repository) {\n    this.repository = repository;\n  }\n\n  public List<{{pascalCase name}}> findAll() { return repository.findAll(); }\n  public Optional<{{pascalCase name}}> findById(UUID id) { return repository.findById(id); }\n  public {{pascalCase name}} save({{pascalCase name}} entity) { return repository.save(entity); }\n  public void deleteById(UUID id) { repository.deleteById(id); }\n}\n"
+        },
+        {
+          "uuid": "5f5f8fa1-4aa0-44e2-9c66-b1c523d191ec",
+          "type": "output",
+          "content": "",
+          "outputFilename": "src/main/java/com/example/blog/service/{{pascalCase name}}Service.java"
+        }
+      ]
+    }
+  ]
+}

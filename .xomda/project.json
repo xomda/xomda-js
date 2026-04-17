@@ -1,0 +1,23 @@
+{
+  "name": "xΟΔ",
+  "versions": {
+    "head": null,
+    "versions": []
+  },
+  "settings": {
+    "restrictWritesToProjectRoot": true,
+    "isRoot": true,
+    "excludeFromScan": [
+      ".git",
+      ".idea",
+      ".vscode",
+      ".xomda",
+      "build",
+      "dist",
+      "node_modules",
+      "out",
+      "target"
+    ]
+  },
+  "plugins": ["gradle", "maven"]
+}

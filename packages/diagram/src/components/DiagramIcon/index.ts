@@ -1,0 +1,1 @@
+export { DiagramIcon } from './DiagramIcon'

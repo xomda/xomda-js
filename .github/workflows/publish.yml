@@ -1,0 +1,53 @@
+name: Publish Packages
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    # prevents this action from running on forks
+    if: github.repository == 'JorisAerts/modelman'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    environment: Release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda
+
+      - name: Set node version to 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org/
+          package-manager-cache: false
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Publish packages to npm
+        run: |
+          npm i -g npm@^11.6.1
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PRERELEASE=$(node -e "
+              const v=[...('${TAG_VERSION}'.matchAll(/[-.]([a-z]+)?[-.](\d+)?$/g))][0];
+              console.log(v?.[1] ?? '')
+          ")
+          TAG=${PRERELEASE:-latest}
+          echo "Publishing version ${TAG_VERSION} with tag '${TAG}'"
+          pnpm -r publish --tag "${TAG}" --access public --no-git-checks

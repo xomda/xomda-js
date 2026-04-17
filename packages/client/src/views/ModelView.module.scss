@@ -1,0 +1,97 @@
+.main {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.canvasContainer {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  padding: 8px;
+  overflow: hidden;
+}
+
+.canvasArea {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+}
+
+.canvas {
+  height: 100%;
+  border-radius: 0 !important;
+}
+
+.propertiesPanel {
+  flex: 0 0 auto;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: panelSlideIn 0.2s ease;
+}
+
+@keyframes panelSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.layoutSaveBar {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 6px 16px;
+  background: rgb(var(--v-theme-surface));
+  // Use the theme's shadow tokens so the elevation is legible in both
+  // light and dark mode (the previous hardcoded near-black rgba dropped
+  // out against dark surfaces).
+  box-shadow: 0 4px 16px
+    rgba(var(--v-shadow-key-umbra-color, 0, 0, 0), var(--v-shadow-key-umbra-opacity, 0.18));
+  font-size: 0.875rem;
+}
+
+.emptySidebar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: rgba(var(--v-theme-on-surface), var(--v-disabled-opacity));
+  font-style: italic;
+  padding: 40px;
+  text-align: center;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+}
+
+.error {
+  color: rgb(var(--v-theme-error));
+  font-size: 0.9rem;
+  text-align: center;
+  max-width: 400px;
+}
+
+.errorList {
+  max-width: 600px;
+}

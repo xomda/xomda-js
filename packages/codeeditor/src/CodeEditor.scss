@@ -1,0 +1,26 @@
+// Intentionally NOT a *.module.scss file: this stylesheet has to reach into
+// Monaco's own DOM (`.monaco-editor`, `.cursors-layer`, `.view-lines`) which
+// the editor renders with un-renameable global class names. CSS-module hashing
+// would break those selectors. Scope is contained by the `.v-code-editor`
+// root class we own.
+.v-code-editor {
+  position: relative;
+  overflow: hidden;
+
+  .monaco-editor {
+    padding: 0;
+  }
+}
+
+.v-code-editor--readonly {
+  .monaco-editor {
+    .cursors-layer > .cursor {
+      display: none !important;
+    }
+
+    .view-lines,
+    .monaco-mouse-cursor-text {
+      cursor: default;
+    }
+  }
+}

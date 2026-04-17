@@ -1,0 +1,5 @@
+export type { Colors } from './colors'
+export { colors } from './colors'
+export type { Mat4, Vec3 } from './matrix'
+export { mat4, rotateAroundAxis, vec3 } from './matrix'
+export { isNumberLike } from './number'

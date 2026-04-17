@@ -1,0 +1,82 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.contribution {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.contributionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgba(var(--v-theme-on-surface), 0.7);
+}
+
+.section {
+  padding: 0.75rem 1rem;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.kvTable {
+  display: grid;
+  grid-template-columns: minmax(120px, max-content) 1fr;
+  gap: 0.25rem 1rem;
+  font-size: 0.9rem;
+}
+
+.kvKey {
+  color: rgba(var(--v-theme-on-surface), 0.65);
+  align-self: start;
+}
+
+.kvValue {
+  overflow-wrap: anywhere;
+  font-family: var(--v-font-family-mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: 0.85rem;
+}
+
+.tableScroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.empty {
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(var(--v-theme-on-surface), 0.5);
+}
+
+.status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.statusLabel {
+  font-weight: 500;
+}
+
+.statusSub {
+  font-size: 0.8rem;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+}

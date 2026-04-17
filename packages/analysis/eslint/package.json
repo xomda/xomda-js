@@ -1,0 +1,30 @@
+{
+  "name": "@xomda/plugin-analysis-eslint",
+  "version": "0.0.1",
+  "description": "ESLint detector for xomda analysis",
+  "keywords": [
+    "xomda",
+    "analysis",
+    "plugin",
+    "eslint"
+  ],
+  "author": "Joris Aerts, 3611758+JorisAerts@users.noreply.github.com",
+  "type": "module",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@xomda/analysis-client": "workspace:*",
+    "@xomda/analysis-core": "workspace:*",
+    "@xomda/icons": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
+  }
+}
