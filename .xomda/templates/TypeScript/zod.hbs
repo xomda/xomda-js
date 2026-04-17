@@ -1,0 +1,28 @@
+---
+name: Zod Schema
+outputPath: 'target/src/schemas/{{pascalCase name}}Schema.ts'
+language: typescript
+scope: Entity
+---
+import { z } from 'zod'
+{{#each (nonPrimitiveTypes attributes)}}
+  import { {{pascalCase this}}Schema } from './{{pascalCase this}}Schema';
+{{/each}}
+
+export const {{pascalCase name}}Schema = z.object({
+{{#each attributes}}
+  {{camelCase name}}: {{#if (eq type "string")}}z.string()
+  {{~else if (eq type "number")}}z.number()
+  {{~else if (eq type "boolean")}}z.boolean()
+  {{~else if (eq type "Date")}}z.date()
+  {{~else if (eq type "UUID")}}z.string().uuid()
+  {{~else if (eq type "decimal")}}z.number()
+  {{~else}}{{pascalCase type}}Schema{{/if}}
+  {{~#if multiValue}}.array(){{/if}}
+  {{~#unless required}}.optional(){{/unless}}
+  {{~#if description}}.describe("{{description}}"){{/if}},
+{{/each}}
+});
+
+export type {{pascalCase name}} = z.infer
+<typeof {{pascalCase name}}Schema>;

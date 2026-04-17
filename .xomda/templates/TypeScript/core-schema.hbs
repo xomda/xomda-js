@@ -1,0 +1,41 @@
+---
+name: xomda Core Schema
+outputPath: 'generated/core/schemas/{{pascalCase name}}.ts'
+language: typescript
+scope: Entity
+---
+import { z } from 'zod'
+{{#each (nonPrimitiveTypes attributes)}}
+  {{#unless (eq this ../name)}}
+    import { {{pascalCase this}}Schema } from './{{pascalCase this}}'
+  {{/unless}}
+{{/each}}
+{{#if (isSelfRef name attributes)}}
+  {{#each (nonPrimitiveTypes attributes)}}
+    {{#unless (eq this ../name)}}
+      import type { {{pascalCase this}} } from './{{pascalCase this}}'
+    {{/unless}}
+  {{/each}}
+  export type {{pascalCase name}} = {
+  {{#each attributes}}
+    {{camelCase name}}{{#unless required}}?{{/unless}}: {{tsType this}}
+  {{/each}}
+  }
+
+  export const {{pascalCase name}}Schema: z.ZodType<{{pascalCase name}}> = z.lazy(() =>
+  z.object({
+  {{#each attributes}}
+    {{camelCase name}}: {{zodType this}},
+  {{/each}}
+  })
+  )
+{{else}}
+  export const {{pascalCase name}}Schema = z.object({
+  {{#each attributes}}
+    {{camelCase name}}: {{zodType this}},
+  {{/each}}
+  })
+
+  export type {{pascalCase name}} = z.infer
+  <typeof {{pascalCase name}}Schema>
+{{/if}}

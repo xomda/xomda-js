@@ -1,0 +1,9 @@
+{
+  "description": "logic cell: return statement sets variable",
+  "cells": [
+    { "uuid": "cell-1", "type": "logic", "content": "return 'hello'", "variableName": "msg" }
+  ],
+  "model": { "id": "m", "name": "TestModel", "version": "1.0.0", "packages": [], "elementsOrder": [] },
+  "expectedContextDiff": { "msg": "hello" },
+  "expectedOutput": ""
+}

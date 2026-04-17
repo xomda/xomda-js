@@ -1,0 +1,48 @@
+# dependencies
+node_modules
+
+# build output
+dist
+*.tsbuildinfo
+
+# test / coverage
+coverage
+cypress/videos
+cypress/screenshots
+cypress/downloads
+
+# vite
+*.local
+.vite
+
+# env
+.env
+.env.*
+!.env.example
+
+# editor
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/
+.factorypath
+
+# code generation output (run `pnpm generate` to recreate)
+generated/
+
+# claude worktrees
+.claude/worktrees

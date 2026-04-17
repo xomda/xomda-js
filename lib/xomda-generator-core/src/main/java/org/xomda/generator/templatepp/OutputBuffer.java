@@ -1,0 +1,19 @@
+package org.xomda.generator.templatepp;
+
+/** Accumulates string chunks; the JavaScript-side $out / named buffer variable. */
+public class OutputBuffer {
+    private final StringBuilder sb = new StringBuilder();
+
+    public void write(String chunk) {
+        if (chunk != null) sb.append(chunk);
+    }
+
+    public String getContent() {
+        return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return getContent();
+    }
+}

@@ -1,0 +1,136 @@
+---
+description: General overview of the Modelman (xomda.js) project structure and purpose.
+globs: **/*
+---
+
+# Project Overview: Modelman (xomda.js)
+
+**xomda.js** is a full-stack TypeScript monorepo for data model design and code generation. It enables users to design database schemas visually and automatically generate code artifacts from customizable Handlebars templates.
+
+## Core Purpose
+
+1. **Data Modeling** - Design entities and attributes interactively
+2. **Code Generation** - Generate boilerplate code using Handlebars templates
+3. **Type-Safe APIs** - Client-server communication via tRPC with full type safety
+4. **Visual Editing** - Interactive diagram-based UI for entity visualization
+
+## Package Architecture (12 Total)
+
+### Dependency Layers
+
+```
+Browser/CLI
+    ↓
+@xomda/client (Vue 3 SPA) + @xomda/node (HTTP Server)
+    ↓ [tRPC]
+@xomda/model (Business Logic)
+    ↓
+@xomda/template (Handlebars Engine)
+@xomda/core (Types)
+@xomda/util (Helpers)
+    ↓
+@xomda/diagram (Vue Components)
+@xomda/icons (Icon Assets)
+```
+
+### Package Details
+
+| Package | Purpose | Key Responsibility |
+|---------|---------|-------------------|
+| **@xomda/core** | Type definitions & constants | Single source of truth for types |
+| **@xomda/util** | Utility helpers | Reusable functions |
+| **@xomda/template** | Handlebars template engine | Code generation & template storage |
+| **@xomda/model** | Business logic & tRPC router | CRUD operations, validation, persistence |
+| **@xomda/diagram** | Vue 3 diagram components | Reusable UI for entity visualization |
+| **@xomda/icons** | Icon library | Material Symbols Light icons |
+| **@xomda/ui** | Generic UI components | Reusable Vue components (DynamicForm, TitleBar, etc.) |
+| **@xomda/codeeditor** | Monaco Code Editor | Code editing with syntax highlighting |
+| **@xomda/node** | Node.js HTTP server | Exposes tRPC API via HTTP |
+| **@xomda/client** | Vue 3 web application | Interactive UI for end users |
+| **@xomda/analysis-core** | Project analysis framework | Technology detection utilities |
+| **@xomda/plugin-analysis-*** | Technology detectors | Language/framework-specific detectors |
+
+## Project Structure
+
+```
+modelman/
+├── packages/
+│   ├── analysis/           # Technology detection plugins
+│   │   ├── core/           # Analysis framework
+│   │   ├── typescript/     # TypeScript detector
+│   │   ├── maven/          # Maven detector
+│   │   └── ...             # Other technology detectors
+│   ├── client/             # Web SPA (Vue 3 + Vuetify)
+│   ├── codeeditor/         # Monaco Code Editor
+│   ├── core/               # Types: Entity, Attribute, Model
+│   ├── diagram/            # Vue 3 components + Storybook
+│   ├── icons/              # Icon asset library
+│   ├── model/              # tRPC router + business logic
+│   ├── node/               # HTTP server entry point
+│   ├── template/           # Handlebars engine + storage
+│   ├── ui/                 # Generic UI components
+│   └── util/               # Utility functions
+├── .cursor/rules/          # AI agent context (this file)
+├── .clinerules             # Cline/CLI instructions
+├── docs/                   #  Documentation (MDA, Architecture, TODO)
+├── README.md               # Quick start guide
+├── tsconfig.json           # TypeScript base config
+├── eslint.config.mjs       # ESLint flat config (TypeScript + Prettier)
+└── pnpm-workspace.yaml     # Workspace definition
+```
+
+## Data Model Format
+
+**Core Entities**:
+- `Model`: Root data structure (id, name, version, entities[], timestamps)
+- `Entity`: Collection with attributes (id, name, attributes[], description)
+- `Attribute`: Individual field (id, name, type, required, primaryKey, unique, etc.)
+
+**Storage**: File-based JSON (`.xomda/model.json`) + templates directory
+
+## API Architecture
+
+**tRPC Router** (@xomda/model) exposes:
+- `model.*`: CRUD for entities/attributes
+- `template.*`: Template management (CRUD)
+
+**HTTP Server** (@xomda/node) bridges tRPC to HTTP clients
+
+**Type Safety**: Backend types flow automatically to frontend (no manual API contracts)
+
+## Code Generation
+
+**Templating Engine**: Handlebars-based with custom helpers:
+- String transformations: `camelCase`, `pascalCase`, `snakeCase`, `kebabCase`, etc.
+- Comparisons: `eq`, `ne`, `and`, `or`, `not`
+- Array operations: `join`, `first`, `last`
+- Domain-specific: `required`, `primaryKeys` filters
+
+## Key Workflows
+
+- `pnpm dev`: Start backend (3000) + frontend (5173) in parallel
+- `pnpm build`: Build all packages for production
+- `pnpm typecheck`: Type-check all packages (tsc --noEmit)
+- `pnpm test`: Run tests (Vitest + Cypress)
+- `pnpm lint`: Check linting (ESLint + Stylelint)
+- `pnpm format`: Auto-format code (Prettier)
+
+## Inter-Package Dependencies
+
+- **Client** depends on: diagram, icons, model (types), tRPC
+- **Node** depends on: model (business logic), tRPC
+- **Model** depends on: core (types), template, zod
+- **Template** depends on: core, handlebars, change-case, gray-matter
+- **Diagram** depends on: icons, vue
+- **Icons** is standalone (Material Symbols)
+
+Use `workspace:*` in package.json to link local packages.
+
+## For More Details
+
+See:
+- **docs/ARCHITECTURE.md** - Complete technical deep-dive with examples
+- **docs/MDA.md** - Model-Driven Architecture philosophy
+- **docs/TODO.md** - Project roadmap and tasks
+- **README.md** - Quick start and usage guide
+- **coding-standards.mdc** - Formatting and quality rules

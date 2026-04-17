@@ -1,0 +1,27 @@
+---
+name: Main Template (Java)
+outputPath: 'target/src/main/java/{{pascalCase name}}.java'
+language: java
+scope: Entity
+---
+import java.util.*;
+import java.math.BigDecimal;
+
+public class {{pascalCase name}} {
+
+{{#each attributes}}
+  private {{#if multiValue}}List<{{javaType type}}>{{else}}{{javaType type}}{{/if}} {{camelCase name}};
+{{/each}}
+
+{{#each attributes}}
+  public {{#if multiValue}}List<{{javaType type}}>{{else}}{{javaType type}}{{/if}} get{{pascalCase name}}() {
+  return this.{{camelCase name}};
+  }
+
+  public void set{{pascalCase name}}({{#if multiValue}}List<{{javaType type}}>{{else}}{{javaType
+    type}}{{/if}} {{camelCase name}}) {
+  this.{{camelCase name}} = {{camelCase name}};
+  }
+
+{{/each}}
+}

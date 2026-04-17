@@ -1,0 +1,10 @@
+{
+  "description": "output cell: combines outputFilename and outputDirectory into outputPath",
+  "cells": [
+    { "uuid": "cell-1", "type": "output", "content": "", "outputFilename": "file.ts", "outputDirectory": "src/gen", "outputContent": "x" }
+  ],
+  "model": { "id": "m", "name": "TestModel", "version": "1.0.0", "packages": [], "elementsOrder": [] },
+  "expectedFiles": [
+    { "outputPath": "src/gen/file.ts", "content": "" }
+  ]
+}

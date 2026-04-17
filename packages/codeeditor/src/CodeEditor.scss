@@ -1,0 +1,8 @@
+.v-code-editor {
+  position: relative;
+  overflow: hidden;
+
+  .monaco-editor {
+    padding: 0;
+  }
+}

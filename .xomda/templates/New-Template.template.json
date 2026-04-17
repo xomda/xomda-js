@@ -1,0 +1,24 @@
+{
+  "uuid": "1a446aed-7b71-4861-bb91-b5763c89b6a5",
+  "name": "New Template",
+  "version": "1.0.0",
+  "cells": [
+    {
+      "uuid": "a0444bb9-5688-4b58-82ab-4b1dfa7e89d2",
+      "type": "provider",
+      "content": "",
+      "providerSource": "entities"
+    },
+    {
+      "uuid": "914b5438-fb78-425e-a8ea-8685c08fdb5f",
+      "type": "buffer",
+      "content": "",
+      "variableName": "imports"
+    },
+    {
+      "uuid": "78eb906b-c881-41d4-a2c9-61b34eea41e6",
+      "type": "logic",
+      "content": "test = \"ok\";\nconsole.log(\"ok\");\n"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+# xomda.js — Cline / Roo Code Instructions
+
+> **📚 For comprehensive project context**, see `.cursor/rules/KNOWLEDGE_BASE.md` — the unified knowledge base for all AI agents.
+
+xomda.js is a **Model-Driven Architecture (MDA)** platform: a full-stack TypeScript monorepo where users design data models visually and generate code from Handlebars templates.
+
+## Quick Reference
+
+- **📖 Full context**: [`.cursor/rules/KNOWLEDGE_BASE.md`](.cursor/rules/KNOWLEDGE_BASE.md)
+- **🏗️ Package structure**: [`.cursor/rules/project-overview.mdc`](.cursor/rules/project-overview.mdc)
+- **🛠️ Tech stack & tools**: [`.cursor/rules/tech-stack.mdc`](.cursor/rules/tech-stack.mdc)
+- **✍️ Coding standards**: [`.cursor/rules/coding-standards.mdc`](.cursor/rules/coding-standards.mdc)
+- **📋 Full architecture**: `docs/ARCHITECTURE.md`
+
+## Core Rules
+
+1. **Always use pnpm**: Never use npm or yarn. Use `pnpm -F @xomda/<pkg> <cmd>` from root.
+2. **Type Safety**: Strictly adhere to TypeScript rules. No `any` — use `unknown` + narrowing or generics.
+3. **No `.vue` SFCs**: All components are `.tsx` using `defineComponent` with named exports.
+4. **One component per file**: Never define multiple components in a single file.
+5. **Folder per composite component**: Extract sub-components into a folder with an `index.ts` that exports only the public API.
+6. **`index.ts` for every folder**: Export only what is public — never `export *` everything.
+7. **Prefer index imports**: `import { X } from './X'` not `import { X } from './X/X'`.
+8. **No file extensions in imports**: Never use `.ts` or `.tsx` in import paths.
+9. **Schemas in `@xomda/core`**: Never define shared Zod schemas in `@xomda/model` or other consumers.
+10. **SCSS modules**: Use `*.module.scss` for component styles, not global CSS.
+11. **`import type`** for type-only imports (ESLint enforces this).
+12. **Tests**: Add Vitest/Storybook/Cypress tests when adding new functionality.
+13. **Formatting**: Run `pnpm format` (Prettier) — no semicolons, single quotes, 2-space indent, 100 char width.
+
+## Commands
+
+```bash
+pnpm dev              # Start backend (3000) + frontend (5173) in parallel
+pnpm build            # Build all packages
+pnpm typecheck        # tsc --noEmit across all packages
+pnpm test             # Vitest + Cypress
+pnpm lint             # ESLint + Stylelint
+pnpm format           # Prettier
+pnpm -F @xomda/<pkg> dev       # Single package dev
+pnpm -F @xomda/<pkg> test      # Single package tests
+pnpm -F @xomda/<pkg> typecheck # Single package type-check
+```
+
+## Vue Component Pattern
+
+```typescript
+import { defineComponent } from 'vue'
+
+export const MyComponent = defineComponent({
+  name: 'MyComponent',
+  props: { title: { type: String, required: true } },
+  setup(props) {
+    return () => <div>{props.title}</div>
+  },
+})
+```
+
+## tRPC Patterns
+
+```typescript
+// Backend
+export const myRouter = router({
+  get: publicProcedure.query(() => readModel()),
+  update: publicProcedure.input(EntitySchema).mutation(async ({ input }) => {
+    const model = await readModel()
+    return writeModel({ ...model, ...input })
+  }),
+})
+
+// Client
+const model = await trpc.model.get.query()
+await trpc.model.addEntity.mutate({ entity, packageId })
+```
+
+## Environment
+
+- Node.js 20+, pnpm 10+, TypeScript 6
+- `XOMDA_DIR` env var (default: `.xomda`) — overrides data directory
+- Storage: `.xomda/model.json` + `.xomda/templates/`
+
+## Documentation
+
+- `docs/ARCHITECTURE.md` — full technical deep-dive
+- `docs/MDA.md` — MDA philosophy
+- `docs/REFACTORING.md` — active refactoring plan
+- `docs/TODO.md` — project roadmap
+- `.cursor/rules/` — detailed coding standards

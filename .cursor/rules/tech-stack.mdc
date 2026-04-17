@@ -1,0 +1,176 @@
+---
+description: Technical stack and development environment details.
+globs: **/package.json
+---
+
+# Tech Stack
+
+The project leverages a modern, TypeScript-first stack optimized for type safety, rapid development, and code generation.
+
+## Core Technologies
+
+| Component | Tech | Version | Purpose |
+|-----------|------|---------|---------|
+| **Language** | TypeScript | 6.0.3 | Type-safe development (strict mode) |
+| **Runtime** | Node.js | 20+ | Backend server and CLI |
+| **Package Manager** | pnpm | 10.33.0 | Workspace monorepo management |
+| **Frontend Framework** | Vue 3 | 3.5.33 | Component-based UI |
+| **UI Library** | Vuetify | 4.0.6 | Material Design components |
+| **RPC Framework** | tRPC | 11.17.0 | Type-safe client-server communication |
+| **HTTP Server** | Node.js (standalone) | - | HTTP adapter for tRPC |
+| **Build Tool** | Vite | 8.0.10 | Fast bundling and dev server |
+| **Component Docs** | Storybook | 10.3.5 | Interactive component testing |
+| **Template Engine** | Handlebars | 4.7.9 | Code generation with helpers |
+| **Validation** | Zod | 4.3.6 | Schema validation (runtime type checking) |
+| **String Utilities** | change-case | 5.4.4 | Case transformations for templates |
+
+## Development Tools
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| **ESLint** | 10.2.1 | Linting (flat config format) |
+| **Prettier** | 3.8.3 | Code formatting |
+| **Stylelint** | 17.9.1 | CSS/SCSS linting |
+| **Vitest** | 4.1.5 | Unit testing |
+| **Cypress** | 15.14.2 | E2E testing |
+| **Sass** | 1.99.0 | SCSS compilation |
+| **TypeScript ESLint** | 8.59.1 | TypeScript-aware linting |
+
+## Key Configuration Files
+
+### tsconfig.json
+- **Target**: ES2022 (modern JavaScript)
+- **Module**: ESNext with bundler resolution
+- **Strict**: `true` (all strict checks enabled)
+- **JSX**: `preserve` (Vue JSX via Vite plugin)
+- **Paths**: Alias for @xomda/icons
+
+### eslint.config.mjs (Flat Config)
+- Base: ESLint recommended + TypeScript recommended + Prettier
+- **Import sorting**: simple-import-sort (groups: node → relative → side effects)
+- **Type imports**: Must use `import type` syntax
+- **String literals**: Enforce template literals over concatenation
+- **any usage**: Warned (TypeScript strict)
+- **Unused vars**: Warned (except those prefixed with `_`)
+
+### .prettierrc
+```json
+{
+  "semi": false,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "printWidth": 100,
+  "arrowParens": "always"
+}
+```
+
+### .editorconfig
+- 2-space indentation (universal)
+- Unix line endings (LF)
+- UTF-8 charset
+- Trim trailing whitespace
+- Insert final newline
+
+## Package Dependencies Summary
+
+### @xomda/client (Web Application)
+**Runtime**: vue, vue-router, pinia, vuetify, @trpc/client, monaco-editor-vue
+**Dev**: vite, @vitejs/plugin-vue-jsx, vitest, cypress, happy-dom
+
+### @xomda/node (Backend Server)
+**Runtime**: @trpc/server, @xomda/model
+**Dev**: tsx (live reload), vitest
+
+### @xomda/model (Business Logic)
+**Runtime**: @trpc/server, zod, @xomda/core, @xomda/template
+**Dev**: typescript, @types/node
+
+### @xomda/template (Handlebars Engine)
+**Runtime**: handlebars, change-case, gray-matter, @xomda/core
+**Dev**: typescript, @types/node
+
+### @xomda/diagram (Vue Components)
+**Runtime**: vue (peer), @xomda/icons
+**Dev**: vite, storybook, @vitejs/plugin-vue-jsx, vite-plugin-dts
+
+### @xomda/core, @xomda/util
+**Dev**: typescript only (no runtime dependencies)
+
+### @xomda/icons
+**Runtime**: @iconify-json/material-symbols-light
+
+## Development Guidelines
+
+### Type Safety
+- **Strict Mode**: All packages use TypeScript strict mode
+- **No `any`**: Use `unknown` and narrow the type, or use generics
+- **Type Imports**: Always use `import type { X }` for types
+- **Unused Vars**: Prefix with `_` (e.g., `_unused`) or remove
+
+### Code Organization
+- Group imports: node modules → relative imports → side effects
+- Alphabetically sort within groups (enforced by simple-import-sort)
+- Use template literals (not string concatenation)
+
+### Testing
+- **Unit Tests**: Vitest (`*.test.ts` files alongside source)
+- **E2E Tests**: Cypress for web UI workflows
+- **Type Checking**: `pnpm typecheck` (tsc --noEmit)
+
+### Component Development
+- Use Storybook for developing/testing diagram components
+- Each component should have a `.stories.tsx` file
+- Build with Vite plugin for automatic type declarations
+
+### Performance Considerations
+- Vite dev server: Fast HMR (Hot Module Replacement)
+- pnpm monorepo: Efficient symlinked node_modules
+- tRPC: Type-safe batching for RPC calls
+- Vue 3: Faster rendering, composition API
+
+## Deployment Targets
+
+### Frontend (@xomda/client)
+- Static site hosting (Vercel, Netlify, S3, GitHub Pages)
+- Vite build output: `packages/client/dist/`
+- No SSR needed
+
+### Backend (@xomda/node)
+- Docker containers, VPS, serverless (with custom adapter)
+- Current: Standalone HTTP server (Node.js)
+- Built to: `packages/node/dist/`
+
+### Component Library (@xomda/diagram)
+- npm registry (as scoped package @xomda/diagram)
+- Tree-shaking compatible ESM build
+- Type declarations included (vite-plugin-dts)
+
+## Security Considerations
+
+### pnpm Overrides
+- Force Vue 3 (not Vue 2)
+- Force Dompurify ≥3.3.2 (security patches)
+- Prevents dependency confusion attacks
+
+### CORS
+- Backend enables CORS for cross-origin requests
+- Frontend can communicate with remote backend
+- Configurable via tRPC client URL
+
+## Monorepo Benefits
+
+- **Single Node Modules**: pnpm deduplicated (faster installs)
+- **Shared Dev Tools**: One eslint, prettier, tsconfig
+- **Workspace Links**: `workspace:*` for local dependencies
+- **Unified Scripts**: Root-level commands run in all packages
+- **Type Sharing**: Core types used by all packages
+
+## Future Extensibility
+
+- Add more template engines (Liquid, EJS, etc.)
+- Database persistence layer (replace file storage)
+- Authentication/authorization middleware
+- Multi-tenancy support
+- GraphQL API layer
+- Mobile app (React Native using shared model package)

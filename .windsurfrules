@@ -1,0 +1,213 @@
+# xomda.js — Windsurf Rules
+
+> **📚 For comprehensive project context**, see `.cursor/rules/KNOWLEDGE_BASE.md` — the unified knowledge base for all AI agents.
+
+xomda.js is a **Model-Driven Architecture (MDA)** platform: a full-stack TypeScript monorepo for visual data model design and Handlebars-based code generation.
+
+## Quick Reference
+
+- **📖 Full context**: [`.cursor/rules/KNOWLEDGE_BASE.md`](.cursor/rules/KNOWLEDGE_BASE.md)
+- **🏗️ Package structure**: [`.cursor/rules/project-overview.mdc`](.cursor/rules/project-overview.mdc)
+- **🛠️ Tech stack & tools**: [`.cursor/rules/tech-stack.mdc`](.cursor/rules/tech-stack.mdc)
+- **✍️ Coding standards**: [`.cursor/rules/coding-standards.mdc`](.cursor/rules/coding-standards.mdc)
+- **📋 Full architecture**: `docs/ARCHITECTURE.md`
+
+## Package Manager
+
+Always use **pnpm**. Never npm or yarn.
+
+```bash
+pnpm dev              # Start backend + frontend in parallel
+pnpm build            # Build all packages
+pnpm typecheck        # Type-check all (tsc --noEmit)
+pnpm test             # Run all tests
+pnpm lint             # ESLint + Stylelint
+pnpm format           # Prettier
+
+# Per-package
+pnpm -F @xomda/node dev      # Backend only (port 3000)
+pnpm -F @xomda/client dev    # Frontend only (port 5173)
+pnpm -F @xomda/diagram dev   # Storybook (port 6006)
+```
+
+## Monorepo Structure
+
+```
+@xomda/core       → Zod schemas, types, constants (source of truth)
+@xomda/util       → Runtime utilities
+@xomda/template   → Handlebars engine + template storage
+@xomda/model      → tRPC router, business logic, CRUD
+@xomda/node       → Node.js HTTP server
+@xomda/client     → Vue 3 SPA (Vuetify 4, Pinia, Vue Router)
+@xomda/diagram    → Vue 3 diagram components (Storybook)
+@xomda/icons      → Material Symbols icons
+@xomda/ui         → Generic UI components (DynamicForm, TitleBar, etc.)
+@xomda/codeeditor → Monaco Editor for template editing
+@xomda/analysis-core → Project analysis framework
+@xomda/plugin-analysis-* → Technology detectors
+```
+
+**Dependency graph** (no cycles allowed):
+```
+client → model → template → core
+client → diagram → icons
+client → codeeditor
+node   → model
+```
+
+Use `workspace:*` in `package.json` to reference local packages.
+
+## TypeScript
+
+- **Strict mode** — no `any`, use `unknown` + narrowing or generics
+- **Import type syntax** — separate type imports from values
+- **Explicit return types** — all public functions must declare return types
+
+## Vue Components
+
+- **Use `.tsx` files** — no `.vue` SFC files
+- **Named exports only** — no default exports
+- **Use `defineComponent`** for proper type inference
+- **SCSS modules** for component styles (`*.module.scss`)
+
+## Formatting & Quality
+
+```bash
+pnpm format           # Prettier (2-space, no semicolons, single quotes, 100 char width)
+pnpm lint             # ESLint (TypeScript rules + import sorting)
+```
+
+## Testing
+
+Always add tests when adding functionality:
+- **Vitest** for unit tests
+- **Storybook** for component documentation
+- **Cypress** for E2E tests
+
+For more details, see the linked knowledge base files above.
+- **`import type`** for type-only imports (ESLint rule enforces this)
+- **No SFC files** — all Vue components are `.tsx`
+- **`moduleResolution: "bundler"`** for browser packages; `"NodeNext"` for server packages
+
+## Vue Component Style
+
+No `.vue` SFCs. All components use `defineComponent` with TSX:
+
+```typescript
+import { defineComponent, ref } from 'vue'
+import styles from './MyComponent.module.scss'
+
+export const MyComponent = defineComponent({
+  name: 'MyComponent',
+  props: {
+    title: { type: String, required: true },
+  },
+  setup(props) {
+    const count = ref(0)
+    return () => (
+      <div class={styles.root}>
+        <h2>{props.title}</h2>
+        <button onClick={() => count.value++}>{count.value}</button>
+      </div>
+    )
+  },
+})
+```
+
+**Named exports only** — no `export default` for components.
+
+## File & Folder Organisation
+
+- **One component per file** — never define multiple components in a single `.tsx` file
+- **Folder per composite component** — when a component uses extracted sub-components, move all into a folder with an `index.ts`:
+  ```
+  components/
+    CellEditor/
+      index.ts           ← exports only the public API (e.g. CellEditor)
+      CellEditor.tsx     ← main component
+      OutputCellForm.tsx ← internal sub-component (not re-exported)
+  ```
+- **`index.ts` for every folder** — export only what is public; never `export *` everything
+- **Prefer index imports** — `import { X } from './X'` not `import { X } from './X/X'`
+- **No file extensions** — never use `.ts` or `.tsx` in import paths
+
+## Styling
+
+- **SCSS modules** (`*.module.scss`) for all component styles
+- Import: `import styles from './Component.module.scss'`
+- No global CSS except Vuetify 4 theme overrides
+
+## tRPC
+
+**Router (backend)**:
+```typescript
+import { z } from 'zod'
+import { publicProcedure, router } from './trpc'
+
+export const myRouter = router({
+  list: publicProcedure.query(() => readItems()),
+  create: publicProcedure.input(ItemSchema).mutation(({ input }) => createItem(input)),
+})
+```
+
+**Client**:
+```typescript
+import { trpc } from '../trpc'
+const items = await trpc.model.listEntities.query()
+await trpc.model.addEntity.mutate({ entity, packageId })
+```
+
+Router namespaces: `model.*`, `template.*`, `file.*`
+
+## Zod Schemas
+
+All schemas live in **`@xomda/core`** — never define shared schemas in `@xomda/model` or other consumer packages.
+
+## Testing
+
+**Always add tests when adding new functionality:**
+
+| Type | Tool | Location |
+|------|------|----------|
+| Unit / logic | Vitest (`*.spec.ts`) | `__tests__/` subdirectory next to source |
+| Components | Storybook (`*.stories.tsx`) | `@xomda/diagram` package |
+| E2E | Cypress | `packages/client/cypress/` |
+
+## Code Style (Prettier)
+
+- No semicolons
+- Single quotes
+- 2-space indent
+- 100 character line width
+- Template literals over string concatenation
+
+## Import Order
+
+1. External packages (`vue`, `vuetify`, `zod`, ...)
+2. Internal workspace packages (`@xomda/*`)
+3. Relative imports (`./`, `../`)
+
+## Environment
+
+- Node.js 20+, pnpm 10+, TypeScript 6
+- Backend port: **3000**, Frontend port: **5173**, Storybook port: **6006**
+- `XOMDA_DIR` env var — overrides data directory (default: `.xomda`)
+- Data stored in `.xomda/model.json` and `.xomda/templates/`
+
+## Refactoring
+
+Active refactoring is documented in `docs/REFACTORING.md`. Key direction:
+- All Zod schemas → `@xomda/core`
+- `useAsyncState` composable in `@xomda/core`
+- Generic CRUD builder for tRPC router
+- Storage abstraction interface
+
+Do not duplicate schema definitions — extend from `@xomda/core`.
+
+## Documentation
+
+- `docs/ARCHITECTURE.md` — technical architecture
+- `docs/MDA.md` — MDA philosophy
+- `docs/REFACTORING.md` — active refactoring plan
+- `docs/TODO.md` — roadmap
+- `.cursor/rules/` — detailed coding standards (cross-tool reference)

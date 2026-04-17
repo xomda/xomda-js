@@ -1,0 +1,12 @@
+{
+  "description": "buffer cell: named buffer accumulates writes from logic cell",
+  "cells": [
+    { "uuid": "cell-1", "type": "buffer", "content": "", "variableName": "buf" },
+    { "uuid": "cell-2", "type": "logic", "content": "buf.write('line1\\n'); buf.write('line2\\n')", "variableName": "x" },
+    { "uuid": "cell-3", "type": "output", "content": "", "outputFilename": "out.txt", "outputContent": "buf" }
+  ],
+  "model": { "id": "m", "name": "TestModel", "version": "1.0.0", "packages": [], "elementsOrder": [] },
+  "expectedFiles": [
+    { "outputPath": "out.txt", "content": "line1\nline2\n" }
+  ]
+}

@@ -1,0 +1,92 @@
+plugins {
+  id 'groovy'
+  id 'java-gradle-plugin'
+  id 'maven-publish'
+  id 'signing'
+}
+
+group = 'org.xomda'
+version = '0.0.1-SNAPSHOT'
+
+java {
+  toolchain { languageVersion = JavaLanguageVersion.of(17) }
+  withSourcesJar()
+  withJavadocJar()
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'org.xomda:xomda-generator-core:0.0.1-SNAPSHOT'
+  testImplementation 'org.spockframework:spock-core:2.4-M5-groovy-4.0'
+  testImplementation gradleTestKit()
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
+}
+
+gradlePlugin {
+  plugins {
+    xomda {
+      id = 'org.xomda.generate'
+      implementationClass = 'org.xomda.gradle.XomdaPlugin'
+      displayName = 'xomda code generator'
+      description = 'Generates code from xomda models and Handlebars templates.'
+    }
+  }
+}
+
+tasks.withType(Test).configureEach {
+  useJUnitPlatform()
+}
+
+publishing {
+  repositories {
+    maven {
+      name = 'ossrh'
+      def releasesUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+      def snapshotsUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots'
+      url = version.endsWith('SNAPSHOT') ? snapshotsUrl : releasesUrl
+      credentials {
+        username = System.getenv('OSSRH_USERNAME')
+        password = System.getenv('OSSRH_PASSWORD')
+      }
+    }
+  }
+  publications.withType(MavenPublication).configureEach {
+    pom {
+      name = 'xomda Gradle plugin'
+      description = 'Generates code from xomda models and Handlebars templates.'
+      url = 'https://xomda.org'
+      licenses {
+        license {
+          name = 'MIT License'
+          url = 'https://opensource.org/licenses/MIT'
+        }
+      }
+      developers {
+        developer {
+          id = 'JorisAerts'
+          name = 'Joris Aerts'
+          email = '3611758+JorisAerts@users.noreply.github.com'
+        }
+      }
+      scm {
+        connection = 'scm:git:https://github.com/JorisAerts/modelman.git'
+        developerConnection = 'scm:git:ssh://git@github.com/JorisAerts/modelman.git'
+        url = 'https://github.com/JorisAerts/modelman'
+      }
+    }
+  }
+}
+
+signing {
+  required = { gradle.taskGraph.hasTask('publish') && !version.endsWith('SNAPSHOT') }
+  def signingKey = System.getenv('GPG_PRIVATE_KEY')
+  def signingPassword = System.getenv('GPG_PASSPHRASE')
+  if (signingKey && signingPassword) {
+    useInMemoryPgpKeys(signingKey, signingPassword)
+  }
+  sign publishing.publications
+}

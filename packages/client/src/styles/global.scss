@@ -1,0 +1,32 @@
+@use './settings.scss';
+
+// import Vuetify
+@use "vuetify";
+
+// Sortable.js drag-and-drop styles for cell reordering
+.cell-drag-ghost {
+  opacity: 0.35;
+}
+
+.cell-drag-chosen {
+  opacity: 1;
+}
+
+code,
+kbd,
+pre,
+samp,
+.font-mono {
+  font-family: 'Source Code Pro Variable', monospace !important;
+}
+
+.v-application {
+  font-family: 'Mulish Variable', sans-serif !important;
+
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: 'Source Code Pro Variable', monospace !important;
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "@xomda/codeeditor",
+  "version": "0.0.1",
+  "description": "Code editor component for xomda",
+  "keywords": [
+    "xomda",
+    "codeeditor",
+    "monaco"
+  ],
+  "author": "Joris Aerts, 3611758+JorisAerts@users.noreply.github.com",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@xomda/util": "workspace:*",
+    "monaco-editor": "0.55.1"
+  },
+  "peerDependencies": {
+    "vue": ">=3.5.0"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "vue": "3.5.33"
+  }
+}

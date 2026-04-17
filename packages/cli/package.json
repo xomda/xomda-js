@@ -1,0 +1,31 @@
+{
+  "name": "@xomda/cli",
+  "version": "0.0.1",
+  "description": "CLI for xomda code generation",
+  "keywords": [
+    "xomda",
+    "cli",
+    "codegen"
+  ],
+  "author": "Joris Aerts, 3611758+JorisAerts@users.noreply.github.com",
+  "type": "module",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "bin": {
+    "xomda": "./src/bin.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@xomda/model": "workspace:*",
+    "@xomda/template": "workspace:*",
+    "commander": "14.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "25.6.0"
+  }
+}

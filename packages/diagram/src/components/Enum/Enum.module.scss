@@ -1,0 +1,104 @@
+.enum {
+  display: inline-flex;
+  flex-direction: column;
+  border: 1.5px solid rgba(var(--v-border-color, 0, 0, 0), var(--v-border-opacity, 0.12));
+  border-radius: 8px;
+  font-family: 'Source Code Pro Variable', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  min-width: 180px;
+  background: rgb(var(--v-theme-surface, 255, 255, 255));
+  color: rgb(var(--v-theme-on-surface, 0, 0, 0));
+  box-shadow: var(--v-shadow-key-umbra-opacity, 0 1px 3px rgba(0, 0, 0, 0.08));
+  overflow: hidden;
+  user-select: none;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+
+.enum:hover {
+  box-shadow: var(--v-shadow-key-penumbra-opacity, 0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.selected {
+  border-color: rgb(var(--v-theme-secondary, 2, 212, 163));
+  box-shadow: 0 0 0 2px rgb(var(--v-theme-secondary, 2, 212, 163));
+}
+
+.header {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgb(var(--v-theme-secondary, 2, 212, 163));
+  color: rgb(var(--v-theme-on-secondary, 255, 255, 255));
+  gap: 8px;
+  min-height: 42px;
+  cursor: pointer;
+}
+
+.enumName {
+  flex: 1;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(var(--v-theme-on-secondary, 255, 255, 255), 0.1);
+  color: rgb(var(--v-theme-on-secondary, 255, 255, 255));
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s,
+  transform 0.1s;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+}
+
+.addButton:hover {
+  background: rgba(var(--v-theme-on-secondary, 255, 255, 255), 0.2);
+  transform: scale(1.05);
+}
+
+.values {
+  display: flex;
+  flex-direction: column;
+}
+
+.valueRow {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(var(--v-border-color, 0, 0, 0), 0.05);
+  cursor: grab;
+}
+
+.valueRow:active {
+  cursor: grabbing;
+}
+
+.dragging {
+  opacity: 0.5;
+  background: rgba(var(--v-theme-secondary, 2, 212, 163), 0.1);
+}
+
+.dragOver {
+  border-top: 2px solid rgb(var(--v-theme-secondary, 2, 212, 163));
+}
+
+.valueRow:last-child {
+  border-bottom: none;
+}
+
+.valueRow:hover {
+  background: rgba(var(--v-border-color, 0, 0, 0), 0.03);
+}
+
+.selectedValue {
+  background: rgba(var(--v-theme-secondary, 2, 212, 163), 0.1);
+  font-weight: 500;
+}

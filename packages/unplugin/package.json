@@ -1,0 +1,47 @@
+{
+  "name": "@xomda/unplugin",
+  "version": "0.0.1",
+  "description": "Vite / Rollup / webpack plugin for xomda code generation",
+  "keywords": [
+    "xomda",
+    "vite-plugin",
+    "unplugin",
+    "codegen"
+  ],
+  "author": "Joris Aerts, 3611758+JorisAerts@users.noreply.github.com",
+  "type": "module",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./vite": "./src/vite.ts",
+    "./rollup": "./src/rollup.ts",
+    "./webpack": "./src/webpack.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@xomda/cli": "workspace:*",
+    "unplugin": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "25.6.0"
+  },
+  "peerDependencies": {
+    "rollup": ">=3",
+    "vite": ">=4",
+    "webpack": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "rollup": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    },
+    "webpack": {
+      "optional": true
+    }
+  }
+}

@@ -1,0 +1,7 @@
+rootProject.name = 'xomda-gradle-plugin'
+
+includeBuild('../xomda-generator-core') {
+  dependencySubstitution {
+    substitute module('org.xomda:xomda-generator-core') using project(':')
+  }
+}
