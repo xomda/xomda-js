@@ -1,0 +1,64 @@
+{
+  "name": "xomda.js",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "pnpm --filter @xomda/node --filter @xomda/client --parallel dev",
+    "start": "pnpm --filter @xomda/node start",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test:jvm:install-core": "mvn -f integrations/jvm/generator-core install -Dmaven.repo.local=$PWD/integrations/jvm/.m2-repo -DskipTests",
+    "test:jvm:maven": "mvn -f integrations/jvm verify",
+    "test:jvm:gradle-plugin": "gradle -p integrations/jvm/gradle test",
+    "test:jvm:intellij": "gradle -p integrations/jvm/intellij test",
+    "test:jvm:eclipse": "MAVEN_OPTS=\"$MAVEN_OPTS -Djdk.xml.maxGeneralEntitySizeLimit=0 -Djdk.xml.totalEntitySizeLimit=0\" mvn -f integrations/jvm/eclipse verify -Dmaven.repo.local=$PWD/integrations/jvm/.m2-repo",
+    "test:jvm": "pnpm test:jvm:install-core && pnpm test:jvm:maven && pnpm test:jvm:gradle-plugin && pnpm test:jvm:intellij && pnpm test:jvm:eclipse",
+    "test:all": "pnpm -r test && pnpm test:jvm",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix && prettier --write .",
+    "lint:style": "stylelint \"**/*.{css,scss}\" --ignore-path .gitignore",
+    "format": "prettier --write .",
+    "lint-format-fix": "pnpm lint && pnpm lint:style && pnpm typecheck && pnpm test && pnpm build",
+    "version:sync": "node scripts/sync-versions.js",
+    "version:bump": "node scripts/bump-version.js",
+    "version:bump:minor": "node scripts/bump-version.js minor",
+    "version:bump:major": "node scripts/bump-version.js major"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "cypress",
+      "esbuild"
+    ],
+    "overrides": {
+      "vue@>=2.0.0-alpha.1 <3.0.0-alpha.0": ">=3.0.0-alpha.0",
+      "dompurify@<3.3.2": ">=3.3.2",
+      "dompurify@>=3.1.3 <=3.3.1": ">=3.3.2",
+      "dompurify@<=3.3.1": ">=3.3.2",
+      "dompurify@<=3.3.3": ">=3.4.0"
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@tsconfig/node24": "24.0.4",
+    "@types/node": "^25.6.2",
+    "@vitest/coverage-v8": "4.1.5",
+    "@vue/tsconfig": "0.9.1",
+    "@xmldom/xmldom": "^0.9.10",
+    "eslint": "10.3.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-simple-import-sort": "13.0.0",
+    "globals": "17.6.0",
+    "prettier": "3.8.3",
+    "sass": "1.99.0",
+    "stylelint": "17.11.0",
+    "stylelint-config-standard": "40.0.0",
+    "type-fest": "^5.6.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.59.2",
+    "vitest": "4.1.5"
+  },
+  "packageManager": "pnpm@11.1.0+sha512.0c44e842e5686b2c061a81adda8b2258bd8818e9704b2cf2c63d56b931a7b2e910092e085027003b96ca3911ab56a07f6df5abaed2be9925034cdd686a535b14"
+}

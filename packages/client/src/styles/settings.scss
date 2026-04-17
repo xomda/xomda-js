@@ -1,0 +1,29 @@
+$root-font-size: 14px;
+$field-font-size: $root-font-size;
+
+$root-font: ('Mulish Variable', sans-serif);
+
+@use 'vuetify/settings' with (
+
+  $border-radius-root: 4px,
+
+  // general font size
+  $body-font-family: $root-font,
+  $heading-font-family: $root-font,
+  $font-size-root: $root-font-size,
+
+  // fields
+  $input-line-height: 1.2,
+  $field-font-size: $field-font-size,
+  $field-control-height: 32px,
+
+  $input-density: ('default': 0, 'comfortable': -4, 'compact': -5),
+
+  // tooltips
+  $tooltip-padding: 2px 8px
+);
+
+.v-field {
+  --v-field-input-padding-top: 2px;
+  --v-field-input-padding-bottom: 2px;
+}

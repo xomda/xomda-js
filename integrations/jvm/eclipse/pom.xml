@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.xomda</groupId>
+    <artifactId>xomda-eclipse-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>xomda Eclipse plugin (parent)</name>
+    <description>Tycho aggregator for the xomda Eclipse plugin, feature, and update site.</description>
+
+    <properties>
+        <tycho.version>4.0.10</tycho.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <modules>
+        <module>xomda-eclipse-plugin</module>
+        <module>xomda-eclipse-plugin.test</module>
+        <module>xomda-eclipse-feature</module>
+        <module>xomda-eclipse-updatesite</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-maven-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <extensions>true</extensions>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>target-platform-configuration</artifactId>
+                <version>${tycho.version}</version>
+                <configuration>
+                    <target>
+                        <file>${project.basedir}/../target-platform/xomda.target</file>
+                    </target>
+                    <environments>
+                        <environment>
+                            <os>macosx</os><ws>cocoa</ws><arch>aarch64</arch>
+                        </environment>
+                        <environment>
+                            <os>linux</os><ws>gtk</ws><arch>x86_64</arch>
+                        </environment>
+                        <environment>
+                            <os>win32</os><ws>win32</ws><arch>x86_64</arch>
+                        </environment>
+                    </environments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-source-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <executions>
+                    <execution>
+                        <id>plugin-source</id>
+                        <goals><goal>plugin-source</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

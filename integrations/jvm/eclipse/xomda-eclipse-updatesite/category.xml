@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+    <feature id="org.xomda.eclipse.feature" version="0.0.0">
+        <category name="xomda"/>
+    </feature>
+    <category-def name="xomda" label="xomda">
+        <description>Code generation from xomda models and Handlebars templates.</description>
+    </category-def>
+</site>

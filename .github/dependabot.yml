@@ -1,0 +1,103 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for more information:
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+# https://containers.dev/guide/dependabot
+
+version: 2
+updates:
+  - package-ecosystem: 'devcontainers'
+    directory: '/'
+    open-pull-requests-limit: 25
+    target-branch: 'updates'
+    assignees:
+      - "JorisAerts"
+    schedule:
+      interval: 'weekly'
+
+  - package-ecosystem: 'maven'
+    directories:
+      - '/integrations/jvm'
+      - '/integrations/jvm/eclipse'
+      - '/demo'
+    open-pull-requests-limit: 25
+    target-branch: 'updates'
+    assignees:
+      - "JorisAerts"
+    schedule:
+      interval: 'weekly'
+    groups:
+      jersey:
+        patterns:
+          - 'org.glassfish.jersey*'
+      infinispan:
+        patterns:
+          - 'org.infinispan*'
+      spring:
+        patterns:
+          - 'org.springframework*'
+      fasterxml:
+        patterns:
+          - 'com.fasterxml*'
+      hibernate:
+        patterns:
+          - 'org.hibernate*'
+      testcontainers:
+        patterns:
+          - 'org.testcontainers*'
+      handlebars:
+        patterns:
+          - 'com.github.jknack*'
+
+  - package-ecosystem: 'gradle'
+    directories:
+      - '/integrations/jvm/gradle'
+      - '/integrations/jvm/intellij'
+    open-pull-requests-limit: 25
+    target-branch: 'updates'
+    assignees:
+      - "JorisAerts"
+    schedule:
+      interval: 'weekly'
+
+  - package-ecosystem: 'npm'
+    directory: '/'
+    open-pull-requests-limit: 25
+    target-branch: 'updates'
+    assignees:
+      - "JorisAerts"
+    schedule:
+      interval: 'weekly'
+    groups:
+      prettier:
+        patterns:
+          - 'prettier'
+          - 'prettier-plugin-*'
+      eslint:
+        patterns:
+          - 'eslint*'
+          - 'globals'
+          - '@eslint/*'
+          - '@typescript-eslint/*'
+          - '@rushstack/eslint-patch'
+          - '@types/eslint'
+          - 'typescript-eslint'
+      stylelint:
+        patterns:
+          - 'stylelint*'
+      vue:
+        patterns:
+          - 'vue'
+          - 'vue-*'
+          - '@vue/*'
+      vitest:
+        patterns:
+          - 'vitest'
+          - '@vitest/*'
+      vite:
+        patterns:
+          - 'vite*'
+          - '@vitejs/*'
+      vueuse:
+        patterns:
+          - '@vueuse/*'

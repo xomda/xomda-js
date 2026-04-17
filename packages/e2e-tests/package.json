@@ -1,0 +1,21 @@
+{
+  "name": "@xomda/e2e-tests",
+  "version": "0.0.1",
+  "description": "End-to-end tests for xomda",
+  "keywords": [
+    "xomda",
+    "e2e",
+    "cypress"
+  ],
+  "author": "Joris Aerts, 3611758+JorisAerts@users.noreply.github.com",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "test": "cypress run",
+    "test:open": "cypress open"
+  },
+  "devDependencies": {
+    "cypress": "15.14.2"
+  }
+}

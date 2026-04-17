@@ -1,0 +1,75 @@
+@use './settings.scss';
+
+// import Vuetify
+@use "vuetify";
+
+// Sortable.js drag-and-drop styles for cell reordering
+.cell-drag-ghost {
+  opacity: 0.35;
+}
+
+.cell-drag-chosen {
+  opacity: 1;
+}
+
+/* Hover-preview line on the cell wrapper. The wrapper extends past the loop
+   cell's header to include nested children, so the bottom line marks the
+   actual insertion point (after the children) when the loop's "add below"
+   plus is hovered. The `> .xomda-cell` scope keeps a nested child's plus
+   from triggering its outer loop wrapper's line. */
+.xomda-cell-wrapper {
+  position: relative;
+}
+
+.xomda-cell-wrapper::before,
+.xomda-cell-wrapper::after {
+  content: '';
+  position: absolute;
+  left: 36px;
+  right: 0;
+  height: 2px;
+  background: rgb(var(--v-theme-primary));
+  border-radius: 1px;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.xomda-cell-wrapper::before {
+  top: -4px;
+}
+
+.xomda-cell-wrapper::after {
+  bottom: -4px;
+}
+
+.xomda-cell-wrapper:has(> .xomda-cell .xomda-cell-add-above:hover)::before,
+.xomda-cell-wrapper:has(> .xomda-cell .xomda-cell-add-below:hover)::after {
+  opacity: 1;
+}
+
+code,
+kbd,
+pre,
+samp,
+.font-mono {
+  font-family: 'Source Code Pro Variable', monospace !important;
+}
+
+.v-application {
+  font-family: 'Mulish Variable', sans-serif !important;
+
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: 'Source Code Pro Variable', monospace !important;
+  }
+}
+
+.v-card {
+  background-color: rgba(var(--v-theme-surface), 0.78) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}

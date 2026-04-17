@@ -1,0 +1,55 @@
+{
+  "uuid": "b5b70387-e296-4577-9047-fa1ae87dca21",
+  "name": "xomda Core Schema",
+  "description": "Generates per-entity Zod schemas with self-reference handling. All TypeScript/Zod type mapping is inlined in logic cells; the handlebars cells render plain pre-computed strings.",
+  "version": "1.0.0",
+  "folder": "TypeScript",
+  "cells": [
+    {
+      "uuid": "10b5b634-23fe-4cb9-8dc4-8efcf1caa2c8",
+      "type": "loop",
+      "content": "function* provide(model) {\n  for (const pkg of (model.packages ?? [])) {\n    for (const entity of (pkg.entities ?? [])) {\n      yield entity\n    }\n  }\n}",
+      "variableName": "$entity",
+      "loopSource": "javascript",
+      "children": [
+        {
+          "uuid": "2dc4e3d8-3ad0-4cc2-99b9-7813ad02907a",
+          "type": "logic",
+          "content": "const prims = ['string','number','boolean','Date','UUID','decimal','date','uuid'];\nconst attrs = attributes || [];\nconst nonPrim = attrs.filter(function (a) { return !a.reference; }).map(function (a) { return a.type; }).filter(function (t) { return prims.indexOf(t) === -1 && t !== name; });\nnonPrimitives = Array.from(new Set(nonPrim));"
+        },
+        {
+          "uuid": "6446cbc9-5def-40e6-b91c-6a90ed94a210",
+          "type": "logic",
+          "content": "selfRef = (attributes || []).some(function (a) { return a.type === name && !a.reference; });"
+        },
+        {
+          "uuid": "e1a4b7c2-1111-4000-9000-000000000001",
+          "type": "logic",
+          "content": "const primZod = { string: 'z.string()', number: 'z.number()', boolean: 'z.boolean()', decimal: 'z.number()', date: 'z.string().datetime()', uuid: 'z.string().uuid()' };\nconst primTs = { string: 'string', number: 'number', boolean: 'boolean', decimal: 'number', date: 'string', uuid: 'string' };\nfunction zodFor(a) {\n  const isPrim = a.type in primZod;\n  let base;\n  if (a.reference && !isPrim) { base = 'z.string().uuid()'; }\n  else if (isPrim) {\n    base = primZod[a.type];\n    if (a.primaryKey && a.type === 'uuid') { base += '.default(() => crypto.randomUUID())'; }\n    else if (a.defaultValue !== undefined && a.defaultValue !== '') {\n      const v = a.type === 'string' ? (\"'\" + a.defaultValue + \"'\") : a.defaultValue;\n      base += '.default(' + v + ')';\n    } else if (a.type === 'boolean') { base += '.default(false)'; }\n    if (a.required && a.type === 'string' && !a.defaultValue) { base = 'z.string().min(1)'; }\n  } else { base = pascalCase(a.type) + 'Schema'; }\n  if (a.multiValue) { base = 'z.array(' + base + ').default([])'; }\n  else if (!a.required && !a.primaryKey) { base += '.optional()'; }\n  return base;\n}\nfunction tsFor(a) {\n  const isPrim = a.type in primTs;\n  let base = (a.reference && !isPrim) ? 'string' : (primTs[a.type] || pascalCase(a.type || ''));\n  if (a.multiValue) { base += '[]'; }\n  return base;\n}\nattrSpecs = (attributes || []).map(function (a) {\n  return { name: a.name, camel: camelCase(a.name), required: a.required, tsType: tsFor(a), zodType: zodFor(a) };\n});"
+        },
+        {
+          "uuid": "d4320c20-fb0f-4f3d-bced-b6193490f6ad",
+          "type": "handlebars",
+          "content": "import { z } from 'zod'\n{{#each nonPrimitives}}\nimport { {{pascalCase this}}Schema } from './{{pascalCase this}}'\n{{/each}}\n"
+        },
+        {
+          "uuid": "4596b7b3-8c22-41e7-aafc-8d6df298b4c5",
+          "type": "handlebars",
+          "content": "{{#if selfRef}}\n{{#each nonPrimitives}}\nimport type { {{pascalCase this}} } from './{{pascalCase this}}'\n{{/each}}\nexport type {{pascalCase name}} = {\n{{#each attrSpecs}}\n  {{camel}}{{#unless required}}?{{/unless}}: {{{tsType}}}\n{{/each}}\n}\n\nexport const {{pascalCase name}}Schema: z.ZodType<{{pascalCase name}}> = z.lazy(() =>\nz.object({\n{{#each attrSpecs}}\n  {{camel}}: {{{zodType}}},\n{{/each}}\n})\n)\n{{/if}}"
+        },
+        {
+          "uuid": "c90328a2-c5ad-4194-b550-630c3bd6c804",
+          "type": "handlebars",
+          "content": "{{#unless selfRef}}\nexport const {{pascalCase name}}Schema = z.object({\n{{#each attrSpecs}}\n  {{camel}}: {{{zodType}}},\n{{/each}}\n})\n\nexport type {{pascalCase name}} = z.infer<typeof {{pascalCase name}}Schema>\n{{/unless}}"
+        },
+        {
+          "uuid": "cb60481b-5c46-479c-ba23-a9bc88da6614",
+          "type": "output",
+          "content": "",
+          "outputType": "file",
+          "outputFilename": "generated/core/schemas/{{pascalCase name}}.ts"
+        }
+      ]
+    }
+  ]
+}
