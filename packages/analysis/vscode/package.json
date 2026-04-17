@@ -1,0 +1,31 @@
+{
+  "name": "@xomda/plugin-analysis-vscode",
+  "version": "0.0.1",
+  "private": true,
+  "description": "VS Code detector for xomda analysis",
+  "keywords": [
+    "xomda",
+    "analysis",
+    "plugin",
+    "vscode"
+  ],
+  "author": "Joris Aerts, 3611758+JorisAerts@users.noreply.github.com",
+  "type": "module",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@xomda/analysis-client": "workspace:*",
+    "@xomda/analysis-core": "workspace:*",
+    "@xomda/icons": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
+  }
+}

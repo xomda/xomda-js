@@ -1,0 +1,34 @@
+{
+  "uuid": "57a5067c-1402-41eb-aab4-983715d9591b",
+  "name": "Spring Boot Repository",
+  "description": "Generates a Spring Data JPA repository interface per entity.",
+  "version": "1.0.0",
+  "folder": "SpringBoot",
+  "cells": [
+    {
+      "uuid": "f2c7595c-b2a9-4d8d-b099-bc2bbe7c844b",
+      "type": "loop",
+      "content": "",
+      "variableName": "$entity",
+      "loopSource": "entities",
+      "children": [
+        {
+          "uuid": "e736f5c4-cf69-4c65-b621-3566bfd5d039",
+          "type": "logic",
+          "content": "\nconst idAttr = (attributes || []).find(function (a) { return a.primaryKey; }) || { type: 'uuid' };\nidJavaType = idAttr.type === 'uuid' ? 'UUID' : (idAttr.type === 'number' ? 'Long' : 'String');\n"
+        },
+        {
+          "uuid": "cb2b26da-085d-4fd5-8c4b-476af8e774b4",
+          "type": "handlebars",
+          "content": "package com.example.blog.repository;\n\nimport com.example.blog.entity.{{pascalCase name}};\nimport java.util.UUID;\nimport org.springframework.data.jpa.repository.JpaRepository;\nimport org.springframework.stereotype.Repository;\n\n@Repository\npublic interface {{pascalCase name}}Repository extends JpaRepository<{{pascalCase name}}, {{{idJavaType}}}> {\n}\n"
+        },
+        {
+          "uuid": "16ebbac3-3bca-4c19-bc1c-80d2bdcfc53b",
+          "type": "output",
+          "content": "",
+          "outputFilename": "src/main/java/com/example/blog/repository/{{pascalCase name}}Repository.java"
+        }
+      ]
+    }
+  ]
+}

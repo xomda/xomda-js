@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: blog-service-postgres
+    environment:
+      POSTGRES_DB: blog_service
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    ports:
+      - "5432:5432"
+    volumes:
+      - blog-service-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d blog_service"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  blog-service-pgdata:

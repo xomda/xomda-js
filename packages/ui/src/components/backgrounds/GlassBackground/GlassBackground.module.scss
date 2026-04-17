@@ -1,0 +1,5 @@
+@use '../background' as bg;
+
+.canvas {
+  @include bg.canvas;
+}

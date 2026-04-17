@@ -1,0 +1,19 @@
+{
+  "name": "xomda",
+  "type": "module",
+  "bin": {
+    "xomda": "./dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/cli.js"
+  },
+  "files": ["dist", "client", "docs", "LICENSE", "README.md"],
+  "engines": {
+    "node": ">=22.6"
+  },
+  "dependencies": {
+    "commander": "14.0.3",
+    "@trpc/server": "11.17.0",
+    "lodash-es": "4.18.1"
+  }
+}

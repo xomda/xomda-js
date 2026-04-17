@@ -1,0 +1,94 @@
+.attribute {
+  display: flex;
+  align-items: center;
+  padding: 5px 12px;
+  gap: 8px;
+  border-top: 1px solid rgba(var(--v-border-color, 0, 0, 0), var(--v-border-opacity, 0.12));
+  font-size: 13px;
+  line-height: 1.4;
+  background: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
+  transition: background 0.1s;
+}
+
+.attribute:hover {
+  background: rgba(var(--v-theme-on-surface), var(--v-hover-opacity, 0.08));
+  cursor: pointer;
+}
+
+.selected {
+  background: rgba(var(--v-theme-primary), var(--v-idle-opacity, 0.04)) !important;
+  box-shadow: inset 3px 0 0 rgb(var(--v-theme-primary));
+}
+
+.badges {
+  display: flex;
+  gap: 3px;
+  width: 40px;
+  flex-shrink: 0;
+}
+
+.badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.6;
+}
+
+// Badges share a tonal recipe — background is the theme color at low alpha,
+// foreground is the same color at full strength. Theme-aware (works in both
+// light and dark modes) and keeps the diagram in the project's color system.
+@mixin tonal-badge($theme-color) {
+  background: rgba(var(--v-theme-#{$theme-color}), 0.16);
+  color: rgb(var(--v-theme-#{$theme-color}));
+  border: 1px solid rgba(var(--v-theme-#{$theme-color}), 0.32);
+}
+
+.badgePk {
+  @include tonal-badge(warning);
+}
+
+.badgeUq {
+  @include tonal-badge(secondary);
+}
+
+.badgeInh {
+  background: rgba(var(--v-theme-on-surface), 0.08);
+  color: rgba(var(--v-theme-on-surface), 0.65);
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.16);
+}
+
+.inherited {
+  opacity: 0.65;
+  font-style: italic;
+}
+
+.name {
+  flex: 1;
+  font-weight: 500;
+  color: inherit;
+  font-family: 'Source Code Pro Variable', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+.required {
+  color: rgb(var(--v-theme-error));
+  font-size: 11px;
+  margin-left: -4px;
+  align-self: flex-start;
+  line-height: 1.8;
+}
+
+.type {
+  color: rgb(var(--v-theme-primary));
+  font-size: 12px;
+  font-family: 'Source Code Pro Variable', 'Fira Code', 'Cascadia Code', monospace;
+  opacity: 0.85;
+}
+
+.multiValue::after {
+  content: '[]';
+  color: rgba(var(--v-theme-on-surface), 0.55);
+}

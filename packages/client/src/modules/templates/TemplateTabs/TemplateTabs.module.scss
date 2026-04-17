@@ -1,0 +1,53 @@
+.bar {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  column-gap: 8px;
+}
+
+.tabs {
+  // Let the VTabs region take all the leftover width while the append slot
+  // keeps its natural size. min-width: 0 is the well-known fix that lets a
+  // flex child with overflowing content actually shrink instead of pushing
+  // the strip wider than its container.
+  flex: 1 1 auto;
+  min-width: 0;
+
+  // With `hideSlider` there is no underline to mark the active tab.
+  // Tint the selected pill with the theme's primary surface so the
+  // affordance is unambiguous in both light and dark themes.
+  :global(.v-tab--selected) {
+    background-color: rgba(var(--v-theme-primary), 0.12);
+    color: rgb(var(--v-theme-primary));
+    border-color: rgba(var(--v-theme-primary), 0.5);
+  }
+}
+
+.append {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
+}
+
+.tabLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dirtyDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgb(var(--v-theme-primary));
+  flex-shrink: 0;
+}
+
+.closeBtn {
+  // Reduce the visual weight of the close button so it doesn't dominate the
+  // tab label. The button itself stays full-size for hit-target reasons (§18).
+  margin-left: 4px;
+  margin-right: -6px;
+}

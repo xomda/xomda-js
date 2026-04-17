@@ -1,0 +1,140 @@
+.main {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.canvasContainer {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  padding: 8px;
+  overflow: hidden;
+}
+
+.canvasArea {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+}
+
+.emptyModelOverlay {
+  // Floats over the (still-mounted) DiagramCanvas so the grid backdrop
+  // shows behind the empty-state card. `pointer-events: none` on the
+  // wrapper keeps canvas panning available; the inner VEmptyState
+  // re-enables pointer events so its CTA stays clickable.
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.treePanel {
+  // Width is driven inline by ModelView via `usePanelResize`; the
+  // PanelDivider on the right edge of this column lets the user drag
+  // it. Falls back to 260px if no inline width is applied (legacy
+  // tests / Storybook).
+  flex: 0 0 auto;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: rgba(var(--v-theme-surface), 0.6);
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: 8px;
+}
+
+.treePanelHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 4px 4px 12px;
+  min-height: 36px;
+  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+}
+
+.treePanelTitle {
+  flex: 1 1 auto;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  opacity: 0.75;
+}
+
+.treePanelBody {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+}
+
+.canvas {
+  height: 100%;
+  // Override the global VCard rounded corners — the canvas fills its
+  // container edge-to-edge and rounded corners clip diagram nodes.
+  border-radius: 0 !important;
+  // Dimming amount for non-selected diagram items. Overridden inline by
+  // ModelView when `diagramDimNonSelected` is on. Default 1 = no dimming
+  // so untouched canvases (no selection) render at full opacity.
+  --xomda-dim-opacity: 1;
+}
+
+.propertiesPanel {
+  flex: 0 0 auto;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: panelSlideIn 0.2s ease;
+}
+
+@keyframes panelSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.emptySidebar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: rgba(var(--v-theme-on-surface), var(--v-disabled-opacity));
+  font-style: italic;
+  padding: 40px;
+  text-align: center;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+}
+
+.error {
+  color: rgb(var(--v-theme-error));
+  font-size: 0.9rem;
+  text-align: center;
+  max-width: 400px;
+}
+
+.errorList {
+  max-width: 600px;
+}

@@ -1,0 +1,22 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "node_modules/.cache/tsconfig.tsbuildinfo",
+    "lib": ["ES2022", "DOM"],
+    // Browser-target aggregator, but TS pulls in every plugin's index.ts
+    // (the node-side half) during transitive resolution of the `/client`
+    // deep imports — those node-side files reference `node:fs` etc. The
+    // `types: ["node"]` here doesn't reach runtime code (the bundler emits
+    // only the `/client` entries) but lets `tsc --noEmit` succeed across
+    // the aggregator. Migrates away when project references land
+    // (audit H2): with `references[]`, transitive sources are replaced by
+    // emitted `.d.ts` files and the aggregator's typecheck only sees the
+    // narrow `/client` surface.
+    "types": ["node"],
+    "outDir": "dist",
+    "rootDir": "src",
+    "paths": {}
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

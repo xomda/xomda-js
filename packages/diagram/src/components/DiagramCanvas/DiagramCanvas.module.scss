@@ -1,0 +1,185 @@
+.canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewport {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  // `hidden`, not `auto`: the canvas is an infinite-feeling stage
+  // navigated by drag-pan + inertia (see DiagramCanvas.tsx). No
+  // scrollbars — scroll content would otherwise present an arbitrary
+  // origin to the user on first load and trap content past the
+  // positive-quadrant edge.
+  overflow: hidden;
+  border-radius: 0;
+  // The grid is painted on the viewport itself; DiagramCanvas writes
+  // `background-position: panX panY` inline so the grid tracks the
+  // camera. Cell size is `--grid-cell` (set by DiagramCanvas from
+  // zoom × 24, rounded to a whole pixel — see `gridAlignment.ts`) so
+  // the painted grid step lands on the same pixel grid as snapped
+  // node positions.
+
+  --grid-cell: 24px;
+  --grid-line: rgba(var(--v-theme-on-surface), 0.04);
+
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: var(--grid-cell) var(--grid-cell);
+  background-repeat: repeat;
+}
+
+.inner {
+  position: relative;
+  // No explicit size: `.inner` only needs to anchor the transformed
+  // absolute-positioned nodes. The viewport (`overflow: hidden`)
+  // clips anything outside the visible camera frame; drag-pan moves
+  // the frame across world coords without growing the DOM box.
+  width: 0;
+  height: 0;
+}
+
+.zoomControls {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: inline-flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(var(--v-theme-surface), 0.95);
+  border: 1px solid rgba(var(--v-border-color, 0, 0, 0), 0.12);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  user-select: none;
+  z-index: 20;
+  font-size: 12px;
+  transition: padding 0.15s ease;
+}
+
+.zoomExpanded {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-width 0.2s ease,
+    opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.zoomControls:hover .zoomExpanded,
+.zoomControls:focus-within .zoomExpanded {
+  max-width: 220px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.zoomBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: rgb(var(--v-theme-on-surface));
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+}
+
+.zoomBtn:hover:not(:disabled) {
+  background: rgba(var(--v-theme-on-surface), 0.08);
+}
+
+.zoomBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.zoomBtn:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 2px;
+}
+
+.zoomSlider {
+  width: 120px;
+  cursor: pointer;
+}
+
+.zoomLabel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: rgba(var(--v-theme-on-surface), 0.7);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  padding: 0 6px;
+}
+
+.zoomLabel:hover {
+  background: rgba(var(--v-theme-on-surface), 0.08);
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.zoomLabel:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 2px;
+}
+
+.zeroPointVLine,
+.zeroPointHLine {
+  position: absolute;
+  background: rgb(var(--v-theme-primary, 33, 150, 243));
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.zeroPointVLine {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+
+.zeroPointHLine {
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+
+.zeroPointHint {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 12px;
+  background: rgba(var(--v-theme-surface), 0.95);
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 31;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}

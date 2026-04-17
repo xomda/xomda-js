@@ -1,0 +1,35 @@
+{
+  "name": "@xomda/plugin-analysis-xomda",
+  "version": "0.0.1",
+  "private": true,
+  "description": "xomda project detector for xomda analysis",
+  "keywords": [
+    "xomda",
+    "analysis",
+    "plugin"
+  ],
+  "author": "Joris Aerts, 3611758+JorisAerts@users.noreply.github.com",
+  "type": "module",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@xomda/analysis-client": "workspace:*",
+    "@xomda/analysis-core": "workspace:*",
+    "@xomda/core": "workspace:*",
+    "@xomda/icons": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "25.9.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.6"
+  }
+}

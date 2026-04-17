@@ -1,0 +1,26 @@
+packages:
+  - 'packages/*'
+  - 'packages/analysis/*'
+  - 'integrations/node/*'
+  - 'demo/*'
+allowBuilds:
+  '@parcel/watcher': true
+  '@vscode/vsce-sign': false
+  cypress: true
+  esbuild: true
+  keytar: false
+minimumReleaseAgeExclude:
+  - dompurify@3.3.2
+  - dompurify@3.3.4
+  - uuid@14.0.0
+  - dompurify@3.4.0
+  - diff@8.0.3
+  - serialize-javascript@7.0.3
+  - serialize-javascript@7.0.5
+overrides:
+  # Security-driven version floors. One entry per package — the broadest
+  # `<X.Y.Z` constraint subsumes every narrower one.
+  diff@<8.0.3: ^8.0.3 # CVE-2025-... ReDoS in diff <8.0.3
+  dompurify@<3.4.0: ^3.4.0 # multiple XSS fixes culminating in 3.4.0
+  serialize-javascript@<7.0.5: ^7.0.5 # CVE-2024-11831 reflected XSS
+  uuid@<14.0.0: ^14.0.0 # uuid 14 drops bundled-CJS path used by old transitive deps

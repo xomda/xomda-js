@@ -1,0 +1,44 @@
+.host {
+  display: flex;
+  // Column direction so the nested SidePanel stretches to the host's
+  // full width by default (cross-axis stretch). Row direction was
+  // leaving the SidePanel sized to its content, requiring an explicit
+  // `width` prop to fill the slot — which then double-constrained with
+  // the host's own width.
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  animation: slide-in 0.18s ease-out;
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.input {
+  width: 100%;
+  padding: 8px;
+  background: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: rgb(var(--v-theme-primary));
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 60px;
+}

@@ -1,0 +1,53 @@
+.nav {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.list {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  color: rgb(var(--v-theme-on-surface));
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  transition: background var(--xomda-dur-fast) var(--xomda-ease-standard);
+
+  &:hover {
+    background: rgba(var(--v-theme-on-surface), 0.06);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: -2px;
+  }
+}
+
+.itemActive {
+  background: rgba(var(--v-theme-primary), 0.12);
+  color: rgb(var(--v-theme-primary));
+
+  &:hover {
+    background: rgba(var(--v-theme-primary), 0.18);
+  }
+}
+
+.label {
+  font-size: 0.875rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

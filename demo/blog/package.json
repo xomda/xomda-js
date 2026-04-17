@@ -1,0 +1,22 @@
+{
+  "name": "@xomda/demo-blog",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@xomda/core": "workspace:*",
+    "@xomda/model": "workspace:*",
+    "@xomda/template": "workspace:*",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "25.9.1",
+    "tsx": "4.22.3",
+    "vitest": "4.1.6"
+  }
+}

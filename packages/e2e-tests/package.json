@@ -1,0 +1,31 @@
+{
+  "name": "@xomda/e2e-tests",
+  "version": "0.0.1",
+  "description": "End-to-end tests for xomda",
+  "keywords": [
+    "xomda",
+    "e2e",
+    "cypress"
+  ],
+  "author": "Joris Aerts, 3611758+JorisAerts@users.noreply.github.com",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build:app": "pnpm --filter @xomda/client build",
+    "setup:sandbox": "tsx scripts/setup-sandbox.ts",
+    "start:app": "tsx ../../packages/node/src/main.ts --port 6440 --cwd target/sandbox",
+    "test:unit": "vitest run",
+    "typecheck": "tsc --noEmit && tsc -p scripts/tsconfig.json --noEmit",
+    "test": "pnpm test:unit",
+    "test:e2e": "pnpm test:unit && pnpm build:app && pnpm setup:sandbox && start-server-and-test 'pnpm start:app' http-get://localhost:6440/trpc/template.list 'cypress run'",
+    "test:cypress": "cypress run",
+    "test:open": "pnpm build:app && pnpm setup:sandbox && start-server-and-test 'pnpm start:app' http-get://localhost:6440/trpc/template.list 'cypress open'"
+  },
+  "devDependencies": {
+    "cypress": "15.15.0",
+    "start-server-and-test": "3.0.5",
+    "tsx": "4.22.3",
+    "vitest": "4.1.6"
+  }
+}

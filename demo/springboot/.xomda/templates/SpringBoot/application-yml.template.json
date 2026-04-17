@@ -1,0 +1,20 @@
+{
+  "uuid": "d3242d7d-5ceb-4a1f-b202-d6d066272240",
+  "name": "Spring Boot application.yml",
+  "description": "Generates Spring Boot application.yml configured for the docker-compose Postgres.",
+  "version": "1.0.0",
+  "folder": "SpringBoot",
+  "cells": [
+    {
+      "uuid": "d1e99ca5-11c9-4f12-ad22-7e661f56d57a",
+      "type": "handlebars",
+      "content": "spring:\n  application:\n    name: {{kebabCase model.name}}\n  datasource:\n    url: jdbc:postgresql://localhost:5432/{{snakeCase model.name}}\n    username: app\n    password: app\n    driver-class-name: org.postgresql.Driver\n  jpa:\n    hibernate:\n      ddl-auto: validate\n    properties:\n      hibernate:\n        dialect: org.hibernate.dialect.PostgreSQLDialect\n    open-in-view: false\n  flyway:\n    enabled: true\n    locations: classpath:db/migration\n\nserver:\n  port: 8080\n"
+    },
+    {
+      "uuid": "054b37d4-3e43-4706-8a31-bd0102dd33de",
+      "type": "output",
+      "content": "",
+      "outputFilename": "src/main/resources/application.yml"
+    }
+  ]
+}

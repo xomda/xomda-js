@@ -1,0 +1,35 @@
+{
+  "name": "@xomda/node",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Node.js server for xomda",
+  "keywords": [
+    "xomda",
+    "node"
+  ],
+  "author": "Joris Aerts, 3611758+JorisAerts@users.noreply.github.com",
+  "type": "module",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "dev": "cd ../.. && packages/node/node_modules/.bin/tsx watch packages/node/src/main.ts",
+    "start": "cd ../.. && packages/node/node_modules/.bin/tsx packages/node/src/main.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@trpc/server": "11.17.0",
+    "@xomda/model": "workspace:*",
+    "@xomda/util": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "25.9.1",
+    "tsx": "4.22.3"
+  }
+}

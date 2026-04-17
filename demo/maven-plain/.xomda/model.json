@@ -1,0 +1,56 @@
+{
+  "id": "00000000-0000-4000-8000-000000000012",
+  "name": "MavenPlain",
+  "version": "1.0.0",
+  "packages": [
+    {
+      "id": "00000000-0000-4000-8000-000000000011",
+      "name": "com.example.model",
+      "packages": [],
+      "enums": [],
+      "entities": [
+        {
+          "id": "00000000-0000-4000-8000-000000000007",
+          "name": "Owner",
+          "attributes": [
+            {
+              "id": "00000000-0000-4000-8000-000000000006",
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": true,
+              "unique": true
+            }
+          ]
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000010",
+          "name": "Pet",
+          "attributes": [
+            {
+              "id": "00000000-0000-4000-8000-000000000008",
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": true,
+              "unique": true
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000009",
+              "name": "owner",
+              "type": "Owner",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false,
+              "reference": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "updatedAt": "2026-05-16T15:06:15.697Z"
+}

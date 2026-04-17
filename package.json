@@ -1,0 +1,80 @@
+{
+  "name": "xomda.js",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "author": "Joris Aerts, 3611758+JorisAerts@users.noreply.github.com",
+  "description": "xomda — model-driven code generation platform",
+  "keywords": [
+    "xomda",
+    "mda",
+    "code-generation",
+    "codegen",
+    "model-driven-architecture",
+    "templates"
+  ],
+  "homepage": "https://github.com/JorisAerts/modelman#readme",
+  "bugs": {
+    "url": "https://github.com/JorisAerts/modelman/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JorisAerts/modelman.git"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "build:all": "pnpm build && pnpm build:jvm",
+    "build:jvm": "pnpm test:jvm:install-core && mvn -f integrations/jvm package -DskipTests -Dmaven.repo.local=$PWD/integrations/jvm/.m2-repo && gradle -p integrations/jvm/gradle build -x test && gradle -p integrations/jvm/intellij build -x test && MAVEN_OPTS=\"$MAVEN_OPTS -Djdk.xml.maxGeneralEntitySizeLimit=0 -Djdk.xml.totalEntitySizeLimit=0\" mvn -f integrations/jvm/eclipse package -DskipTests -Dmaven.repo.local=$PWD/integrations/jvm/.m2-repo",
+    "build:publish": "node --experimental-strip-types --no-warnings=ExperimentalWarning packages/xomda/scripts/build.ts",
+    "clean:all": "pnpm clean:jvm && pnpm clean",
+    "clean:jvm": "mvn -f integrations/jvm clean -Dmaven.repo.local=$PWD/integrations/jvm/.m2-repo; mvn -f integrations/jvm/eclipse clean -Dmaven.repo.local=$PWD/integrations/jvm/.m2-repo; gradle -p integrations/jvm/gradle clean; gradle -p integrations/jvm/intellij clean; rm -rf integrations/jvm/.m2-repo",
+    "dev": "pnpm --filter @xomda/node --filter @xomda/client --parallel dev",
+    "format": "prettier --write .",
+    "lint": "eslint . && pnpm lint:style",
+    "lint-format-fix": "pnpm lint:fix && pnpm typecheck && pnpm test && pnpm build",
+    "lint:fix": "eslint . --fix && stylelint \"**/*.{css,scss}\" --ignore-path .gitignore --fix && prettier --write .",
+    "lint:style": "stylelint \"**/*.{css,scss}\" --ignore-path .gitignore",
+    "start": "pnpm --filter @xomda/node start",
+    "test": "pnpm -r test",
+    "test:all": "pnpm -r test && pnpm test:jvm",
+    "test:jvm": "pnpm test:jvm:install-core && pnpm test:jvm:maven && pnpm test:jvm:gradle-plugin && pnpm test:jvm:intellij && pnpm test:jvm:eclipse",
+    "test:jvm:eclipse": "MAVEN_OPTS=\"$MAVEN_OPTS -Djdk.xml.maxGeneralEntitySizeLimit=0 -Djdk.xml.totalEntitySizeLimit=0\" mvn -f integrations/jvm/eclipse verify -Dmaven.repo.local=$PWD/integrations/jvm/.m2-repo",
+    "test:jvm:gradle-plugin": "gradle -p integrations/jvm/gradle test",
+    "test:jvm:install-core": "mvn -f integrations/jvm/generator-core install -Dmaven.repo.local=$PWD/integrations/jvm/.m2-repo -DskipTests",
+    "test:jvm:intellij": "gradle -p integrations/jvm/intellij test",
+    "test:jvm:maven": "mvn -f integrations/jvm verify",
+    "typecheck": "pnpm -r typecheck",
+    "version:bump": "node scripts/bump-version.js",
+    "version:bump:major": "node scripts/bump-version.js major",
+    "version:bump:minor": "node scripts/bump-version.js minor",
+    "version:sync": "node scripts/sync-versions.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@tsconfig/node24": "24.0.4",
+    "@types/node": "^25.9.1",
+    "@vitest/coverage-v8": "4.1.6",
+    "@vue/tsconfig": "0.9.1",
+    "@xmldom/xmldom": "^0.9.10",
+    "eslint": "10.4.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-simple-import-sort": "13.0.0",
+    "eslint-plugin-storybook": "10.4.0",
+    "globals": "17.6.0",
+    "postcss-scss": "4.0.9",
+    "prettier": "3.8.3",
+    "sass": "1.99.0",
+    "stylelint": "17.11.1",
+    "stylelint-config-standard": "40.0.0",
+    "type-fest": "^5.6.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.59.4",
+    "vitest": "4.1.6"
+  },
+  "packageManager": "pnpm@11.1.3+sha512.c85357fe17ca12dd23dd7071822666dfd7e3cb76fe214e3370b5ea2fb34f2a231185509b63e717f3cd0acb38dd3f8d82bcd5e8172400ae678b70ea4fbed0896d",
+  "engines": {
+    "node": ">=22.13",
+    "pnpm": ">=11"
+  }
+}

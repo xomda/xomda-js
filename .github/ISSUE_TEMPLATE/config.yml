@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and discussions
+    url: https://github.com/JorisAerts/modelman/discussions
+    about: Ask questions, share ideas, and discuss xomda with the community.
+  - name: Security reports
+    url: https://github.com/JorisAerts/modelman/security/advisories/new
+    about: Report security-sensitive issues privately. Please do not open a public issue.

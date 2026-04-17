@@ -1,0 +1,62 @@
+.toolbar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  background: rgba(var(--v-theme-surface), 0.92);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: 8px;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.08);
+  pointer-events: auto;
+  animation: sceneToolbarFadeIn 0.15s ease;
+}
+
+@keyframes sceneToolbarFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  padding: 0 4px;
+  user-select: none;
+}
+
+// Doubles as the toolbar's drag handle (grab the title to reposition).
+.labelDraggable {
+  cursor: grab;
+  touch-action: none;
+}
+
+.labelDraggable:active {
+  cursor: grabbing;
+}
+
+.toggle {
+  // VBtnToggle default height is too tall for a mini toolbar; shrink
+  // to match the surrounding density="comfortable" buttons.
+  height: 32px !important;
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  margin: 0 2px;
+  background: rgba(var(--v-border-color), var(--v-border-opacity));
+}
