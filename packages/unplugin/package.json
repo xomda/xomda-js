@@ -26,7 +26,7 @@
     "unplugin": "^3.0.0"
   },
   "devDependencies": {
-    "@types/node": "25.6.0"
+    "@types/node": "25.6.2"
   },
   "peerDependencies": {
     "rollup": ">=3",
