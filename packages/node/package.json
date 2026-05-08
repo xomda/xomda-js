@@ -26,7 +26,7 @@
     "@xomda/model": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "25.6.0",
+    "@types/node": "25.6.2",
     "tsx": "4.21.0"
   }
 }
