@@ -8,13 +8,18 @@ export const vuetify = createVuetify({
   defaults: {
     global: {
       size: 'small',
+      density: 'comfortable',
       style: {
         'font-family': 'Mulish Variable, sans-serif',
       },
     },
-    VEmptyState: {
-      size: 96,
-    },
+    // Buttons: small size with default density (comfortable + small = too tight)
+    VBtn: { density: 'default' },
+    // Components without a `size` prop use compact density
+    VList: { density: 'compact' },
+    VListItem: { density: 'compact' },
+    VListSubheader: { density: 'compact' },
+    VEmptyState: { size: 96 },
   },
   icons: {
     defaultSet: 'mdi',
@@ -31,6 +36,7 @@ export const vuetify = createVuetify({
     themes: {
       light: {
         colors: {
+          background: '#f5f5f5',
           primary: '#1867c0',
         },
       },

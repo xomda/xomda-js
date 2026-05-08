@@ -4,8 +4,11 @@ import Handlebars from 'handlebars'
 
 /**
  * Registers Handlebars helpers for code generation.
- * All string-case helpers are compatible with the jknack/handlebars.java
- * StringHelpers (CamelCaseHelper, etc.).
+ *
+ * Helpers here are deliberately generic (string casing, comparisons, simple
+ * model traversal). Target-language type mapping (TypeScript, Zod, Java, …)
+ * lives in template logic cells, not here — keeping the helper surface
+ * language-neutral is part of the two-tier MDA architecture.
  */
 export function registerHelpers(hbs: typeof Handlebars = Handlebars): void {
   hbs.registerHelper('camelCase', (str: string) => camelCase(str ?? ''))
@@ -40,21 +43,11 @@ export function registerHelpers(hbs: typeof Handlebars = Handlebars): void {
     (attrs ?? []).filter((a) => a.primaryKey)
   )
 
-  // Type helpers — includes both legacy-cased (Date, UUID) and model.json lowercase variants
+  // Model traversal helpers — language-neutral.
+  // Primitive list mirrors the type names used in model.json. Both lowercase
+  // (date/uuid) and legacy-cased (Date/UUID) variants are accepted.
   const primitives = ['string', 'number', 'boolean', 'Date', 'UUID', 'decimal', 'date', 'uuid']
   hbs.registerHelper('isPrimitive', (type: string) => primitives.includes(type))
-
-  hbs.registerHelper('javaType', (type: string) => {
-    const map: Record<string, string> = {
-      string: 'String',
-      number: 'Integer',
-      boolean: 'Boolean',
-      Date: 'Date',
-      UUID: 'UUID',
-      decimal: 'BigDecimal',
-    }
-    return map[type] || pascalCase(type)
-  })
 
   hbs.registerHelper(
     'nonPrimitiveTypes',
@@ -75,68 +68,4 @@ export function registerHelpers(hbs: typeof Handlebars = Handlebars): void {
   hbs.registerHelper('isSelfRef', (entityName: string, attrs: Attribute[]) =>
     (attrs ?? []).some((a) => a.type === entityName && !a.reference)
   )
-
-  // Emits the full Zod chain for a single attribute, suitable for use in z.object({...}).
-  hbs.registerHelper('zodType', (attr: Attribute & { defaultValue?: string }) => {
-    const primitiveZod: Record<string, string> = {
-      string: 'z.string()',
-      number: 'z.number()',
-      boolean: 'z.boolean()',
-      decimal: 'z.number()',
-      date: 'z.string().datetime()',
-      uuid: 'z.string().uuid()',
-    }
-
-    let base: string
-    const isPrimitive = attr.type in primitiveZod
-    if (attr.reference && !isPrimitive) {
-      // Stored as the referenced element's id.
-      base = 'z.string().uuid()'
-    } else if (isPrimitive) {
-      base = primitiveZod[attr.type]
-      if (attr.primaryKey && attr.type === 'uuid') {
-        base += '.default(() => crypto.randomUUID())'
-      } else if (attr.defaultValue !== undefined && attr.defaultValue !== '') {
-        const isString = attr.type === 'string'
-        const val = isString ? `'${attr.defaultValue}'` : attr.defaultValue
-        base += `.default(${val})`
-      } else if (attr.type === 'boolean') {
-        base += '.default(false)'
-      }
-      if (attr.required && attr.type === 'string' && !attr.defaultValue) {
-        base = 'z.string().min(1)'
-      }
-    } else {
-      base = `${pascalCase(attr.type)}Schema`
-    }
-
-    if (attr.multiValue) {
-      base = `z.array(${base}).default([])`
-    } else if (!attr.required && !attr.primaryKey) {
-      base += '.optional()'
-    }
-
-    return new Handlebars.SafeString(base)
-  })
-
-  // Emits the TypeScript type expression for an attribute (used in manual type declarations).
-  hbs.registerHelper('tsType', (attr: Attribute) => {
-    const tsMap: Record<string, string> = {
-      string: 'string',
-      number: 'number',
-      boolean: 'boolean',
-      decimal: 'number',
-      date: 'string',
-      uuid: 'string',
-    }
-    const isPrimitive = attr.type in tsMap
-    let base: string
-    if (attr.reference && !isPrimitive) {
-      base = 'string'
-    } else {
-      base = tsMap[attr.type] ?? pascalCase(attr.type ?? '')
-    }
-    if (attr.multiValue) base += '[]'
-    return new Handlebars.SafeString(base)
-  })
 }

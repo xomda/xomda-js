@@ -1,11 +1,19 @@
 import { CodeEditor } from '@xomda/codeeditor'
-import { AddIcon, CloseIcon, DeleteIcon, EditIcon, MoreIcon, TemplatesIcon as TemplatesViewIcon, } from '@xomda/icons'
+import {
+  AddIcon,
+  CloseIcon,
+  DeleteIcon,
+  EditIcon,
+  MoreIcon,
+  TemplatesIcon as TemplatesViewIcon,
+} from '@xomda/icons'
 import type { Model } from '@xomda/model'
 import type { HandlebarsTemplate, HandlebarsTemplateFolder } from '@xomda/template'
 import { DynamicForm, FileEntryIcon, TitleBar, useModelEntity } from '@xomda/ui'
 import { debounce } from 'lodash-es'
 import type { JsonObject } from 'type-fest'
-import { computed, defineComponent, onMounted, ref } from 'vue'
+import { computed, defineComponent, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useTheme } from 'vuetify'
 import {
   VBtn,
@@ -14,18 +22,18 @@ import {
   VCardText,
   VCardTitle,
   VCheckbox,
-  VContainer,
   VDialog,
   VEmptyState,
   VList,
   VListItem,
   VMenu,
-  VNavigationDrawer,
   VSpacer,
   VSwitch,
   VTextField,
 } from 'vuetify/components'
 
+import { PanelDivider } from '../components'
+import { usePanelResize } from '../composables'
 import { trpc } from '../trpc'
 import styles from './TemplatesView.module.scss'
 
@@ -33,13 +41,39 @@ export const TemplatesView = defineComponent({
   name: 'TemplatesView',
   setup() {
     const theme = useTheme()
+    const route = useRoute()
+    const router = useRouter()
     const templates = ref<HandlebarsTemplate[]>([])
     const folders = ref<HandlebarsTemplateFolder[]>([])
     const appModel = ref<Model | null>(null)
     const selectedTemplate = ref<HandlebarsTemplate | null>(null)
-    const currentPath = ref('')
     const loading = ref(false)
     const showAsHandlebars = ref(true)
+
+    const currentPath = computed(() => {
+      const segs = route.params.folderPath
+      if (Array.isArray(segs)) return segs.join('/')
+      if (typeof segs === 'string') return segs
+      return ''
+    })
+
+    const folderPathSegments = (path: string) => (path ? path.split('/') : [])
+
+    const goToFolder = (path: string) => {
+      router.push({
+        name: 'templates',
+        params: { folderPath: folderPathSegments(path) },
+        query: {},
+      })
+    }
+
+    const updateSelectedInUrl = (templateId: string | null) => {
+      router.replace({
+        name: 'templates',
+        params: { folderPath: folderPathSegments(currentPath.value) },
+        query: templateId ? { template: templateId } : {},
+      })
+    }
 
     const templateEntity = useModelEntity(appModel, 'Template')
 
@@ -110,6 +144,7 @@ export const TemplatesView = defineComponent({
     async function selectTemplate(template: HandlebarsTemplate) {
       selectedTemplate.value = { ...template }
       showAsHandlebars.value = true
+      updateSelectedInUrl(template.id)
     }
 
     async function renameTemplate(newId: string) {
@@ -125,6 +160,7 @@ export const TemplatesView = defineComponent({
         selectedTemplate.value.id = newId
         selectedTemplate.value.path = newPath
         await loadData()
+        updateSelectedInUrl(newId)
       } catch (e) {
         console.error('Failed to rename template', e)
       }
@@ -152,6 +188,7 @@ export const TemplatesView = defineComponent({
         await trpc.handlebarsTemplate.save.mutate(newTemplate)
         await loadData()
         selectedTemplate.value = newTemplate
+        updateSelectedInUrl(newTemplate.id)
       } catch (e) {
         console.error('Failed to add template', e)
       }
@@ -344,27 +381,43 @@ export const TemplatesView = defineComponent({
             selectedTemplate.value!.path || selectedTemplate.value!.id
           )
           selectedTemplate.value = null
+          updateSelectedInUrl(null)
         }
       )
     }
 
+    const { width: leftWidth, onResize: onResizeLeft } = usePanelResize(250, 160, 480)
+    const { width: rightWidth, onResize: onResizeRight } = usePanelResize(300, 200, 500)
+
+    watch(
+      [() => route.query.template, templates],
+      ([id]) => {
+        const templateId = typeof id === 'string' ? id : ''
+        if (!templateId) {
+          if (selectedTemplate.value !== null) selectedTemplate.value = null
+          return
+        }
+        if (selectedTemplate.value?.id === templateId) return
+        const found = templates.value.find((t) => t.id === templateId)
+        if (found) {
+          selectedTemplate.value = { ...found }
+          showAsHandlebars.value = true
+        }
+      },
+      { immediate: true }
+    )
+
     onMounted(loadData)
 
     return () => (
-      <>
+      <div class="d-flex flex-column fill-height">
         <TitleBar>
           {{
             title: () => (
               <div class="d-flex align-center">
                 {breadcrumbs.value.map((crumb, index) => (
                   <>
-                    <div
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => {
-                        currentPath.value = crumb.path
-                        selectedTemplate.value = null
-                      }}
-                    >
+                    <div style={{ cursor: 'pointer' }} onClick={() => goToFolder(crumb.path)}>
                       {crumb.name}
                     </div>
                     {index < breadcrumbs.value.length - 1 && <div class="mx-2">/</div>}
@@ -410,97 +463,58 @@ export const TemplatesView = defineComponent({
           }}
         </TitleBar>
 
-        <VNavigationDrawer permanent width="250" location="left" border="e">
-          <VList
-            {...({
-              onDragover: (e: DragEvent) => {
-                e.preventDefault()
-                e.stopPropagation()
-              },
-            } as any)}
-            class="pa-0"
+        <div class="d-flex flex-grow-1 py-2" style="min-height: 0; gap: 0">
+          <VCard
+            class="d-flex flex-column flex-shrink-0 overflow-hidden"
+            style={{ width: `${leftWidth.value}px` }}
+            elevation={2}
+            rounded="lg"
           >
-            {currentPath.value && (
-              <VListItem
-                prependGap={16}
-                title=".. (Parent Folder)"
-                onClick={() => {
-                  const parts = currentPath.value.split('/')
-                  parts.pop()
-                  currentPath.value = parts.join('/')
-                }}
-                {...({
-                  onDragover: (e: DragEvent) => e.preventDefault(),
-                  onDrop: () => {
-                    const parts = currentPath.value.split('/')
-                    parts.pop()
-                    onDropOnFolder({ path: parts.join('/'), name: 'Parent' })
-                  },
-                } as any)}
-              >
-                {{ prepend: () => <FileEntryIcon isDirectory={true} icon={null} /> }}
-              </VListItem>
-            )}
-            {currentFolders.value.map((f: HandlebarsTemplateFolder) => (
-              <VListItem
-                prependGap={16}
-                key={f.path}
-                title={f.name}
-                onClick={() => (currentPath.value = f.path)}
-                {...({
-                  draggable: true,
-                  onDragstart: (e: DragEvent) => onDragStart(e, f, 'folder'),
-                  onDragover: (e: DragEvent) => e.preventDefault(),
-                  onDrop: () => onDropOnFolder(f),
-                } as any)}
-              >
-                {{
-                  prepend: () => <FileEntryIcon isDirectory={true} icon={null} />,
-                  append: () => (
-                    <VMenu>
-                      {{
-                        activator: ({ props }: any) => (
-                          <VBtn
-                            {...props}
-                            icon={MoreIcon as any}
-                            variant="text"
-                            density="comfortable"
-                            size="small"
-                            onClick={(e: Event) => e.stopPropagation()}
-                          />
-                        ),
-                        default: () => (
-                          <VList density="compact">
-                            <VListItem
-                              prepend-icon={EditIcon as any}
-                              title="Rename"
-                              onClick={() => renameFolder(f)}
-                            />
-                          </VList>
-                        ),
-                      }}
-                    </VMenu>
-                  ),
-                }}
-              </VListItem>
-            ))}
-            {currentTemplates.value.map((t: HandlebarsTemplate) => {
-              const devIcon = getIconForTemplate(t)
-              return (
+            <VList
+              {...({
+                onDragover: (e: DragEvent) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                },
+              } as any)}
+              class="pa-0 overflow-y-auto flex-grow-1"
+            >
+              {currentPath.value && (
                 <VListItem
                   prependGap={16}
-                  key={t.id}
-                  title={t.name}
-                  subtitle={`${t.id}.hbs`}
-                  onClick={() => selectTemplate(t)}
-                  active={selectedTemplate.value?.id === t.id}
+                  title=".. (Parent Folder)"
+                  onClick={() => {
+                    const parts = currentPath.value.split('/')
+                    parts.pop()
+                    goToFolder(parts.join('/'))
+                  }}
+                  {...({
+                    onDragover: (e: DragEvent) => e.preventDefault(),
+                    onDrop: () => {
+                      const parts = currentPath.value.split('/')
+                      parts.pop()
+                      onDropOnFolder({ path: parts.join('/'), name: 'Parent' })
+                    },
+                  } as any)}
+                >
+                  {{ prepend: () => <FileEntryIcon isDirectory={true} icon={null} /> }}
+                </VListItem>
+              )}
+              {currentFolders.value.map((f: HandlebarsTemplateFolder) => (
+                <VListItem
+                  prependGap={16}
+                  key={f.path}
+                  title={f.name}
+                  onClick={() => goToFolder(f.path)}
                   {...({
                     draggable: true,
-                    onDragstart: (e: DragEvent) => onDragStart(e, t, 'template'),
+                    onDragstart: (e: DragEvent) => onDragStart(e, f, 'folder'),
+                    onDragover: (e: DragEvent) => e.preventDefault(),
+                    onDrop: () => onDropOnFolder(f),
                   } as any)}
                 >
                   {{
-                    prepend: () => <FileEntryIcon isDirectory={false} icon={devIcon} />,
+                    prepend: () => <FileEntryIcon isDirectory={true} icon={null} />,
                     append: () => (
                       <VMenu>
                         {{
@@ -519,16 +533,7 @@ export const TemplatesView = defineComponent({
                               <VListItem
                                 prepend-icon={EditIcon as any}
                                 title="Rename"
-                                onClick={() => renameTemplatePrompt(t)}
-                              />
-                              <VListItem
-                                prepend-icon={DeleteIcon as any}
-                                title="Delete"
-                                color="error"
-                                onClick={() => {
-                                  selectTemplate(t)
-                                  deleteTemplate()
-                                }}
+                                onClick={() => renameFolder(f)}
                               />
                             </VList>
                           ),
@@ -537,81 +542,78 @@ export const TemplatesView = defineComponent({
                     ),
                   }}
                 </VListItem>
-              )
-            })}
-          </VList>
-          {currentFolders.value.length === 0 &&
-            currentTemplates.value.length === 0 &&
-            !loading.value && <div class="pa-4 text-center text-caption text-disabled">Empty</div>}
-        </VNavigationDrawer>
-
-        {selectedTemplate.value && (
-          <VNavigationDrawer permanent width="300" location="right" border="s">
-            <div class={styles.sidebarHeader}>
-              <div class="text-h6 flex-grow-1">Properties</div>
-              <VBtn
-                icon={CloseIcon as any}
-                variant="text"
-                density="comfortable"
-                onClick={() => (selectedTemplate.value = null)}
-              />
-            </div>
-            <div class={styles.sidebarContent}>
-              <div class="text-overline mb-4">Template</div>
-              <VTextField
-                v-model={selectedTemplate.value.id}
-                label="ID (Filename)"
-                variant="outlined"
-                density="compact"
-                class="mb-2"
-                onUpdate:modelValue={renameTemplate}
-              />
-              {templateEntity.value && (
-                <DynamicForm
-                  entity={templateEntity.value}
-                  modelValue={selectedTemplate.value as JsonObject}
-                  model={appModel.value}
-                  fieldOverrides={{
-                    content: () => null,
-                    path: () => null,
-                    disabled: ({ value, onUpdate, onCommit }) => (
-                      <VCheckbox
-                        modelValue={Boolean(value)}
-                        label="Disabled"
-                        hide-details
-                        density="compact"
-                        class="mb-2"
-                        color="error"
-                        onUpdate:modelValue={(v: boolean | null) => {
-                          onUpdate(Boolean(v))
-                          onCommit()
-                        }}
-                      />
-                    ),
-                  }}
-                  onUpdate:modelValue={(v) => {
-                    selectedTemplate.value = v as HandlebarsTemplate
-                  }}
-                  onCommit={saveTemplate}
-                />
+              ))}
+              {currentTemplates.value.map((t: HandlebarsTemplate) => {
+                const devIcon = getIconForTemplate(t)
+                return (
+                  <VListItem
+                    prependGap={16}
+                    key={t.id}
+                    title={t.name}
+                    subtitle={`${t.id}.hbs`}
+                    onClick={() => selectTemplate(t)}
+                    active={selectedTemplate.value?.id === t.id}
+                    {...({
+                      draggable: true,
+                      onDragstart: (e: DragEvent) => onDragStart(e, t, 'template'),
+                    } as any)}
+                  >
+                    {{
+                      prepend: () => <FileEntryIcon isDirectory={false} icon={devIcon} />,
+                      append: () => (
+                        <VMenu>
+                          {{
+                            activator: ({ props }: any) => (
+                              <VBtn
+                                {...props}
+                                icon={MoreIcon as any}
+                                variant="text"
+                                density="comfortable"
+                                size="small"
+                                onClick={(e: Event) => e.stopPropagation()}
+                              />
+                            ),
+                            default: () => (
+                              <VList density="compact">
+                                <VListItem
+                                  prepend-icon={EditIcon as any}
+                                  title="Rename"
+                                  onClick={() => renameTemplatePrompt(t)}
+                                />
+                                <VListItem
+                                  prepend-icon={DeleteIcon as any}
+                                  title="Delete"
+                                  color="error"
+                                  onClick={() => {
+                                    selectTemplate(t)
+                                    deleteTemplate()
+                                  }}
+                                />
+                              </VList>
+                            ),
+                          }}
+                        </VMenu>
+                      ),
+                    }}
+                  </VListItem>
+                )
+              })}
+            </VList>
+            {currentFolders.value.length === 0 &&
+              currentTemplates.value.length === 0 &&
+              !loading.value && (
+                <div class="pa-4 text-center text-caption text-disabled">Empty</div>
               )}
-              <VBtn
-                block
-                color="error"
-                variant="tonal"
-                prepend-icon={DeleteIcon as any}
-                onClick={deleteTemplate}
-              >
-                Delete HandlebarsTemplate
-              </VBtn>
-            </div>
-          </VNavigationDrawer>
-        )}
+          </VCard>
 
-        <main class="fill-height overflow-hidden">
+          <PanelDivider onResize={onResizeLeft} />
+
           {selectedTemplate.value ? (
-            <div
-              class="fill-height d-flex flex-column"
+            <VCard
+              class="flex-grow-1 overflow-hidden d-flex flex-column"
+              style="min-width: 0"
+              elevation={2}
+              rounded="lg"
               key={selectedTemplate.value.path || selectedTemplate.value.id}
             >
               <CodeEditor
@@ -624,17 +626,91 @@ export const TemplatesView = defineComponent({
                 theme={theme.global.current.value.dark ? 'vs-dark' : 'vs'}
                 onUpdate:modelValue={saveTemplate}
               />
-            </div>
+            </VCard>
           ) : (
-            <VContainer class="fill-height">
+            <div class="flex-grow-1 d-flex align-center justify-center" style="min-width: 0">
               <VEmptyState
                 icon={TemplatesViewIcon as any}
                 title="No templates selected"
                 text="Select a template from the left or create a new one."
               />
-            </VContainer>
+            </div>
           )}
-        </main>
+
+          {selectedTemplate.value && (
+            <>
+              <PanelDivider onResize={(delta) => onResizeRight(-delta)} />
+              <VCard
+                class="d-flex flex-column flex-shrink-0 overflow-hidden"
+                style={{ width: `${rightWidth.value}px` }}
+                elevation={2}
+                rounded="lg"
+              >
+                <div class={styles.sidebarHeader}>
+                  <div class="text-h6 flex-grow-1">Properties</div>
+                  <VBtn
+                    icon={CloseIcon as any}
+                    variant="text"
+                    density="comfortable"
+                    onClick={() => {
+                      selectedTemplate.value = null
+                      updateSelectedInUrl(null)
+                    }}
+                  />
+                </div>
+                <div class={styles.sidebarContent}>
+                  <div class="text-overline mb-4">Template</div>
+                  <VTextField
+                    v-model={selectedTemplate.value.id}
+                    label="ID (Filename)"
+                    variant="outlined"
+                    density="compact"
+                    class="mb-2"
+                    onUpdate:modelValue={renameTemplate}
+                  />
+                  {templateEntity.value && (
+                    <DynamicForm
+                      entity={templateEntity.value}
+                      modelValue={selectedTemplate.value as JsonObject}
+                      model={appModel.value}
+                      fieldOverrides={{
+                        content: () => null,
+                        path: () => null,
+                        disabled: ({ value, onUpdate, onCommit }) => (
+                          <VCheckbox
+                            modelValue={Boolean(value)}
+                            label="Disabled"
+                            hide-details
+                            density="compact"
+                            class="mb-2"
+                            color="error"
+                            onUpdate:modelValue={(v: boolean | null) => {
+                              onUpdate(Boolean(v))
+                              onCommit()
+                            }}
+                          />
+                        ),
+                      }}
+                      onUpdate:modelValue={(v) => {
+                        selectedTemplate.value = v as HandlebarsTemplate
+                      }}
+                      onCommit={saveTemplate}
+                    />
+                  )}
+                  <VBtn
+                    block
+                    color="error"
+                    variant="tonal"
+                    prepend-icon={DeleteIcon as any}
+                    onClick={deleteTemplate}
+                  >
+                    Delete HandlebarsTemplate
+                  </VBtn>
+                </div>
+              </VCard>
+            </>
+          )}
+        </div>
 
         <VDialog v-model={confirmDialog.value} max-width={400}>
           {{
@@ -660,7 +736,7 @@ export const TemplatesView = defineComponent({
             ),
           }}
         </VDialog>
-      </>
+      </div>
     )
   },
 })

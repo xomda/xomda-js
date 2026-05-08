@@ -2,10 +2,10 @@ import { useLocalStorageStore } from '@xomda/ui'
 import { defineComponent, watch } from 'vue'
 import { RouterView } from 'vue-router'
 import { useTheme } from 'vuetify'
-import { VApp, VMain, VNavigationDrawer } from 'vuetify/components'
+import { VApp, VMain } from 'vuetify/components'
 
 import { AppMeta } from './AppMeta'
-import { Sidebar } from './components'
+import { AppNav } from './components'
 
 export const App = defineComponent({
   name: 'App',
@@ -22,10 +22,8 @@ export const App = defineComponent({
     return () => (
       <VApp>
         <AppMeta />
-        <VNavigationDrawer permanent width="60" elevation={0} border="r">
-          <Sidebar />
-        </VNavigationDrawer>
-        <VMain class={['h-screen']}>
+        <AppNav />
+        <VMain class={['h-screen']} style={{ paddingLeft: 'calc(var(--appnav-width, 56px) + 16px)' }}>
           <RouterView />
         </VMain>
       </VApp>

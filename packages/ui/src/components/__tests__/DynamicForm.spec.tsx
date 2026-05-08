@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import type { Entity, Model } from '@xomda/model'
-import { DynamicForm } from '@xomda/ui'
+import { DynamicForm } from '../DynamicForm'
 import type { JsonValue } from 'type-fest'
 import { describe, expect, it } from 'vitest'
 import { createVuetify } from 'vuetify'

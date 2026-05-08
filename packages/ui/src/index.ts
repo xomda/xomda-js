@@ -5,6 +5,8 @@ export {
   Collapsible,
   DynamicForm,
   FileEntryIcon,
+  FilePreviewDialog,
+  languageFromPath,
   ThemeToggle,
   TitleBar,
 } from './components'

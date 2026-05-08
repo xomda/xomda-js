@@ -21,10 +21,10 @@ describe('App', () => {
     expect(wrapper.exists()).toBe(true)
   })
 
-  it('renders the navigation drawer', () => {
+  it('renders the app navigation', () => {
     const wrapper = mount(App, {
       global: { plugins: [vuetify, createPinia(), makeRouter()] },
     })
-    expect(wrapper.find('.v-navigation-drawer').exists()).toBe(true)
+    expect(wrapper.findComponent({ name: 'AppNav' }).exists()).toBe(true)
   })
 })

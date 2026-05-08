@@ -37,3 +37,12 @@ export interface PackageData {
   description?: string
   elementsOrder?: string[]
 }
+
+export interface LayoutEntry {
+  x: number
+  y: number
+  width?: number
+  height?: number
+}
+
+export type Layout = Record<string, LayoutEntry>

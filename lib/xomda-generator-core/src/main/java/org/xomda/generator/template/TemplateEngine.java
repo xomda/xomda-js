@@ -2,8 +2,8 @@ package org.xomda.generator.template;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jknack.handlebars.Handlebars;
-import com.github.jknack.handlebars.helper.StringHelpers;
 import org.graalvm.polyglot.Context;
+import org.xomda.generator.Helpers;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Source;
 import org.xomda.generator.template.processor.CellContext;
@@ -117,7 +117,10 @@ public class TemplateEngine {
 
     private static Handlebars buildHandlebars() {
         Handlebars hb = new Handlebars();
-        StringHelpers.register(hb);
+        // Register the full helper surface (jknack StringHelpers, custom case helpers,
+        // comparisons, array ops, model-traversal helpers) so handlebars cells in
+        // advanced templates see the same helpers as the TS engine.
+        Helpers.register(hb);
         return hb;
     }
 }

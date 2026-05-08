@@ -12,11 +12,13 @@ export const router = createRouter({
       component: () => import('../views/ModelView').then(({ ModelView }) => ModelView),
     },
     {
-      path: '/templates',
+      path: '/templates/:folderPath(.*)*',
+      name: 'templates',
       component: () => import('../views/TemplatesView').then(({ TemplatesView }) => TemplatesView),
     },
     {
-      path: '/templates-pp',
+      path: '/templates-pp/:folderPath(.*)*',
+      name: 'templates-pp',
       component: () =>
         import('../views/TemplatePPView').then(({ TemplatePPView }) => TemplatePPView),
     },
@@ -25,7 +27,8 @@ export const router = createRouter({
       component: () => import('../views/GenerateView').then(({ GenerateView }) => GenerateView),
     },
     {
-      path: '/files',
+      path: '/files/:dirPath(.*)*',
+      name: 'files',
       component: () =>
         import('../views/FileBrowserView').then(({ FileBrowserView }) => FileBrowserView),
     },

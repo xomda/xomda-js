@@ -83,7 +83,7 @@ for (const t of templates) {
 
 // ─── 4. Render all templates against the model ───────────────────────────────
 
-const results = templates.flatMap((t) => renderTemplateByScope(t, model))
+const results = (await Promise.all(templates.map((t) => renderTemplateByScope(t, model)))).flat()
 
 // ─── 5. Write generated files ────────────────────────────────────────────────
 

@@ -289,6 +289,18 @@ When building UI components, prioritize reusable components in this order:
 <div class="custom-layout">{{ content }}</div>
 ```
 
+### UI Layout Patterns (Cards & Panels)
+
+- **No `VNavigationDrawer`** for content panels. Use floating `VCard` components or inline flex panels instead.
+- **Navigation sidebar**: Use the `AppNav` component (`packages/client/src/components/AppNav`). It is a floating `VCard` with two toggle states — icon-only (default) and icon+text. Never replace it with a `VNavigationDrawer`.
+- **Floating panels** (e.g. model designer properties): Use `position: absolute` + `VCard` with elevation. Animate visibility with `opacity` + `transform`, not `width` transitions.
+- **Resizable split panels**: Use `PanelDivider` (`packages/client/src/components/PanelDivider`) between flex siblings and the `usePanelResize` composable (`packages/client/src/composables/usePanelResize`) for width state.
+- **Vuetify size/density rule**:
+  - Components **with** a `size` prop (VTextField, VSelect, VCheckbox, VSwitch, …): `size="small"` + `density="comfortable"` — set globally in `packages/client/src/vuetify.ts`.
+  - **VBtn exception**: `size="small"` + `density="default"` — `comfortable` + `small` together makes buttons too tight; overridden per-component in `vuetify.ts`.
+  - Components **without** a `size` prop (VList, VListItem, VListSubheader, …): `density="compact"` — set per-component in `vuetify.ts`.
+  - Do not override these defaults inline without a clear reason.
+
 ## JavaScript/TypeScript Patterns
 
 ### Template Literals (Required)

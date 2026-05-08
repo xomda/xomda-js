@@ -1,4 +1,5 @@
-export { Sidebar } from './Sidebar'
+export { AppNav } from './AppNav'
+export { PanelDivider } from './PanelDivider'
 export { TemplatePPEditor } from './templatePP'
-export { DynamicForm, FileEntryIcon, ThemeToggle, TitleBar } from '@xomda/ui'
 export type { FieldRenderContext } from '@xomda/ui'
+export { DynamicForm, FileEntryIcon, ThemeToggle, TitleBar } from '@xomda/ui'

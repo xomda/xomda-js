@@ -15,7 +15,11 @@
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.get\\('dependencies',{}\\).keys\\(\\)\\)[:20]\\)\")",
       "Bash(pnpm --filter @xomda/client add @vueuse/core @vueuse/integrations sortablejs)",
       "Bash(pnpm --filter @xomda/client add -D @types/sortablejs)",
-      "Bash(mvn test *)"
+      "Bash(mvn test *)",
+      "Bash(pnpm --filter @xomda/ui typecheck)",
+      "Bash(git stash *)",
+      "Bash(pnpm --filter @xomda/client lint)",
+      "Bash(pnpm lint *)"
     ]
   }
 }

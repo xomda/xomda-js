@@ -7,18 +7,18 @@
       "uuid": "a0444bb9-5688-4b58-82ab-4b1dfa7e89d2",
       "type": "provider",
       "content": "",
+      "variableName": "$entity",
       "providerSource": "entities"
-    },
-    {
-      "uuid": "914b5438-fb78-425e-a8ea-8685c08fdb5f",
-      "type": "buffer",
-      "content": "",
-      "variableName": "imports"
     },
     {
       "uuid": "78eb906b-c881-41d4-a2c9-61b34eea41e6",
       "type": "logic",
       "content": "test = \"ok\";\nconsole.log(\"ok\");\n"
+    },
+    {
+      "uuid": "c0ae5636-9a30-455a-b749-f3a2f24777ea",
+      "type": "output",
+      "content": ""
     }
   ]
 }

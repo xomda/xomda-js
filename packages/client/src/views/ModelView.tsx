@@ -4,6 +4,7 @@ import {
   DropZone,
   type EntityData,
   type EnumData,
+  type Layout,
   Package,
   type PackageData,
 } from '@xomda/diagram'
@@ -38,6 +39,31 @@ export const ModelView = defineComponent({
     const loading = ref(false)
     const error = ref<string | null>(null)
     const detailedErrors = ref<{ message: string; path?: (string | number)[] }[] | null>(null)
+
+    // Canvas layout: UUID → {x, y, width?, height?}
+    const layout = ref<Layout>({})
+    let layoutSaveTimer: ReturnType<typeof setTimeout> | null = null
+
+    function scheduleLayoutSave() {
+      if (layoutSaveTimer) clearTimeout(layoutSaveTimer)
+      layoutSaveTimer = setTimeout(async () => {
+        try {
+          await trpc.model.updateLayout.mutate(layout.value)
+        } catch {
+          // layout save errors are non-critical; silently ignore
+        }
+      }, 400)
+    }
+
+    function onPackageMove(id: string, x: number, y: number) {
+      layout.value = { ...layout.value, [id]: { ...layout.value[id], x, y } }
+      scheduleLayoutSave()
+    }
+
+    function onPackageResize(id: string, width: number, height: number) {
+      layout.value = { ...layout.value, [id]: { ...layout.value[id], width, height } }
+      scheduleLayoutSave()
+    }
 
     // Add-entity dialog state
     const entityDialog = ref(false)
@@ -140,6 +166,7 @@ export const ModelView = defineComponent({
       detailedErrors.value = null
       try {
         model.value = await trpc.model.get.query()
+        layout.value = model.value?.layout ?? {}
       } catch (e) {
         parseError(e)
       } finally {
@@ -796,7 +823,7 @@ export const ModelView = defineComponent({
     })
 
     return () => (
-      <>
+      <div class="d-flex flex-column h-100">
         <TitleBar>
           {{
             title: () => (
@@ -858,24 +885,12 @@ export const ModelView = defineComponent({
             )}
 
           {model.value && !loading.value && (
-            <div class={styles.layout}>
-              <div class={styles.canvasWrapper}>
-                <DiagramCanvas class={styles.canvas}>
+            <div class={styles.canvasContainer}>
+              <DiagramCanvas class={styles.canvas} layout={layout.value}>
                   {{
                     default: () => (
-                      <div class="d-flex flex-wrap ga-4">
-                        <DropZone
-                          index={0}
-                          onDrop-item={(p: any) =>
-                            moveToPackage({
-                              type: p.type,
-                              id: p.id,
-                              targetPackageId: undefined,
-                              index: 0,
-                            })
-                          }
-                        />
-                        {sortedRootElements.value.map((el, idx) => (
+                      <>
+                        {sortedRootElements.value.map((el) => (
                           <>
                             {el.type === 'package' && (
                               <Package
@@ -883,6 +898,8 @@ export const ModelView = defineComponent({
                                 package={el.data}
                                 inheritedAttributesByEntityId={inheritedAttributesByEntityId.value}
                                 selected={selectedPackage.value?.id === el.data.id}
+                                layout={layout.value[el.data.id] ?? { x: 0, y: 0 }}
+                                absolute={true}
                                 onEdit-package={selectPackage}
                                 onEdit-entity={selectEntity}
                                 onAdd-attribute={openAddAttribute}
@@ -912,37 +929,29 @@ export const ModelView = defineComponent({
                                   })
                                 }}
                                 onMove-to-package={moveToPackage}
+                                onMove={onPackageMove}
+                                onResize={onPackageResize}
                               />
                             )}
-                            <DropZone
-                              index={idx + 1}
-                              onDrop-item={(p: any) =>
-                                moveToPackage({
-                                  type: p.type,
-                                  id: p.id,
-                                  targetPackageId: undefined,
-                                  index: idx + 1,
-                                })
-                              }
-                            />
                           </>
                         ))}
-                      </div>
+                      </>
                     ),
                   }}
                 </DiagramCanvas>
-              </div>
 
-              <div
+              <VCard
                 class={[
-                  styles.sidebar,
+                  styles.propertiesPanel,
                   (selectedAttr.value ||
                     selectedEntity.value ||
                     selectedEnum.value ||
                     selectedPackage.value ||
                     selectedModel.value) &&
-                    styles.sidebarVisible,
+                    styles.propertiesPanelVisible,
                 ]}
+                elevation={4}
+                rounded="lg"
               >
                 {selectedAttr.value && editAttrData.value && (
                   <>
@@ -1208,7 +1217,7 @@ export const ModelView = defineComponent({
                     </div>
                   </>
                 )}
-              </div>
+              </VCard>
             </div>
           )}
         </div>
@@ -1540,7 +1549,7 @@ export const ModelView = defineComponent({
             ),
           }}
         </VDialog>
-      </>
+      </div>
     )
   },
 })

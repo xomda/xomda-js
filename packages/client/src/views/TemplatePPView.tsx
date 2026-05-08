@@ -2,25 +2,26 @@ import { AddIcon, DeleteIcon, EditIcon, FolderIcon, MoreIcon, TemplatesIcon } fr
 import type { Template, TemplateFolder } from '@xomda/template'
 import { FileEntryIcon } from '@xomda/ui'
 import { debounce } from 'lodash-es'
-import { computed, defineComponent, onMounted, ref } from 'vue'
+import { computed, defineComponent, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useTheme } from 'vuetify'
 import {
   VBtn,
+  VCard,
   VContainer,
   VEmptyState,
   VList,
   VListItem,
   VListSubheader,
   VMenu,
-  VNavigationDrawer,
   VSelect,
-  VSheet,
   VTextField,
   VToolbar,
 } from 'vuetify/components'
 
-import { TitleBar } from '../components'
+import { PanelDivider, TitleBar } from '../components'
 import { TemplatePPEditor } from '../components/templatePP/TemplatePPEditor'
+import { usePanelResize } from '../composables'
 import { trpc } from '../trpc'
 
 function newTemplate(folder?: string): Template {
@@ -37,11 +38,37 @@ export const TemplatePPView = defineComponent({
   name: 'TemplatePPView',
   setup() {
     const theme = useTheme()
+    const route = useRoute()
+    const router = useRouter()
     const templates = ref<Template[]>([])
     const folders = ref<TemplateFolder[]>([])
     const selectedTemplate = ref<Template | null>(null)
-    const currentPath = ref('')
     const loading = ref(false)
+
+    const currentPath = computed(() => {
+      const segs = route.params.folderPath
+      if (Array.isArray(segs)) return segs.join('/')
+      if (typeof segs === 'string') return segs
+      return ''
+    })
+
+    const folderPathSegments = (path: string) => (path ? path.split('/') : [])
+
+    const goToFolder = (path: string) => {
+      router.push({
+        name: 'templates-pp',
+        params: { folderPath: folderPathSegments(path) },
+        query: {},
+      })
+    }
+
+    const updateSelectedInUrl = (uuid: string | null) => {
+      router.replace({
+        name: 'templates-pp',
+        params: { folderPath: folderPathSegments(currentPath.value) },
+        query: uuid ? { template: uuid } : {},
+      })
+    }
 
     const draggingTemplate = ref<Template | null>(null)
     const draggingFolder = ref<TemplateFolder | null>(null)
@@ -95,6 +122,7 @@ export const TemplatePPView = defineComponent({
 
     function selectTemplate(t: Template) {
       selectedTemplate.value = { ...t }
+      updateSelectedInUrl(t.uuid)
     }
 
     async function addTemplate() {
@@ -103,6 +131,7 @@ export const TemplatePPView = defineComponent({
         await trpc.template.save.mutate(t)
         await loadData()
         selectedTemplate.value = t
+        updateSelectedInUrl(t.uuid)
       } catch (e) {
         console.error('Failed to create template', e)
       }
@@ -155,6 +184,7 @@ export const TemplatePPView = defineComponent({
       try {
         await trpc.template.delete.mutate(selectedTemplate.value.uuid)
         selectedTemplate.value = null
+        updateSelectedInUrl(null)
         await loadData()
       } catch (e) {
         console.error('Failed to delete template', e)
@@ -166,7 +196,11 @@ export const TemplatePPView = defineComponent({
       debouncedSave(t)
     }
 
-    function onDragStart(e: DragEvent, item: Template | TemplateFolder, type: 'template' | 'folder') {
+    function onDragStart(
+      e: DragEvent,
+      item: Template | TemplateFolder,
+      type: 'template' | 'folder'
+    ) {
       if (type === 'template') {
         draggingTemplate.value = item as Template
         draggingFolder.value = null
@@ -229,23 +263,34 @@ export const TemplatePPView = defineComponent({
       }
     }
 
+    const { width: leftWidth, onResize: onResizeLeft } = usePanelResize(260, 160, 480)
+
+    watch(
+      [() => route.query.template, templates],
+      ([uuid]) => {
+        const id = typeof uuid === 'string' ? uuid : ''
+        if (!id) {
+          if (selectedTemplate.value !== null) selectedTemplate.value = null
+          return
+        }
+        if (selectedTemplate.value?.uuid === id) return
+        const found = templates.value.find((t) => t.uuid === id)
+        if (found) selectedTemplate.value = { ...found }
+      },
+      { immediate: true }
+    )
+
     onMounted(loadData)
 
     return () => (
-      <>
+      <div class="d-flex flex-column fill-height">
         <TitleBar>
           {{
             title: () => (
               <div class="d-flex align-center">
                 {breadcrumbs.value.map((crumb, index) => (
                   <>
-                    <span
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => {
-                        currentPath.value = crumb.path
-                        selectedTemplate.value = null
-                      }}
-                    >
+                    <span style={{ cursor: 'pointer' }} onClick={() => goToFolder(crumb.path)}>
                       {crumb.name}
                     </span>
                     {index < breadcrumbs.value.length - 1 && <span class="mx-2">/</span>}
@@ -288,189 +333,197 @@ export const TemplatePPView = defineComponent({
           }}
         </TitleBar>
 
-        <VNavigationDrawer permanent width="260" location="left" border="e">
-          <VList
-            {...({
-              onDragover: (e: DragEvent) => { e.preventDefault(); e.stopPropagation() },
-            } as any)}
-            class="pa-0"
+        <div class="d-flex flex-grow-1 py-2" style="min-height: 0; gap: 0">
+          <VCard
+            class="d-flex flex-column flex-shrink-0 overflow-hidden"
+            style={{ width: `${leftWidth.value}px` }}
+            elevation={2}
+            rounded="lg"
           >
-            {currentPath.value && (
-              <VListItem
-                title=".. (Parent Folder)"
-                onClick={() => {
-                  const parts = currentPath.value.split('/')
-                  parts.pop()
-                  currentPath.value = parts.join('/')
-                  selectedTemplate.value = null
-                }}
-                {...({
-                  onDragover: (e: DragEvent) => e.preventDefault(),
-                  onDrop: () => {
+            <VList
+              {...({
+                onDragover: (e: DragEvent) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                },
+              } as any)}
+              class="pa-0 overflow-y-auto flex-grow-1"
+            >
+              {currentPath.value && (
+                <VListItem
+                  title=".. (Parent Folder)"
+                  onClick={() => {
                     const parts = currentPath.value.split('/')
                     parts.pop()
-                    onDropOnFolder({ path: parts.join('/'), name: 'Parent' })
-                  },
-                } as any)}
-              >
-                {{ prepend: () => <FileEntryIcon isDirectory={true} icon={null} /> }}
-              </VListItem>
-            )}
-
-            {currentFolders.value.map((f) => (
-              <VListItem
-                key={f.path}
-                title={f.name}
-                onClick={() => {
-                  currentPath.value = f.path
-                  selectedTemplate.value = null
-                }}
-                {...({
-                  draggable: true,
-                  onDragstart: (e: DragEvent) => onDragStart(e, f, 'folder'),
-                  onDragover: (e: DragEvent) => e.preventDefault(),
-                  onDrop: () => onDropOnFolder(f),
-                } as any)}
-              >
-                {{
-                  prepend: () => <FileEntryIcon isDirectory={true} icon={null} />,
-                  append: () => (
-                    <VMenu>
-                      {{
-                        activator: ({ props }: any) => (
-                          <VBtn
-                            {...props}
-                            icon={MoreIcon as any}
-                            variant="text"
-                            density="comfortable"
-                            size="small"
-                            onClick={(e: Event) => e.stopPropagation()}
-                          />
-                        ),
-                        default: () => (
-                          <VList density="compact">
-                            <VListItem
-                              prepend-icon={EditIcon as any}
-                              title="Rename"
-                              onClick={() => renameFolder(f)}
-                            />
-                          </VList>
-                        ),
-                      }}
-                    </VMenu>
-                  ),
-                }}
-              </VListItem>
-            ))}
-
-            {currentTemplates.value.map((t) => (
-              <VListItem
-                key={t.uuid}
-                title={t.name}
-                subtitle={t.description}
-                active={selectedTemplate.value?.uuid === t.uuid}
-                onClick={() => selectTemplate(t)}
-                {...({
-                  draggable: true,
-                  onDragstart: (e: DragEvent) => onDragStart(e, t, 'template'),
-                } as any)}
-              >
-                {{
-                  prepend: () => <FileEntryIcon isDirectory={false} icon={null} />,
-                  append: () => (
-                    <VMenu>
-                      {{
-                        activator: ({ props }: any) => (
-                          <VBtn
-                            {...props}
-                            icon={MoreIcon as any}
-                            variant="text"
-                            density="comfortable"
-                            size="small"
-                            onClick={(e: Event) => e.stopPropagation()}
-                          />
-                        ),
-                        default: () => (
-                          <VList density="compact">
-                            <VListItem
-                              prepend-icon={EditIcon as any}
-                              title="Rename"
-                              onClick={() => renameTemplate(t)}
-                            />
-                          </VList>
-                        ),
-                      }}
-                    </VMenu>
-                  ),
-                }}
-              </VListItem>
-            ))}
-          </VList>
-
-          {currentFolders.value.length === 0 && currentTemplates.value.length === 0 && !loading.value && (
-            <VListSubheader>No templates yet</VListSubheader>
-          )}
-        </VNavigationDrawer>
-
-        <main class="fill-height overflow-hidden">
-          {selectedTemplate.value ? (
-            <VSheet class="fill-height d-flex flex-column" color="transparent">
-              <VToolbar density="compact" flat border="b">
-                <VTextField
-                  v-model={selectedTemplate.value.name}
-                  label="Name"
-                  density="compact"
-                  variant="outlined"
-                  hide-details
-                  style={{ maxWidth: '220px' }}
-                  class="mx-2"
-                  onUpdate:modelValue={() => onTemplateUpdate(selectedTemplate.value!)}
-                />
-                <VSelect
-                  modelValue={selectedTemplate.value.extends ?? null}
-                  items={templates.value
-                    .filter((t) => t.uuid !== selectedTemplate.value?.uuid)
-                    .map((t) => ({ title: t.name, value: t.uuid }))}
-                  label="Extends"
-                  density="compact"
-                  variant="outlined"
-                  hide-details
-                  clearable
-                  style={{ maxWidth: '180px' }}
-                  class="mx-2"
-                  onUpdate:modelValue={(v: string | null) => {
-                    onTemplateUpdate({ ...selectedTemplate.value!, extends: v ?? undefined })
+                    goToFolder(parts.join('/'))
                   }}
-                />
-                <VTextField
-                  v-model={selectedTemplate.value.description}
-                  label="Description"
-                  density="compact"
-                  variant="outlined"
-                  hide-details
-                  class="mx-2 flex-grow-1"
-                  onUpdate:modelValue={() => onTemplateUpdate(selectedTemplate.value!)}
-                />
-              </VToolbar>
+                  {...({
+                    onDragover: (e: DragEvent) => e.preventDefault(),
+                    onDrop: () => {
+                      const parts = currentPath.value.split('/')
+                      parts.pop()
+                      onDropOnFolder({ path: parts.join('/'), name: 'Parent' })
+                    },
+                  } as any)}
+                >
+                  {{ prepend: () => <FileEntryIcon isDirectory={true} icon={null} /> }}
+                </VListItem>
+              )}
 
-              <VSheet class="flex-grow-1 overflow-hidden" color="transparent">
-                <TemplatePPEditor
-                  template={selectedTemplate.value}
-                  onUpdate:template={onTemplateUpdate}
+              {currentFolders.value.map((f) => (
+                <VListItem
+                  key={f.path}
+                  title={f.name}
+                  onClick={() => goToFolder(f.path)}
+                  {...({
+                    draggable: true,
+                    onDragstart: (e: DragEvent) => onDragStart(e, f, 'folder'),
+                    onDragover: (e: DragEvent) => e.preventDefault(),
+                    onDrop: () => onDropOnFolder(f),
+                  } as any)}
+                >
+                  {{
+                    prepend: () => <FileEntryIcon isDirectory={true} icon={null} />,
+                    append: () => (
+                      <VMenu>
+                        {{
+                          activator: ({ props }: any) => (
+                            <VBtn
+                              {...props}
+                              icon={MoreIcon as any}
+                              variant="text"
+                              density="comfortable"
+                              size="small"
+                              onClick={(e: Event) => e.stopPropagation()}
+                            />
+                          ),
+                          default: () => (
+                            <VList density="compact">
+                              <VListItem
+                                prepend-icon={EditIcon as any}
+                                title="Rename"
+                                onClick={() => renameFolder(f)}
+                              />
+                            </VList>
+                          ),
+                        }}
+                      </VMenu>
+                    ),
+                  }}
+                </VListItem>
+              ))}
+
+              {currentTemplates.value.map((t) => (
+                <VListItem
+                  key={t.uuid}
+                  title={t.name}
+                  subtitle={t.description}
+                  active={selectedTemplate.value?.uuid === t.uuid}
+                  onClick={() => selectTemplate(t)}
+                  {...({
+                    draggable: true,
+                    onDragstart: (e: DragEvent) => onDragStart(e, t, 'template'),
+                  } as any)}
+                >
+                  {{
+                    prepend: () => <FileEntryIcon isDirectory={false} icon={null} />,
+                    append: () => (
+                      <VMenu>
+                        {{
+                          activator: ({ props }: any) => (
+                            <VBtn
+                              {...props}
+                              icon={MoreIcon as any}
+                              variant="text"
+                              density="comfortable"
+                              size="small"
+                              onClick={(e: Event) => e.stopPropagation()}
+                            />
+                          ),
+                          default: () => (
+                            <VList density="compact">
+                              <VListItem
+                                prepend-icon={EditIcon as any}
+                                title="Rename"
+                                onClick={() => renameTemplate(t)}
+                              />
+                            </VList>
+                          ),
+                        }}
+                      </VMenu>
+                    ),
+                  }}
+                </VListItem>
+              ))}
+            </VList>
+
+            {currentFolders.value.length === 0 &&
+              currentTemplates.value.length === 0 &&
+              !loading.value && <VListSubheader>No templates yet</VListSubheader>}
+          </VCard>
+
+          <PanelDivider onResize={onResizeLeft} />
+
+          <div class="flex-grow-1 overflow-hidden d-flex flex-column" style="min-width: 0">
+            {selectedTemplate.value ? (
+              <div class="fill-height d-flex flex-column">
+                <VToolbar density="compact" flat color="transparent">
+                  <VTextField
+                    v-model={selectedTemplate.value.name}
+                    label="Name"
+                    density="compact"
+                    variant="outlined"
+                    hide-details
+                    style={{ maxWidth: '220px' }}
+                    class="mx-2"
+                    onUpdate:modelValue={() => onTemplateUpdate(selectedTemplate.value!)}
+                  />
+                  <VSelect
+                    modelValue={selectedTemplate.value.extends ?? null}
+                    items={templates.value
+                      .filter((t) => t.uuid !== selectedTemplate.value?.uuid)
+                      .map((t) => ({ title: t.name, value: t.uuid }))}
+                    label="Extends"
+                    density="compact"
+                    variant="outlined"
+                    hide-details
+                    clearable
+                    style={{ maxWidth: '180px' }}
+                    class="mx-2"
+                    onUpdate:modelValue={(v: string | null) => {
+                      onTemplateUpdate({ ...selectedTemplate.value!, extends: v ?? undefined })
+                    }}
+                  />
+                  <VTextField
+                    v-model={selectedTemplate.value.description}
+                    label="Description"
+                    density="compact"
+                    variant="outlined"
+                    hide-details
+                    class="mx-2 flex-grow-1"
+                    onUpdate:modelValue={() => onTemplateUpdate(selectedTemplate.value!)}
+                  />
+                </VToolbar>
+
+                <div class="flex-grow-1 overflow-hidden">
+                  <TemplatePPEditor
+                    template={selectedTemplate.value}
+                    onUpdate:template={onTemplateUpdate}
+                  />
+                </div>
+              </div>
+            ) : (
+              <VContainer class="fill-height">
+                <VEmptyState
+                  icon={TemplatesIcon as any}
+                  title="No template selected"
+                  text="Select a template from the left or create a new one."
                 />
-              </VSheet>
-            </VSheet>
-          ) : (
-            <VContainer class="fill-height">
-              <VEmptyState
-                icon={TemplatesIcon as any}
-                title="No template selected"
-                text="Select a template from the left or create a new one."
-              />
-            </VContainer>
-          )}
-        </main>
-      </>
+              </VContainer>
+            )}
+          </div>
+        </div>
+      </div>
     )
   },
 })

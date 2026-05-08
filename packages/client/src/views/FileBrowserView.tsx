@@ -1,8 +1,11 @@
 import { CodeEditor } from '@xomda/codeeditor'
 import { CloseIcon, FolderXomdaIcon, InfoIcon, ParentFolderIcon } from '@xomda/icons'
+import { FileEntryIcon, languageFromPath, TitleBar } from '@xomda/ui'
 import { computed, defineComponent, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import {
   VBtn,
+  VCard,
   VChip,
   VDivider,
   VFadeTransition,
@@ -14,8 +17,8 @@ import {
   VToolbar,
 } from 'vuetify/components'
 
-import { FileEntryIcon, languageFromPath, TitleBar } from '@xomda/ui'
-import { useAsyncState } from '../composables'
+import { PanelDivider } from '../components'
+import { useAsyncState, usePanelResize } from '../composables'
 import { trpc } from '../trpc'
 
 interface FileEntry {
@@ -41,7 +44,18 @@ type PreviewMap = Map<string, string>
 export const FileBrowserView = defineComponent({
   name: 'FileBrowserView',
   setup() {
-    const currentPath = ref('.')
+    const route = useRoute()
+    const router = useRouter()
+
+    const currentPath = computed(() => {
+      const segs = route.params.dirPath
+      if (Array.isArray(segs) && segs.length > 0) return segs.join('/')
+      if (typeof segs === 'string' && segs) return segs
+      return '.'
+    })
+
+    const dirPathSegments = (path: string) => (!path || path === '.' ? [] : path.split('/'))
+
     const entries = ref<FileEntry[]>([])
     const { loading, execute: executeList } = useAsyncState<FileEntry[]>()
     const selectedFile = ref<FileStats | null>(null)
@@ -82,16 +96,26 @@ export const FileBrowserView = defineComponent({
       })
 
     const navigateTo = (path: string) => {
-      currentPath.value = path
-      selectedFile.value = null
+      router.push({
+        name: 'files',
+        params: { dirPath: dirPathSegments(path) },
+        query: {},
+      })
     }
 
     const navigateUp = () => {
       if (currentPath.value === '.') return
       const segments = currentPath.value.split('/')
       segments.pop()
-      currentPath.value = segments.length === 0 ? '.' : segments.join('/')
-      selectedFile.value = null
+      navigateTo(segments.length === 0 ? '.' : segments.join('/'))
+    }
+
+    const updateSelectedFileInUrl = (fileName: string | null) => {
+      router.replace({
+        name: 'files',
+        params: { dirPath: dirPathSegments(currentPath.value) },
+        query: fileName ? { file: fileName } : {},
+      })
     }
 
     const virtualEntries = computed<FileEntry[]>(() => {
@@ -148,7 +172,10 @@ export const FileBrowserView = defineComponent({
         navigateTo(currentPath.value === '.' ? entry.name : `${currentPath.value}/${entry.name}`)
         return
       }
+      updateSelectedFileInUrl(entry.name)
+    }
 
+    const loadFile = async (entry: FileEntry) => {
       const path = currentPath.value === '.' ? entry.name : `${currentPath.value}/${entry.name}`
 
       if (entry.isGenerated && !entries.value.some((e) => e.name === entry.name)) {
@@ -174,6 +201,30 @@ export const FileBrowserView = defineComponent({
       })
     }
 
+    const clearPreview = () => {
+      selectedFile.value = null
+      previewTitle.value = ''
+      previewContent.value = ''
+      previewLanguage.value = 'plaintext'
+      showInfo.value = false
+    }
+
+    watch(
+      [() => route.query.file, mergedEntries],
+      ([fileName]) => {
+        const name = typeof fileName === 'string' ? fileName : ''
+        if (!name) {
+          clearPreview()
+          return
+        }
+        if (selectedFile.value?.name === name && previewTitle.value) return
+        if (previewTitle.value.endsWith(`/${name}`) || previewTitle.value === name) return
+        const entry = mergedEntries.value.find((e) => e.name === name && !e.isDirectory)
+        if (entry) loadFile(entry)
+      },
+      { immediate: true }
+    )
+
     const closeInfo = () => {
       showInfo.value = false
     }
@@ -188,6 +239,9 @@ export const FileBrowserView = defineComponent({
 
     const formatDate = (dateStr: string) => new Date(dateStr).toLocaleString()
 
+    const { width: leftWidth, onResize: onResizeLeft } = usePanelResize(260, 160, 480)
+    const { width: rightWidth, onResize: onResizeRight } = usePanelResize(280, 200, 480)
+
     onMounted(() => {
       loadEntries()
       loadPreview()
@@ -195,7 +249,7 @@ export const FileBrowserView = defineComponent({
     watch([currentPath, showHidden], loadEntries)
 
     return () => (
-      <div class="d-flex flex-column" style="height: calc(100dvh - var(--v-layout-top))">
+      <div class="d-flex flex-column fill-height">
         <TitleBar>
           {{
             title: () => (
@@ -220,7 +274,7 @@ export const FileBrowserView = defineComponent({
         </TitleBar>
 
         {/* Toolbar */}
-        <VToolbar density="comfortable" border="b">
+        <VToolbar density="comfortable" color="transparent">
           <VSwitch
             hide-details
             label="Show hidden"
@@ -242,11 +296,13 @@ export const FileBrowserView = defineComponent({
         )}
 
         {/* Three-column body */}
-        <div class="d-flex flex-grow-1 overflow-hidden" style="min-height: 0">
+        <div class="d-flex flex-grow-1 py-2" style="min-height: 0; gap: 0">
           {/* Left: file list */}
-          <div
-            class="flex-shrink-0 d-flex flex-column"
-            style="width:260px; border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); min-height: 0"
+          <VCard
+            class="flex-shrink-0 d-flex flex-column overflow-hidden"
+            style={{ width: `${leftWidth.value}px` }}
+            elevation={2}
+            rounded="lg"
           >
             <VList class="overflow-y-auto flex-grow-1">
               {currentPath.value !== '.' && (
@@ -304,79 +360,92 @@ export const FileBrowserView = defineComponent({
                 <div class="pa-4 text-center text-caption text-disabled">Empty directory</div>
               )}
             </VList>
-          </div>
+          </VCard>
+
+          <PanelDivider onResize={onResizeLeft} />
 
           {/* Center: inline preview */}
-          <div class="flex-grow-1 overflow-hidden d-flex flex-column" style="min-width:0">
-            {previewContent.value ? (
-              <>
-                <div
-                  class="px-3 py-2 text-caption text-disabled d-flex align-center"
-                  style="border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); flex-shrink:0"
-                >
-                  <span class="flex-grow-1" style="font-family:monospace">
-                    {previewTitle.value}
-                  </span>
-                </div>
-                <div class="flex-grow-1 overflow-hidden">
-                  <CodeEditor
-                    modelValue={previewContent.value}
-                    language={previewLanguage.value}
-                    height="100%"
-                    options={{ readOnly: true }}
-                  />
-                </div>
-              </>
-            ) : (
-              <div class="d-flex align-center justify-center fill-height text-disabled text-body-2">
-                Select a file to preview
+          {previewContent.value ? (
+            <VCard
+              class="flex-grow-1 overflow-hidden d-flex flex-column"
+              style="min-width:0"
+              elevation={2}
+              rounded="lg"
+            >
+              <div
+                class="px-3 py-2 text-caption text-disabled d-flex align-center"
+                style="border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); flex-shrink:0"
+              >
+                <span class="flex-grow-1" style="font-family:monospace">
+                  {previewTitle.value}
+                </span>
               </div>
-            )}
-          </div>
+              <div class="flex-grow-1 overflow-hidden">
+                <CodeEditor
+                  modelValue={previewContent.value}
+                  language={previewLanguage.value}
+                  height="100%"
+                  options={{ readOnly: true }}
+                />
+              </div>
+            </VCard>
+          ) : (
+            <div
+              class="flex-grow-1 d-flex align-center justify-center text-disabled text-body-2"
+              style="min-width:0"
+            >
+              Select a file to preview
+            </div>
+          )}
 
           {/* Right: file info panel */}
           {selectedFile.value && showInfo.value && (
-            <div
-              class="overflow-y-auto flex-shrink-0"
-              style="width:280px; border-left: 1px solid rgba(var(--v-border-color), var(--v-border-opacity))"
-            >
-              <div class="pa-3 d-flex align-center ga-2">
-                <VIcon icon={InfoIcon} size={20} />
-                <span class="text-subtitle-2 flex-grow-1">File Information</span>
-                <VBtn icon size="small" variant="text" onClick={closeInfo}>
-                  <VIcon icon={CloseIcon} size={18} />
-                </VBtn>
-              </div>
-              <VDivider />
-              <div class="pa-4 d-flex flex-column ga-4">
-                <div>
-                  <div class="text-caption text-disabled">Name</div>
-                  <div>{selectedFile.value.name}</div>
+            <>
+              <PanelDivider onResize={(delta) => onResizeRight(-delta)} />
+              <VCard
+                class="overflow-y-auto flex-shrink-0"
+                style={{ width: `${rightWidth.value}px` }}
+                elevation={2}
+                rounded="lg"
+              >
+                <div class="pa-3 d-flex align-center ga-2">
+                  <VIcon icon={InfoIcon} size={20} />
+                  <span class="text-subtitle-2 flex-grow-1">File Information</span>
+                  <VBtn icon size="small" variant="text" onClick={closeInfo}>
+                    <VIcon icon={CloseIcon} size={18} />
+                  </VBtn>
                 </div>
-                <div>
-                  <div class="text-caption text-disabled">Path</div>
-                  <div
-                    style={{ wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.8em' }}
-                  >
-                    {selectedFile.value.path}
-                  </div>
-                </div>
-                {!selectedFile.value.isDirectory && (
+                <VDivider />
+                <div class="pa-4 d-flex flex-column ga-4">
                   <div>
-                    <div class="text-caption text-disabled">Size</div>
-                    <div>{formatSize(selectedFile.value.size)}</div>
+                    <div class="text-caption text-disabled">Name</div>
+                    <div>{selectedFile.value.name}</div>
                   </div>
-                )}
-                <div>
-                  <div class="text-caption text-disabled">Modified</div>
-                  <div>{formatDate(selectedFile.value.mtime)}</div>
+                  <div>
+                    <div class="text-caption text-disabled">Path</div>
+                    <div
+                      style={{ wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.8em' }}
+                    >
+                      {selectedFile.value.path}
+                    </div>
+                  </div>
+                  {!selectedFile.value.isDirectory && (
+                    <div>
+                      <div class="text-caption text-disabled">Size</div>
+                      <div>{formatSize(selectedFile.value.size)}</div>
+                    </div>
+                  )}
+                  <div>
+                    <div class="text-caption text-disabled">Modified</div>
+                    <div>{formatDate(selectedFile.value.mtime)}</div>
+                  </div>
+                  <div>
+                    <div class="text-caption text-disabled">Created</div>
+                    <div>{formatDate(selectedFile.value.birthtime)}</div>
+                  </div>
                 </div>
-                <div>
-                  <div class="text-caption text-disabled">Created</div>
-                  <div>{formatDate(selectedFile.value.birthtime)}</div>
-                </div>
-              </div>
-            </div>
+              </VCard>
+            </>
           )}
         </div>
       </div>

@@ -5,6 +5,7 @@ import {
   diffModels,
   EntitySchema,
   EnumSchema,
+  LayoutEntrySchema,
   ModelSchema,
   PackageSchema,
 } from '@xomda/core'
@@ -356,5 +357,12 @@ export const modelRouter = router({
     .query(async ({ input }) => {
       const [before, after] = await Promise.all([readSnapshot(input.snapshotFilename), readModel()])
       return diffModels(before, after)
+    }),
+
+  updateLayout: publicProcedure
+    .input(z.record(z.string(), LayoutEntrySchema))
+    .mutation(async ({ input }) => {
+      const model = await readModel()
+      return writeModel({ ...model, layout: input })
     }),
 })

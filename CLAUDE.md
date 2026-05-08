@@ -54,6 +54,8 @@ pnpm --filter @xomda/<pkg> test         # Single package tests
     - **Pattern**: `src/path/to/MyComponent.tsx` → tests go in `src/path/to/__tests__/MyComponent.spec.tsx`
     - **Naming**: Use `.spec.ts` or `.spec.tsx` (not `.test.ts`); type tests use `.spec-d.ts`
     - **Import**: Import from parent: `import { X } from '../X'`
+13. **No `VNavigationDrawer` for panels**: Navigation uses `AppNav` (`packages/client/src/components/AppNav`); split panels use `PanelDivider` + `usePanelResize`. See `coding-standards.mdc` → UI Layout Patterns.
+14. **Vuetify size/density**: Global defaults in `packages/client/src/vuetify.ts`: `size='small'` + `density='comfortable'` for most components with a size prop; **VBtn uses `density='default'`** (comfortable+small is too tight); `density='compact'` for VList/VListItem/VListSubheader. Do not override inline without reason.
 
 ## Package Structure at a Glance
 

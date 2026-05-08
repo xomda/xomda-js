@@ -50,5 +50,10 @@ export const useLocalStorageStore = defineStore('local-storage', () => {
       get: (): boolean => !!store.value.darkMode,
       set: (value: boolean) => (store.value = { ...store.value, darkMode: value }),
     }) as Ref<boolean>,
+
+    navExpanded: computed({
+      get: (): boolean => !!store.value.navExpanded,
+      set: (value: boolean) => (store.value = { ...store.value, navExpanded: value }),
+    }) as Ref<boolean>,
   }
 })

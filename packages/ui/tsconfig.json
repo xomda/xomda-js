@@ -7,6 +7,7 @@
       "@xomda/icons": ["../icons/src/index.ts"],
       "@xomda/model": ["../model/src/index.ts"]
     },
+    "types": ["node"],
     "declaration": true,
     "declarationDir": "dist",
     "rootDir": "../../"
