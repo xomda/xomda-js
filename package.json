@@ -34,7 +34,7 @@
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@tsconfig/node24": "24.0.4",
-    "@types/node": "^25.7.0",
+    "@types/node": "^25.8.0",
     "@vitest/coverage-v8": "4.1.6",
     "@vue/tsconfig": "0.9.1",
     "@xmldom/xmldom": "^0.9.10",

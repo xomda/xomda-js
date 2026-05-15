@@ -29,7 +29,7 @@
     "vuetify": "4.0.7"
   },
   "devDependencies": {
-    "@types/node": "25.7.0",
+    "@types/node": "25.8.0",
     "typescript": "6.0.3",
     "vitest": "4.1.6"
   }

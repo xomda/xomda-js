@@ -43,7 +43,7 @@
     "@xomda/plugin-analysis-xomda": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "25.7.0",
+    "@types/node": "25.8.0",
     "@vitejs/plugin-vue-jsx": "5.1.5",
     "happy-dom": "20.9.0",
     "typescript": "6.0.3",
