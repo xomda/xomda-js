@@ -4,7 +4,7 @@
   "name": "modelman",
   "image": "mcr.microsoft.com/devcontainers/base:bookworm",
   "features": {
-    "ghcr.io/devcontainers/features/common-utils:2": {
+    "ghcr.io/devcontainers/features/common-utils:": {
       "configureZshAsDefaultShell": "true"
     },
     "ghcr.io/devcontainers/features/node:1": {
