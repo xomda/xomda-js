@@ -47,8 +47,8 @@ dependencies {
     // pure-logic classes (XomdaProjectInfo, XomdaModelReader). Add
     // it back only when the plugin grows tests that actually exercise
     // the IntelliJ Platform fixtures.
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.1.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.2")
 }
 
