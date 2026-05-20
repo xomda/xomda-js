@@ -30,7 +30,7 @@
     "unplugin": "^3.0.0"
   },
   "devDependencies": {
-    "@types/node": "25.9.0",
+    "@types/node": "25.9.1",
     "vitest": "4.1.6"
   },
   "peerDependencies": {

@@ -15,7 +15,7 @@
     "@xomda/unplugin": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "25.9.0",
+    "@types/node": "25.9.1",
     "tsx": "4.22.2",
     "vite": "8.0.13",
     "vitest": "4.1.6"

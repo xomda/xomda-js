@@ -110,7 +110,7 @@
     "@xomda/util": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "25.9.0",
+    "@types/node": "25.9.1",
     "@types/vscode": "1.120.0",
     "@vscode/test-cli": "0.0.12",
     "@vscode/vsce": "3.9.1",

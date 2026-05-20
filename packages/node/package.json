@@ -29,7 +29,7 @@
     "@xomda/util": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "25.9.0",
+    "@types/node": "25.9.1",
     "tsx": "4.22.2"
   }
 }
