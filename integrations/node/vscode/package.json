@@ -116,6 +116,6 @@
     "@vscode/vsce": "3.9.1",
     "rolldown": "1.0.1",
     "typescript": "6.0.3",
-    "vitest": "4.1.6"
+    "vitest": "4.1.7"
   }
 }

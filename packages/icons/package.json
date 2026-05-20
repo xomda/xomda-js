@@ -27,6 +27,6 @@
     "@iconify-json/material-symbols-light": "1.2.73",
     "devicon": "2.17.0",
     "typescript": "6.0.3",
-    "vitest": "4.1.6"
+    "vitest": "4.1.7"
   }
 }

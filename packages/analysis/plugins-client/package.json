@@ -48,6 +48,6 @@
     "@vitejs/plugin-vue-jsx": "5.1.5",
     "happy-dom": "20.9.0",
     "typescript": "6.0.3",
-    "vitest": "4.1.6"
+    "vitest": "4.1.7"
   }
 }
