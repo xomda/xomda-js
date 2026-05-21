@@ -21,6 +21,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@xomda/core": "workspace:*",
     "@xomda/model": "workspace:*",
     "@xomda/template": "workspace:*",
     "@xomda/util": "workspace:*",

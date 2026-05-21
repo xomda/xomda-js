@@ -5,28 +5,41 @@ import type { Model, ModelDiff, Template, TemplateCell } from '@xomda/core'
 import { getAllEntities, getAllEnums, getAllPackages } from '@xomda/core'
 
 import { executeTemplate } from './engine'
+import type { ProjectInfo } from './processors/types'
 import type { RenderResult } from './types'
 
 function hasTopLevelLoop(cells: TemplateCell[]): boolean {
   return cells.some((c) => c.type === 'loop' || c.type === 'loop-logic')
 }
 
+/**
+ * Optional workspace lens for a render. When supplied, `models` and
+ * `projects` loop sources resolve against these; otherwise they fall back
+ * to a singleton ([model] or [<synthetic project>]) so a workspace-scope
+ * loop in a single-model project still iterates exactly once.
+ */
+export interface RenderWorkspace {
+  allModels?: Model[]
+  allProjects?: ProjectInfo[]
+}
+
 export async function renderTemplateByScope(
   template: Template,
   model: Model,
-  diff?: ModelDiff
+  diff?: ModelDiff,
+  workspace?: RenderWorkspace
 ): Promise<RenderResult[]> {
   // Loop cells handle iteration inside the engine. If the template has a
   // top-level loop, run once — the engine recurses.
   if (hasTopLevelLoop(template.cells)) {
-    return (await executeTemplate(template, model, {}, diff)).files
+    return (await executeTemplate(template, model, {}, diff, workspace)).files
   }
 
   // Fallback to legacy template.scope (pre-loop templates).
   if (template.scope === 'Entity') {
     const results = await Promise.all(
       getAllEntities(model).map((entity) =>
-        executeTemplate(template, model, { entity, ...entity }, diff)
+        executeTemplate(template, model, { entity, ...entity }, diff, workspace)
       )
     )
     return results.flatMap((r) => r.files)
@@ -34,7 +47,9 @@ export async function renderTemplateByScope(
 
   if (template.scope === 'Enum') {
     const results = await Promise.all(
-      getAllEnums(model).map((en) => executeTemplate(template, model, { enum: en, ...en }, diff))
+      getAllEnums(model).map((en) =>
+        executeTemplate(template, model, { enum: en, ...en }, diff, workspace)
+      )
     )
     return results.flatMap((r) => r.files)
   }
@@ -42,13 +57,13 @@ export async function renderTemplateByScope(
   if (template.scope === 'Package') {
     const results = await Promise.all(
       getAllPackages(model).map((pkg) =>
-        executeTemplate(template, model, { package: pkg, ...pkg }, diff)
+        executeTemplate(template, model, { package: pkg, ...pkg }, diff, workspace)
       )
     )
     return results.flatMap((r) => r.files)
   }
 
-  return (await executeTemplate(template, model, {}, diff)).files
+  return (await executeTemplate(template, model, {}, diff, workspace)).files
 }
 
 export interface WriteRenderResultsOptions {

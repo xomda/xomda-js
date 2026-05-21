@@ -1,4 +1,5 @@
 import { registerModule } from '../registry'
+import { SettingsRoutes } from './routes'
 
 /**
  * Settings has its own dedicated button in `AppNav` (bottom rail), so this
@@ -9,8 +10,11 @@ registerModule({
   routes: [
     {
       path: '/settings',
-      name: 'settings',
+      name: SettingsRoutes.view,
       component: () => import('./SettingsView').then(({ SettingsView }) => SettingsView),
     },
   ],
 })
+
+export type { SettingsRouteName } from './routes'
+export { SettingsRoutes } from './routes'

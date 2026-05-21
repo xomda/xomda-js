@@ -24,6 +24,10 @@ import {
 
 import { AppTitleBar, PanelDivider, ProjectOverview } from '../../components'
 import { usePanelResize } from '../../composables'
+import { FilesRoutes } from '../files'
+import { ModelRoutes } from '../model'
+import { TemplatesRoutes } from '../templates'
+import { VersionsRoutes } from '../versions'
 import { EditProjectMetaPanel } from './EditProjectMetaPanel'
 import { useHomeData } from './HomeView.logic'
 import styles from './HomeView.module.scss'
@@ -31,7 +35,7 @@ import styles from './HomeView.module.scss'
 interface SectionProps {
   icon: string
   title: string
-  route: string
+  routeName: string
   color: string
 }
 
@@ -39,21 +43,31 @@ const SECTIONS: Record<string, SectionProps> = {
   projects: {
     icon: TreeViewIcon,
     title: 'Projects',
-    route: '/files',
+    routeName: FilesRoutes.browse,
     color: 'rgb(var(--v-theme-secondary))',
   },
-  model: { icon: ModelIcon, title: 'Model', route: '/model', color: 'rgb(var(--v-theme-primary))' },
+  model: {
+    icon: ModelIcon,
+    title: 'Model',
+    routeName: ModelRoutes.view,
+    color: 'rgb(var(--v-theme-primary))',
+  },
   templates: {
     icon: TemplatesIcon,
     title: 'Templates',
-    route: '/templates',
+    routeName: TemplatesRoutes.view,
     color: 'rgb(var(--v-theme-success))',
   },
-  files: { icon: FolderIcon, title: 'Files', route: '/files', color: 'rgb(var(--v-theme-info))' },
+  files: {
+    icon: FolderIcon,
+    title: 'Files',
+    routeName: FilesRoutes.browse,
+    color: 'rgb(var(--v-theme-info))',
+  },
   versions: {
     icon: HistoryIcon,
     title: 'Versions',
-    route: '/versions',
+    routeName: VersionsRoutes.view,
     color: 'rgb(var(--v-theme-warning))',
   },
 }
@@ -400,10 +414,10 @@ export const HomeView = defineComponent({
 
     const renderSection = (s: SectionProps, summary: () => unknown) => (
       <VCard
-        key={s.route}
+        key={s.routeName}
         class={styles.sectionCard}
         style={{ '--card-color': s.color }}
-        onClick={() => router.push(s.route)}
+        onClick={() => router.push({ name: s.routeName })}
         elevation={0}
         rounded="lg"
       >

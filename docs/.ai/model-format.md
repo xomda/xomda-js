@@ -10,6 +10,31 @@ repository.
 `.xomda/model.json` at the project root. Override the parent directory with
 the `XOMDA_DIR` env var (default `.xomda`).
 
+### Multiple models per project
+
+A project may carry **one primary model** plus zero or more **secondary
+models**:
+
+```
+.xomda/
+├── model.json              # primary — always loaded by the CLI default
+└── models/
+    ├── <uuid-a>.json       # secondary models, same `Model` schema
+    └── <uuid-b>.json
+```
+
+The primary at `.xomda/model.json` is the only model `xomda generate`
+operates on by default (and the only one the version-history /
+Publish flow currently supports). Secondary models are first-class for
+editing and template iteration but cannot be `commitVersion`'d — that
+constraint is intentional and the router rejects mismatches with
+`BAD_REQUEST`.
+
+Templates iterate every model in the project via the `models` loop
+source (see `template-format.md`). Cross-project iteration uses
+`projects`. Both default-fallback to a single-model / single-project
+list when only one exists, so existing templates keep working.
+
 ## Root: `Model`
 
 ```ts

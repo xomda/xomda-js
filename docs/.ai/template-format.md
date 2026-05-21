@@ -36,7 +36,7 @@ groupings in the UI but having no effect on generation.
   content: string,        // source (JS / Handlebars / markdown / "" for output)
   variableName?: string,  // bind cell output (or per-iteration value) to a name
   // loop / loop-logic only:
-  loopSource?: 'entities' | 'enums' | 'packages' | 'javascript' | 'diff-*',
+  loopSource?: 'entities' | 'enums' | 'packages' | 'models' | 'projects' | 'javascript' | 'diff-*',
   loopFilter?: string,    // JS predicate run before iteration (TS-side only today; JVM round-trips)
   children?: Cell[],      // executed once per yielded item
   // output only:
@@ -52,7 +52,7 @@ groupings in the UI but having no effect on generation.
 
 | Type | Purpose |
 | --- | --- |
-| `loop` | Iterate a built-in source (`entities` / `enums` / `packages`). `children` run once per item; `variableName` binds the current item (e.g. `$entity`). Loops nest. |
+| `loop` | Iterate a built-in source (`entities` / `enums` / `packages` / `models` / `projects`). `children` run once per item; `variableName` binds the current item (e.g. `$entity`). Loops nest. See "Workspace-level loops" below for `models` / `projects` semantics. |
 | `loop-logic` | Like `loop` but `content` is a JavaScript generator function yielding items. Sees outer loop variables as parameters. |
 | `logic` | JavaScript executed in the shared context. Top-level `name = …` (no `let`/`const`) exposes the variable to later cells. |
 | `handlebars` | Handlebars template string rendered with the current context. Output appends to the current cell's `$out` buffer. With `variableName`, the rendered string is also bound. |
@@ -70,6 +70,49 @@ groupings in the UI but having no effect on generation.
 
 A second `output` cell at the same level only consumes what was written
 between the two outputs (each `output` consumes the buffer behind it).
+
+## Workspace-level loops: `models` and `projects`
+
+Two loop sources iterate at the workspace level rather than inside a
+single model:
+
+- `loopSource: 'models'` — iterates every model in the active project
+  (the primary at `.xomda/model.json` plus every secondary under
+  `.xomda/models/`). **Inside this loop the engine swaps `execCtx.model`
+  per iteration**, so nested `entities` / `enums` / `packages` loops
+  resolve against the iterated model. The iteration variable is bound
+  to the full `Model` object.
+- `loopSource: 'projects'` — iterates every project in the workspace
+  (cwd-resolved project + subprojects discovered under `.xomda/`,
+  stopping at `isRoot: true` boundaries). Each iteration exposes
+  `{ root, name, isRoot, models }`. The engine does **not** swap
+  `execCtx.model` (a project has multiple models — no single "current"
+  to swap to); nest a `models` loop inside to descend.
+
+When the workspace contains only one project / one model, both loops
+iterate once (the singleton fallback) — templates remain valid on
+fresh single-project repos.
+
+```jsonc
+// One file per model in the project, listing its entities.
+{
+  "type": "loop",
+  "loopSource": "models",
+  "variableName": "$model",
+  "children": [
+    {
+      "type": "loop",
+      "loopSource": "entities",
+      "variableName": "$entity",
+      "children": [/* … */]
+    },
+    {
+      "type": "output",
+      "outputFilename": "{{ $model.name }}.txt"
+    }
+  ]
+}
+```
 
 ## Handlebars helper library
 

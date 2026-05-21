@@ -21,7 +21,7 @@ import { DEFAULT_PROJECT_SCAN_EXCLUDES, type ProjectFile, ProjectFileSchema } fr
 import { createLogger } from '@xomda/util'
 import { z } from 'zod'
 
-import { readProjectMeta, saveProjectMeta } from '../storage'
+import { listModelDescriptors, readProjectMeta, saveProjectMeta } from '../storage'
 import { publicProcedure, router } from './trpc'
 
 const log = createLogger('project.router')
@@ -475,4 +475,65 @@ export const projectRouter = router({
       )
       return { data }
     }),
+
+  /**
+   * Bundle the cwd-resolved project and its nested xomda subprojects into
+   * a single query response shaped for the workspace selector. Each entry
+   * carries every model in the project (lightweight descriptors only —
+   * the full model is loaded on demand via `model.get`).
+   *
+   * `isRoot: true` on a subproject denotes a workspace boundary — the
+   * recursive walk does not descend into its children, mirroring the
+   * existing `walkForSubprojects` semantics.
+   */
+  workspace: publicProcedure
+    .input(z.object({ root: z.string().default('.') }).default({ root: '.' }))
+    .query(async ({ input }): Promise<WorkspaceResponse> => {
+      const rootPath = resolveAgainstCwd(input.root)
+      const buildEntry = async (
+        absRoot: string,
+        fallbackName: string,
+        isRootFlag: boolean | null = null
+      ): Promise<WorkspaceProjectInfo> => {
+        const meta = await readProjectMeta(absRoot).catch(() => null)
+        const models = await listModelDescriptors(absRoot).catch(() => [])
+        return {
+          root: absRoot,
+          name: meta?.name ?? fallbackName,
+          isRoot: isRootFlag ?? meta?.settings.isRoot ?? false,
+          ...(meta?.description !== undefined ? { description: meta.description } : {}),
+          models,
+        }
+      }
+      const workspaceEntry = await buildEntry(rootPath, rootPath.split(/[\\/]/).pop() ?? 'project')
+
+      const plugin = findProjectKindPlugin()
+      const rawSubs = (await plugin?.projectKind?.hooks?.listSubprojects?.(rootPath)) ?? []
+      const subprojects = await Promise.all(
+        rawSubs.map(async (s) => buildEntry(resolve(rootPath, s.path), s.name, s.isRoot))
+      )
+      return { workspace: workspaceEntry, subprojects }
+    }),
 })
+
+export interface WorkspaceProjectInfo {
+  /** Absolute path of the project root. */
+  root: string
+  /** Project name from project.json, or basename fallback. */
+  name: string
+  /** Whether this project's `settings.isRoot` is true (a workspace boundary). */
+  isRoot: boolean
+  description?: string
+  models: Array<{
+    id: string
+    name: string
+    version: string
+    updatedAt?: string
+    isPrimary: boolean
+  }>
+}
+
+export interface WorkspaceResponse {
+  workspace: WorkspaceProjectInfo
+  subprojects: WorkspaceProjectInfo[]
+}

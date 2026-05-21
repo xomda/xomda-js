@@ -39,6 +39,7 @@ import { usePanelResize, usePluginIcons } from '../../composables'
 import { trpc } from '../../trpc'
 import { FolderTreeNode } from '../files/FolderTreeNode'
 import type { FileEntry, TreeNode } from '../files/types'
+import { TemplatesRoutes } from '../templates'
 
 interface GeneratedResult {
   outputPath: string
@@ -170,7 +171,7 @@ export const GenerateView = defineComponent({
       const t = templatesById.value.get(id)
       if (!t) return null
       const folderPath = t.folder ? t.folder.split('/').filter(Boolean) : []
-      return { name: 'templates', params: { folderPath }, query: { template: t.uuid } }
+      return { name: TemplatesRoutes.view, params: { folderPath }, query: { template: t.uuid } }
     }
     const { loading: genLoading, error: genError, run: genRun } = useAsyncState<GeneratedResult[]>()
     const showGenLoading = useDelayedLoading(genLoading)

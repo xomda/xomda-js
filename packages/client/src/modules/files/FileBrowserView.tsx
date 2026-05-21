@@ -42,6 +42,7 @@ import { useFolderProjectIcons, usePanelResize, usePluginIcons } from '../../com
 import { trpc } from '../../trpc'
 import { FolderListView } from './FolderListView'
 import { FolderTreeView } from './FolderTreeView'
+import { FilesRoutes } from './routes'
 import type { FileEntry, PreviewMap } from './types'
 import { type SelectedView, useFilePreview } from './useFilePreview'
 import { mergeWithVirtualEntries } from './useFolderEntries'
@@ -184,7 +185,7 @@ export const FileBrowserView = defineComponent({
         if (typeof v === 'string') next[k] = v
       }
       if (viewId) next.view = viewId
-      router.replace({ name: 'files', params: route.params, query: next })
+      router.replace({ name: FilesRoutes.browse, params: route.params, query: next })
     }
 
     // When views resolve for a newly-selected file, normalise the URL
@@ -292,7 +293,7 @@ export const FileBrowserView = defineComponent({
 
     const navigateTo = (path: string) => {
       router.push({
-        name: 'files',
+        name: FilesRoutes.browse,
         params: { dirPath: dirPathSegments(path) },
         query: route.query,
       })
@@ -305,7 +306,7 @@ export const FileBrowserView = defineComponent({
 
     const updateSelectedFileInUrl = (parent: string, fileName: string | null) => {
       router.replace({
-        name: 'files',
+        name: FilesRoutes.browse,
         params: { dirPath: dirPathSegments(parent) },
         query: fileName ? { file: fileName } : {},
       })
@@ -392,7 +393,7 @@ export const FileBrowserView = defineComponent({
     const onTreeSelectFile = (path: string, entry: FileEntry) => {
       const parent = parentPath(path)
       router.push({
-        name: 'files',
+        name: FilesRoutes.browse,
         params: { dirPath: dirPathSegments(parent) },
         query: { file: entry.name },
       })
@@ -478,7 +479,7 @@ export const FileBrowserView = defineComponent({
       const dir = slash >= 0 ? resolved.slice(0, slash) : '.'
       const name = slash >= 0 ? resolved.slice(slash + 1) : resolved
       router.push({
-        name: 'files',
+        name: FilesRoutes.browse,
         params: { dirPath: dirPathSegments(dir) },
         query: { file: name },
       })

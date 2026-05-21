@@ -1,6 +1,9 @@
 import { computed, defineComponent, type PropType, ref } from 'vue'
+import { VHover } from 'vuetify/components'
 
 import styles from './PanelDivider.module.scss'
+
+const HOVER_ARM_DELAY_MS = 350
 
 export const PanelDivider = defineComponent({
   name: 'PanelDivider',
@@ -12,35 +15,16 @@ export const PanelDivider = defineComponent({
   },
   emits: ['resize'],
   setup(props, { emit }) {
-    const handleVisible = ref(false)
     const dragging = ref(false)
     const crossPos = ref(0)
     const dragDirection = ref<'neg' | 'pos' | null>(null)
-    let hoverTimer: ReturnType<typeof setTimeout> | null = null
     let lastMain = 0
 
     const isVertical = computed(() => props.orientation === 'vertical')
 
-    function onPointerEnter() {
-      hoverTimer = setTimeout(() => {
-        handleVisible.value = true
-      }, 350)
-    }
-
-    function onPointerLeave() {
-      if (hoverTimer !== null) {
-        clearTimeout(hoverTimer)
-        hoverTimer = null
-      }
-      if (!dragging.value) {
-        handleVisible.value = false
-      }
-    }
-
     function onPointerDown(e: PointerEvent) {
       if (e.button !== 0) return
       dragging.value = true
-      handleVisible.value = true
       dragDirection.value = null
       lastMain = isVertical.value ? e.clientY : e.clientX
       ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
@@ -62,36 +46,54 @@ export const PanelDivider = defineComponent({
 
     function onPointerUp() {
       dragging.value = false
-      handleVisible.value = false
       dragDirection.value = null
     }
 
     return () => {
       const vertical = isVertical.value
       const dir = dragDirection.value
+      // `openDelay`: VHover replaces the hand-rolled setTimeout arm. The
+      // handle stays visible while dragging even if the pointer leaves the
+      // strip — that's the OR with `dragging.value` below.
       return (
-        <div
-          class={[
-            styles.divider,
-            vertical ? styles.vertical : styles.horizontal,
-            dragging.value && styles.dragging,
-            dir === 'neg' && (vertical ? styles.draggingUp : styles.draggingLeft),
-            dir === 'pos' && (vertical ? styles.draggingDown : styles.draggingRight),
-          ]}
-          role="separator"
-          aria-orientation={vertical ? 'horizontal' : 'vertical'}
-          data-panel-divider={vertical ? 'horizontal' : 'vertical'}
-          onPointerenter={onPointerEnter}
-          onPointerleave={onPointerLeave}
-          onPointerdown={onPointerDown}
-          onPointermove={onPointerMove}
-          onPointerup={onPointerUp}
-        >
-          <div
-            class={[styles.handle, handleVisible.value && styles.handleVisible]}
-            style={vertical ? { left: `${crossPos.value}px` } : { top: `${crossPos.value}px` }}
-          />
-        </div>
+        <VHover openDelay={HOVER_ARM_DELAY_MS}>
+          {{
+            default: ({
+              isHovering,
+              props: hoverProps,
+            }: {
+              isHovering: boolean
+              props: Record<string, unknown>
+            }) => (
+              <div
+                {...hoverProps}
+                class={[
+                  styles.divider,
+                  vertical ? styles.vertical : styles.horizontal,
+                  dragging.value && styles.dragging,
+                  dir === 'neg' && (vertical ? styles.draggingUp : styles.draggingLeft),
+                  dir === 'pos' && (vertical ? styles.draggingDown : styles.draggingRight),
+                ]}
+                role="separator"
+                aria-orientation={vertical ? 'horizontal' : 'vertical'}
+                data-panel-divider={vertical ? 'horizontal' : 'vertical'}
+                onPointerdown={onPointerDown}
+                onPointermove={onPointerMove}
+                onPointerup={onPointerUp}
+              >
+                <div
+                  class={[
+                    styles.handle,
+                    (isHovering || dragging.value) && styles.handleVisible,
+                  ]}
+                  style={
+                    vertical ? { left: `${crossPos.value}px` } : { top: `${crossPos.value}px` }
+                  }
+                />
+              </div>
+            ),
+          }}
+        </VHover>
       )
     }
   },

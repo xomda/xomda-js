@@ -1,6 +1,6 @@
 import { CloseIcon } from '@xomda/icons'
 import { defineComponent, onBeforeUnmount, watch } from 'vue'
-import { VBtn } from 'vuetify/components'
+import { VBtn, VSlideXReverseTransition } from 'vuetify/components'
 
 import {
   type Notification,
@@ -157,7 +157,9 @@ export const NotificationHost = defineComponent({
 
       return (
         <div class={styles.host}>
-          {store.items.map(renderToast)}
+          {/* `group` turns the transition into a TransitionGroup so each
+              toast slides in/out independently while the others reflow. */}
+          <VSlideXReverseTransition group>{store.items.map(renderToast)}</VSlideXReverseTransition>
           <div
             class={styles.srOnly}
             role="region"

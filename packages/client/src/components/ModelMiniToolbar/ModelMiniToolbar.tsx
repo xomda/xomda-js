@@ -10,7 +10,7 @@ import {
 } from '@xomda/icons'
 import { MenuButton, type MenuItemConfig } from '@xomda/ui'
 import { computed, defineComponent, type PropType } from 'vue'
-import { VBtn, VTooltip } from 'vuetify/components'
+import { VBtn, VFadeTransition, VTooltip } from 'vuetify/components'
 
 import { useFloatingDrag } from '../../composables'
 import styles from './ModelMiniToolbar.module.scss'
@@ -102,7 +102,6 @@ export const ModelMiniToolbar = defineComponent({
     }
 
     return () => {
-      if (!visible.value) return null
       const sel = props.selection
       const positionStyle = props.anchor
         ? {
@@ -113,158 +112,162 @@ export const ModelMiniToolbar = defineComponent({
           ? { transform: `translate(${drag.offset.value.dx}px, ${drag.offset.value.dy}px)` }
           : undefined
       return (
-        <div
-          class={styles.toolbar}
-          style={positionStyle}
-          role="toolbar"
-          aria-label="Model view toolbar"
-        >
-          {sel?.kind === 'entity' && (
-            <>
-              <span class={[styles.label, styles.labelDraggable]} {...titleHandlers}>
-                Entity
-              </span>
-              <VTooltip text="Add attribute" location="bottom">
-                {{
-                  activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
-                    <VBtn
-                      {...tipProps}
-                      icon={AddIcon}
-                      variant="text"
-                      size="small"
-                      density="comfortable"
-                      aria-label="Add attribute"
-                      onClick={() => props.onAddAttribute?.()}
-                    />
-                  ),
-                }}
-              </VTooltip>
-              <div class={styles.divider} aria-hidden="true" />
-            </>
-          )}
-          {sel?.kind === 'enum' && (
-            <>
-              <span class={[styles.label, styles.labelDraggable]} {...titleHandlers}>
-                Enum
-              </span>
-              <VTooltip text="Add value" location="bottom">
-                {{
-                  activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
-                    <VBtn
-                      {...tipProps}
-                      icon={AddIcon}
-                      variant="text"
-                      size="small"
-                      density="comfortable"
-                      aria-label="Add enum value"
-                      onClick={() => props.onAddEnumValue?.()}
-                    />
-                  ),
-                }}
-              </VTooltip>
-              <div class={styles.divider} aria-hidden="true" />
-            </>
-          )}
-          {sel?.kind === 'package' && (
-            <>
-              <span class={[styles.label, styles.labelDraggable]} {...titleHandlers}>
-                Package
-              </span>
-              <VTooltip text="Add entity" location="bottom">
-                {{
-                  activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
-                    <VBtn
-                      {...tipProps}
-                      icon={EntityIcon}
-                      variant="text"
-                      size="small"
-                      density="comfortable"
-                      aria-label="Add entity"
-                      onClick={() => props.onAddEntity?.()}
-                    />
-                  ),
-                }}
-              </VTooltip>
-              <VTooltip text="Add enum" location="bottom">
-                {{
-                  activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
-                    <VBtn
-                      {...tipProps}
-                      icon={EnumIcon}
-                      variant="text"
-                      size="small"
-                      density="comfortable"
-                      aria-label="Add enum"
-                      onClick={() => props.onAddEnum?.()}
-                    />
-                  ),
-                }}
-              </VTooltip>
-              <VTooltip text="Add nested package" location="bottom">
-                {{
-                  activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
-                    <VBtn
-                      {...tipProps}
-                      icon={PackageIcon}
-                      variant="text"
-                      size="small"
-                      density="comfortable"
-                      aria-label="Add nested package"
-                      onClick={() => props.onAddNestedPackage?.()}
-                    />
-                  ),
-                }}
-              </VTooltip>
-              <div class={styles.divider} aria-hidden="true" />
-            </>
-          )}
-          {sel != null && (
-            <>
-              <MenuButton
-                icon={MoveToFolderIcon}
-                tooltip="Move to package"
-                ariaLabel="Move to package"
-                items={moveItems.value}
-              />
-              <div class={styles.divider} aria-hidden="true" />
-              <VTooltip text="Drag scene" location="bottom">
-                {{
-                  activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
-                    <VBtn
-                      {...tipProps}
-                      icon={OpenWithIcon}
-                      variant="text"
-                      size="small"
-                      density="comfortable"
-                      aria-label="Drag scene"
-                      onClick={() => props.onSwitchToPanMode?.()}
-                    />
-                  ),
-                }}
-              </VTooltip>
-            </>
-          )}
-          {sel != null && props.onClose && (
-            <>
-              <div class={styles.divider} aria-hidden="true" />
-              <VTooltip text="Close" location="bottom">
-                {{
-                  activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
-                    <VBtn
-                      {...tipProps}
-                      icon={CloseIcon}
-                      variant="text"
-                      size="small"
-                      density="comfortable"
-                      aria-label="Close toolbar"
-                      onClick={() => props.onClose?.()}
-                    />
-                  ),
-                }}
-              </VTooltip>
-            </>
-          )}
-        </div>
+        <VFadeTransition>
+          {visible.value ? (
+            <div
+              class={styles.toolbar}
+              style={positionStyle}
+              role="toolbar"
+              aria-label="Model view toolbar"
+            >
+              {sel?.kind === 'entity' && (
+                <>
+                  <span class={[styles.label, styles.labelDraggable]} {...titleHandlers}>
+                    Entity
+                  </span>
+                  <VTooltip text="Add attribute" location="bottom">
+                    {{
+                      activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
+                        <VBtn
+                          {...tipProps}
+                          icon={AddIcon}
+                          variant="text"
+                          size="small"
+                          density="comfortable"
+                          aria-label="Add attribute"
+                          onClick={() => props.onAddAttribute?.()}
+                        />
+                      ),
+                    }}
+                  </VTooltip>
+                  <div class={styles.divider} aria-hidden="true" />
+                </>
+              )}
+              {sel?.kind === 'enum' && (
+                <>
+                  <span class={[styles.label, styles.labelDraggable]} {...titleHandlers}>
+                    Enum
+                  </span>
+                  <VTooltip text="Add value" location="bottom">
+                    {{
+                      activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
+                        <VBtn
+                          {...tipProps}
+                          icon={AddIcon}
+                          variant="text"
+                          size="small"
+                          density="comfortable"
+                          aria-label="Add enum value"
+                          onClick={() => props.onAddEnumValue?.()}
+                        />
+                      ),
+                    }}
+                  </VTooltip>
+                  <div class={styles.divider} aria-hidden="true" />
+                </>
+              )}
+              {sel?.kind === 'package' && (
+                <>
+                  <span class={[styles.label, styles.labelDraggable]} {...titleHandlers}>
+                    Package
+                  </span>
+                  <VTooltip text="Add entity" location="bottom">
+                    {{
+                      activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
+                        <VBtn
+                          {...tipProps}
+                          icon={EntityIcon}
+                          variant="text"
+                          size="small"
+                          density="comfortable"
+                          aria-label="Add entity"
+                          onClick={() => props.onAddEntity?.()}
+                        />
+                      ),
+                    }}
+                  </VTooltip>
+                  <VTooltip text="Add enum" location="bottom">
+                    {{
+                      activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
+                        <VBtn
+                          {...tipProps}
+                          icon={EnumIcon}
+                          variant="text"
+                          size="small"
+                          density="comfortable"
+                          aria-label="Add enum"
+                          onClick={() => props.onAddEnum?.()}
+                        />
+                      ),
+                    }}
+                  </VTooltip>
+                  <VTooltip text="Add nested package" location="bottom">
+                    {{
+                      activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
+                        <VBtn
+                          {...tipProps}
+                          icon={PackageIcon}
+                          variant="text"
+                          size="small"
+                          density="comfortable"
+                          aria-label="Add nested package"
+                          onClick={() => props.onAddNestedPackage?.()}
+                        />
+                      ),
+                    }}
+                  </VTooltip>
+                  <div class={styles.divider} aria-hidden="true" />
+                </>
+              )}
+              {sel != null && (
+                <>
+                  <MenuButton
+                    icon={MoveToFolderIcon}
+                    tooltip="Move to package"
+                    ariaLabel="Move to package"
+                    items={moveItems.value}
+                  />
+                  <div class={styles.divider} aria-hidden="true" />
+                  <VTooltip text="Drag scene" location="bottom">
+                    {{
+                      activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
+                        <VBtn
+                          {...tipProps}
+                          icon={OpenWithIcon}
+                          variant="text"
+                          size="small"
+                          density="comfortable"
+                          aria-label="Drag scene"
+                          onClick={() => props.onSwitchToPanMode?.()}
+                        />
+                      ),
+                    }}
+                  </VTooltip>
+                </>
+              )}
+              {sel != null && props.onClose && (
+                <>
+                  <div class={styles.divider} aria-hidden="true" />
+                  <VTooltip text="Close" location="bottom">
+                    {{
+                      activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
+                        <VBtn
+                          {...tipProps}
+                          icon={CloseIcon}
+                          variant="text"
+                          size="small"
+                          density="comfortable"
+                          aria-label="Close toolbar"
+                          onClick={() => props.onClose?.()}
+                        />
+                      ),
+                    }}
+                  </VTooltip>
+                </>
+              )}
+            </div>
+          ) : null}
+        </VFadeTransition>
       )
     }
   },

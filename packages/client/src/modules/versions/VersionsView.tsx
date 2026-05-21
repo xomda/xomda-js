@@ -18,6 +18,7 @@ import {
 import { AppTitleBar, CommitModal, ModelDiffView, PanelDivider } from '../../components'
 import { useAsyncState, usePanelResize } from '../../composables'
 import { trpc } from '../../trpc'
+import { VersionsRoutes } from './routes'
 
 const CURRENT_OPTION = '__current__'
 
@@ -78,7 +79,7 @@ export const VersionsView = defineComponent({
         if (found) {
           selectedId.value = found.id
           compareBeforeId.value = found.id
-          void router.replace({ path: '/versions', query: {} })
+          void router.replace({ name: VersionsRoutes.view, query: {} })
         }
       },
       { immediate: true }

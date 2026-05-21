@@ -21,6 +21,7 @@ vi.mock('../../../trpc', () => ({
   },
 }))
 
+import { SettingsRoutes } from '../routes'
 import { SettingsView } from '../SettingsView'
 
 const vuetify = createVuetify()
@@ -35,7 +36,7 @@ const baseMeta = () => ({
 const makeRouter = (initialPath = '/settings'): Router =>
   createRouter({
     history: createMemoryHistory(),
-    routes: [{ path: '/settings', name: 'settings', component: SettingsView }],
+    routes: [{ path: '/settings', name: SettingsRoutes.view, component: SettingsView }],
     // History start position; tests set hash via router.push afterwards if needed.
     ...({ initialPath } as Record<string, unknown>),
   })

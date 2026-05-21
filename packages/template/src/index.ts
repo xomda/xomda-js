@@ -7,6 +7,7 @@ export type {
   CellProcessor,
   CellState,
   ExecutionContext,
+  ProjectInfo,
 } from './processors'
 export {
   collectLoopItems,
@@ -14,7 +15,7 @@ export {
   createExecutionContext,
   PROCESSORS,
 } from './processors'
-export type { WriteRenderResultsOptions } from './renderer'
+export type { RenderWorkspace, WriteRenderResultsOptions } from './renderer'
 export { renderTemplateByScope, writeRenderResults } from './renderer'
 export {
   deleteTemplate,

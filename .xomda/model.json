@@ -768,6 +768,52 @@
           ],
           "description": "Root container for the entire model definition.",
           "abstract": false
+        },
+        {
+          "id": "f1f1f1f1-0001-4000-b000-000000000001",
+          "name": "Project",
+          "attributes": [
+            {
+              "id": "f1f1f1f1-0001-4000-b000-000000000002",
+              "name": "name",
+              "type": "string",
+              "required": true,
+              "multiValue": false,
+              "primaryKey": true,
+              "unique": true
+            },
+            {
+              "id": "f1f1f1f1-0001-4000-b000-000000000003",
+              "name": "description",
+              "type": "string",
+              "required": false,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false
+            },
+            {
+              "id": "f1f1f1f1-0001-4000-b000-000000000004",
+              "name": "isRoot",
+              "type": "boolean",
+              "required": false,
+              "multiValue": false,
+              "primaryKey": false,
+              "unique": false,
+              "description": "When true, this project is a workspace boundary — recursive walks list but do not descend into it."
+            },
+            {
+              "id": "f1f1f1f1-0001-4000-b000-000000000005",
+              "name": "models",
+              "type": "Model",
+              "required": false,
+              "multiValue": true,
+              "primaryKey": false,
+              "unique": false,
+              "description": "Models that belong to this project. A primary model lives at .xomda/model.json; secondary models live under .xomda/models/<id>.json."
+            }
+          ],
+          "description": "A xomda project rooted at a directory containing .xomda/. Owns one or more Models and zero or more Templates.",
+          "abstract": false
         }
       ],
       "description": "Self-describing core model: xomda's own structural types defined within xomda."

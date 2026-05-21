@@ -9,6 +9,7 @@ export type {
   CellProcessor,
   CellState,
   ExecutionContext,
+  ProjectInfo,
   TemplateExecutionResult,
 } from './types'
 export { OutputBuffer } from './utils'

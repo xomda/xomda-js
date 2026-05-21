@@ -122,7 +122,7 @@ const ALLOWED: Record<string, ReadonlySet<string>> = {
     '@xomda/util',
   ]),
   '@xomda/node': new Set(['@xomda/model', '@xomda/util']),
-  '@xomda/cli': new Set(['@xomda/model', '@xomda/template', '@xomda/util']),
+  '@xomda/cli': new Set(['@xomda/core', '@xomda/model', '@xomda/template', '@xomda/util']),
   '@xomda/client': new Set([
     '@xomda/analysis-client',
     '@xomda/analysis-core',

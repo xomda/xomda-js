@@ -2,7 +2,12 @@ import type { Model, ModelDiff, Template, TemplateCell } from '@xomda/core'
 
 import { collectLoopItems } from './processors/loop'
 import { createCellInstance, createExecutionContext } from './processors/registry'
-import type { CellOutput, ExecutionContext, TemplateExecutionResult } from './processors/types'
+import type {
+  CellOutput,
+  ExecutionContext,
+  ProjectInfo,
+  TemplateExecutionResult,
+} from './processors/types'
 import { OutputBuffer } from './processors/utils'
 
 export { OutputBuffer } from './processors/utils'
@@ -52,6 +57,8 @@ async function executeCells(
         parentIndex: execCtx.parentIndex,
         ctx: execCtx.scopeContext,
         filter: cell.loopFilter,
+        ...(execCtx.allModels !== undefined ? { allModels: execCtx.allModels } : {}),
+        ...(execCtx.allProjects !== undefined ? { allProjects: execCtx.allProjects } : {}),
       })
       for (const [idx, item] of items.entries()) {
         iterationCount++
@@ -59,8 +66,15 @@ async function executeCells(
           [varName]: item,
           ...(item !== null && typeof item === 'object' ? (item as Record<string, unknown>) : {}),
         }
+        // Workspace-scope swap: inside a `models` loop, the iterated item
+        // becomes the model `execCtx.model` for child cells, so a nested
+        // `entities`/`enums`/`packages` loop resolves against that model
+        // instead of the outer one. `projects` does NOT swap — a project
+        // has multiple models, so authors nest a `models` loop inside.
+        const iteratedModel: unknown =
+          source === 'models' && item !== null && typeof item === 'object' ? item : execCtx.model
         const iterCtx: ExecutionContext = {
-          model: execCtx.model,
+          model: iteratedModel,
           scopeContext: execCtx.scopeContext,
           helpers: execCtx.helpers,
           templateUuid: execCtx.templateUuid,
@@ -70,6 +84,8 @@ async function executeCells(
           files: execCtx.files,
           currentItem: item,
           parentIndex: idx,
+          ...(execCtx.allModels !== undefined ? { allModels: execCtx.allModels } : {}),
+          ...(execCtx.allProjects !== undefined ? { allProjects: execCtx.allProjects } : {}),
         }
         const childOutputs = await executeCells(cell.children ?? [], iterCtx)
         iterationOutputs.push(...childOutputs)
@@ -96,9 +112,10 @@ export async function executeTemplate(
   template: Template,
   model: Model,
   scopeContext: Record<string, unknown> = {},
-  diff?: ModelDiff
+  diff?: ModelDiff,
+  workspace?: { allModels?: Model[]; allProjects?: ProjectInfo[] }
 ): Promise<TemplateExecutionResult> {
-  const execCtx = createExecutionContext(template, model, scopeContext, diff)
+  const execCtx = createExecutionContext(template, model, scopeContext, diff, workspace)
   const cellOutputs = await executeCells(template.cells, execCtx)
   return {
     files: execCtx.files,

@@ -104,3 +104,17 @@
   align-items: center;
   justify-content: center;
 }
+
+// Borderless baseline for the labelled MenuButton (title-bar dropdown
+// look). A 1px transparent border reserves layout space; on hover the
+// border softens to the Vuetify token so the affordance is discoverable
+// without shifting layout. Dark-mode parity is automatic through the
+// CSS variable.
+.labeledHover :global(.v-btn) {
+  border: 1px solid transparent;
+  transition: border-color 120ms ease-out;
+
+  &:hover {
+    border-color: rgba(var(--v-border-color, 0, 0, 0), var(--v-border-opacity, 0.12));
+  }
+}

@@ -748,6 +748,9 @@ importers:
 
   packages/cli:
     dependencies:
+      '@xomda/core':
+        specifier: workspace:*
+        version: link:../core
       '@xomda/model':
         specifier: workspace:*
         version: link:../model

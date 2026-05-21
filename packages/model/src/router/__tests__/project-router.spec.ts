@@ -496,3 +496,75 @@ describe('projectRouter.viewData', () => {
     expect(r.data).toBeUndefined()
   })
 })
+
+describe('projectRouter.workspace', () => {
+  let root: string
+
+  beforeEach(async () => {
+    root = await mkdtemp(join(tmpdir(), 'xomda-workspace-'))
+  })
+
+  afterEach(async () => {
+    await rm(root, { recursive: true, force: true })
+  })
+
+  it('returns the root workspace with a single primary model when no models exist', async () => {
+    await mkdir(join(root, XOMDA_DIR), { recursive: true })
+    await writeFile(
+      join(root, XOMDA_DIR, 'project.json'),
+      JSON.stringify({ name: 'root-proj', settings: { isRoot: true }, plugins: [] }),
+      'utf-8'
+    )
+    const result = await caller.workspace({ root })
+    expect(result.workspace.name).toBe('root-proj')
+    expect(result.workspace.isRoot).toBe(true)
+    expect(result.workspace.models).toEqual([])
+    expect(result.subprojects).toEqual([])
+  })
+
+  it('surfaces nested xomda subprojects with their isRoot flag and models', async () => {
+    // root project
+    await mkdir(join(root, XOMDA_DIR), { recursive: true })
+    await writeFile(
+      join(root, XOMDA_DIR, 'project.json'),
+      JSON.stringify({ name: 'root', settings: { isRoot: true }, plugins: [] }),
+      'utf-8'
+    )
+    await writeFile(
+      join(root, XOMDA_DIR, 'model.json'),
+      JSON.stringify({
+        id: '11111111-1111-4111-8111-111111111111',
+        name: 'RootModel',
+        version: '1.0.0',
+        packages: [],
+      }),
+      'utf-8'
+    )
+    // a non-isRoot subproject
+    await mkdir(join(root, 'sub', XOMDA_DIR), { recursive: true })
+    await writeFile(
+      join(root, 'sub', XOMDA_DIR, 'project.json'),
+      JSON.stringify({ name: 'sub-proj', settings: { isRoot: false }, plugins: [] }),
+      'utf-8'
+    )
+    // an isRoot subproject (boundary)
+    await mkdir(join(root, 'isolated', XOMDA_DIR), { recursive: true })
+    await writeFile(
+      join(root, 'isolated', XOMDA_DIR, 'project.json'),
+      JSON.stringify({ name: 'isolated', settings: { isRoot: true }, plugins: [] }),
+      'utf-8'
+    )
+
+    const result = await caller.workspace({ root })
+    expect(result.workspace.name).toBe('root')
+    expect(result.workspace.models.map((m) => m.name)).toEqual(['RootModel'])
+    expect(result.workspace.models[0].isPrimary).toBe(true)
+
+    const subNames = result.subprojects.map((s) => s.name).sort()
+    expect(subNames).toEqual(['isolated', 'sub-proj'])
+    const isolated = result.subprojects.find((s) => s.name === 'isolated')!
+    expect(isolated.isRoot).toBe(true)
+    const sub = result.subprojects.find((s) => s.name === 'sub-proj')!
+    expect(sub.isRoot).toBe(false)
+  })
+})

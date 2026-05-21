@@ -2,13 +2,14 @@ import { useNotificationsStore } from '@xomda/ui'
 import { setLogSink } from '@xomda/util'
 
 import { registerModule } from '../registry'
+import { LogsRoutes } from './routes'
 
 registerModule({
   id: 'logs',
   routes: [
     {
       path: '/logs',
-      name: 'logs',
+      name: LogsRoutes.view,
       component: () => import('./LogsView').then(({ LogsView }) => LogsView),
     },
   ],
@@ -33,3 +34,6 @@ registerModule({
     })
   },
 })
+
+export type { LogsRouteName } from './routes'
+export { LogsRoutes } from './routes'

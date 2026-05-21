@@ -249,4 +249,185 @@ describe('loop cell hierarchy', () => {
     const result = await executeTemplate(template, modelWith([]))
     expect(result.files[0].content).toBe('P1,P2,')
   })
+
+  describe('workspace-scope loop sources', () => {
+    it('models loop falls back to a singleton when allModels is omitted', async () => {
+      const template = tpl([
+        {
+          uuid: crypto.randomUUID(),
+          type: 'loop',
+          content: '',
+          loopSource: 'models',
+          variableName: 'm',
+          children: [{ uuid: crypto.randomUUID(), type: 'handlebars', content: '{{m.name}};' }],
+        },
+        {
+          uuid: crypto.randomUUID(),
+          type: 'output',
+          content: '',
+          outputFilename: 'out.txt',
+        },
+      ])
+      const result = await executeTemplate(template, modelWith([{ name: 'A' }]))
+      // Singleton: exactly one iteration, with the active model's name.
+      expect(result.files[0].content).toBe('M;')
+    })
+
+    it('nested entities loop inside a models loop sees each iterated model', async () => {
+      // The load-bearing test for the engine scope swap: when iterating
+      // `models`, child loops over `entities` must resolve against the
+      // iterated model — not the outer one.
+      const modelA: Model = {
+        id: 'a',
+        name: 'A',
+        version: '1.0.0',
+        packages: [
+          {
+            id: 'p-a',
+            name: 'pa',
+            packages: [],
+            enums: [],
+            entities: [{ id: 'e-a-1', name: 'A1', attributes: [] }],
+          },
+        ],
+      }
+      const modelB: Model = {
+        id: 'b',
+        name: 'B',
+        version: '1.0.0',
+        packages: [
+          {
+            id: 'p-b',
+            name: 'pb',
+            packages: [],
+            enums: [],
+            entities: [
+              { id: 'e-b-1', name: 'B1', attributes: [] },
+              { id: 'e-b-2', name: 'B2', attributes: [] },
+            ],
+          },
+        ],
+      }
+      const template = tpl([
+        {
+          uuid: crypto.randomUUID(),
+          type: 'loop',
+          content: '',
+          loopSource: 'models',
+          variableName: 'm',
+          children: [
+            { uuid: crypto.randomUUID(), type: 'handlebars', content: '[{{m.name}}:' },
+            {
+              uuid: crypto.randomUUID(),
+              type: 'loop',
+              content: '',
+              loopSource: 'entities',
+              variableName: 'e',
+              children: [{ uuid: crypto.randomUUID(), type: 'handlebars', content: '{{e.name}},' }],
+            },
+            { uuid: crypto.randomUUID(), type: 'handlebars', content: ']' },
+          ],
+        },
+        {
+          uuid: crypto.randomUUID(),
+          type: 'output',
+          content: '',
+          outputFilename: 'out.txt',
+        },
+      ])
+      const result = await executeTemplate(template, modelA, {}, undefined, {
+        allModels: [modelA, modelB],
+      })
+      // Outer iteration: model A → A1. Outer iteration: model B → B1, B2.
+      expect(result.files[0].content).toBe('[A:A1,][B:B1,B2,]')
+    })
+
+    it('projects loop falls back to a synthetic singleton when allProjects is omitted', async () => {
+      const template = tpl([
+        {
+          uuid: crypto.randomUUID(),
+          type: 'loop',
+          content: '',
+          loopSource: 'projects',
+          variableName: 'p',
+          children: [{ uuid: crypto.randomUUID(), type: 'handlebars', content: '{{p.name}};' }],
+        },
+        {
+          uuid: crypto.randomUUID(),
+          type: 'output',
+          content: '',
+          outputFilename: 'out.txt',
+        },
+      ])
+      const result = await executeTemplate(template, modelWith([]))
+      expect(result.files[0].content).toBe('current;')
+    })
+
+    it('projects loop iterates supplied projects without swapping model context', async () => {
+      const modelA: Model = {
+        id: 'a',
+        name: 'A',
+        version: '1.0.0',
+        packages: [
+          {
+            id: 'p-a',
+            name: 'pa',
+            packages: [],
+            enums: [],
+            entities: [{ id: 'e-a', name: 'OuterEntity', attributes: [] }],
+          },
+        ],
+      }
+      const modelB: Model = {
+        id: 'b',
+        name: 'B',
+        version: '1.0.0',
+        packages: [
+          {
+            id: 'p-b',
+            name: 'pb',
+            packages: [],
+            enums: [],
+            entities: [{ id: 'e-b', name: 'InnerEntity', attributes: [] }],
+          },
+        ],
+      }
+      const template = tpl([
+        {
+          uuid: crypto.randomUUID(),
+          type: 'loop',
+          content: '',
+          loopSource: 'projects',
+          variableName: 'p',
+          children: [
+            // Without a swap, this resolves against the outer (active) model.
+            { uuid: crypto.randomUUID(), type: 'handlebars', content: '{{p.name}}>' },
+            {
+              uuid: crypto.randomUUID(),
+              type: 'loop',
+              content: '',
+              loopSource: 'entities',
+              variableName: 'e',
+              children: [{ uuid: crypto.randomUUID(), type: 'handlebars', content: '{{e.name}};' }],
+            },
+          ],
+        },
+        {
+          uuid: crypto.randomUUID(),
+          type: 'output',
+          content: '',
+          outputFilename: 'out.txt',
+        },
+      ])
+      const result = await executeTemplate(template, modelA, {}, undefined, {
+        allProjects: [
+          { root: '/x/one', name: 'one', isRoot: true, models: [modelA] },
+          { root: '/x/two', name: 'two', isRoot: false, models: [modelB] },
+        ],
+      })
+      // The active model stays modelA inside the projects loop (no swap),
+      // so both project iterations see OuterEntity from modelA.
+      expect(result.files[0].content).toBe('one>OuterEntity;two>OuterEntity;')
+    })
+  })
 })

@@ -11,3 +11,9 @@
  * directly.
  */
 export type { AppRouter } from './router/index'
+// Workspace-selector output shapes — re-exported so client-side consumers
+// (Pinia store, WorkspaceSelector component) can type their state without
+// pulling `@trpc/server` for `inferRouterOutputs`. The router is the
+// authoritative source; these types stay in lock-step via TS structural
+// equality (the procedure return type IS this interface).
+export type { WorkspaceProjectInfo, WorkspaceResponse } from './router/project.router'

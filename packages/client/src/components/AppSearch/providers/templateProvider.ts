@@ -2,6 +2,7 @@ import type { Template, TemplateFolder } from '@xomda/core'
 import { FolderIcon, TemplatesIcon } from '@xomda/icons'
 import type { Router } from 'vue-router'
 
+import { TemplatesRoutes } from '../../../modules/templates'
 import { trpc } from '../../../trpc'
 import type { SearchHit, SearchProvider } from './types'
 import { createCache, scoreMatch } from './types'
@@ -47,7 +48,7 @@ export function createTemplateProvider(router: Router, onNavigate: () => void): 
           navigate: () => {
             onNavigate()
             void router.push({
-              name: 'templates',
+              name: TemplatesRoutes.view,
               params: { folderPath: folderPathSegments(folder) },
               query: { template: t.uuid },
             })
@@ -69,7 +70,7 @@ export function createTemplateProvider(router: Router, onNavigate: () => void): 
           navigate: () => {
             onNavigate()
             void router.push({
-              name: 'templates',
+              name: TemplatesRoutes.view,
               params: { folderPath: folderPathSegments(f.path) },
             })
           },

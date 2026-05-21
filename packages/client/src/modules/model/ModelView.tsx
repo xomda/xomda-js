@@ -46,7 +46,6 @@ import {
   useMutation,
   useNotificationsStore,
   useVersion,
-  Version,
 } from '@xomda/ui'
 import type { JsonObject } from 'type-fest'
 import { computed, defineComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -77,15 +76,19 @@ import {
   ModelTree,
   PanelDivider,
   SceneMiniToolbar,
+  WorkspaceSelector,
 } from '../../components'
 import { usePanelResize } from '../../composables'
+import { useWorkspaceStore } from '../../stores'
 import { trpc } from '../../trpc'
 import { useModelSelectionStore } from '.'
 import styles from './ModelView.module.scss'
+import { ModelRoutes } from './routes'
 
 export const ModelView = defineComponent({
   name: 'ModelView',
   setup() {
+    const workspace = useWorkspaceStore()
     const model = ref<Model | null>(null)
     const loading = ref(false)
     const showLoading = useDelayedLoading(loading)
@@ -93,6 +96,19 @@ export const ModelView = defineComponent({
     const detailedErrors = ref<{ message: string; path?: (string | number)[] }[] | null>(null)
     const commitOpen = ref(false)
     const versionLabels = ref<string[]>([])
+
+    /**
+     * tRPC selector forwarded to every `model.*` call so the active project +
+     * model in the workspace store drive the request. Omitting either falls
+     * back to the server's default (cwd + primary model) — the same shape
+     * the CLI uses, so we degrade gracefully when the workspace hasn't
+     * finished loading yet.
+     */
+    const selectorInput = computed(() => {
+      const root = workspace.activeProjectRoot ?? undefined
+      const modelId = workspace.activeModelId ?? undefined
+      return root || modelId ? { root, modelId } : undefined
+    })
 
     async function loadVersionLabels(): Promise<void> {
       try {
@@ -228,12 +244,12 @@ export const ModelView = defineComponent({
     }
 
     const updateLayoutMutation = useMutation(
-      (next: Layout) => trpc.model.updateLayout.mutate(next),
+      (next: Layout) => trpc.model.updateLayout.mutate({ layout: next }),
       { onError: applyFieldsError, onSuccess: () => layoutBuffer.commit() }
     )
     /** Layout cleanup after moveToPackage — silent (compound op already toasted on failure). */
     const updateLayoutSilentMutation = useMutation(
-      (next: Layout) => trpc.model.updateLayout.mutate(next),
+      (next: Layout) => trpc.model.updateLayout.mutate({ layout: next }),
       { notify: false, onSuccess: () => layoutBuffer.commit() }
     )
 
@@ -663,7 +679,7 @@ export const ModelView = defineComponent({
       error.value = null
       detailedErrors.value = null
       try {
-        model.value = await trpc.model.get.query()
+        model.value = await trpc.model.get.query(selectorInput.value)
         // Normalise to grid multiples so any legacy layout authored before
         // CSS padding was aligned with GRID_SIZE doesn't carry sub-grid
         // values into the canvas. Saved values from then on are always
@@ -676,6 +692,21 @@ export const ModelView = defineComponent({
         loading.value = false
       }
     }
+
+    // Reload the editor whenever the workspace selection changes. The store's
+    // `selectModel` / `selectProject` actions only mutate refs — the actual
+    // model.json fetch lives here so ModelView owns its own loading lifecycle.
+    watch(
+      () => [workspace.activeProjectRoot, workspace.activeModelId] as const,
+      ([root, modelId], prev) => {
+        if (!root) return
+        // Skip the initial fire — onMounted already calls loadModel once.
+        // Only reload on actual changes after first hydration.
+        if (prev && prev[0] === root && prev[1] === modelId) return
+        if (!prev) return
+        void loadModel()
+      }
+    )
 
     type AddEntityArgs = Parameters<typeof trpc.model.addEntity.mutate>[0]
     const addEntityMutation = useMutation(
@@ -872,11 +903,6 @@ export const ModelView = defineComponent({
       packageBuffer.set(pkg)
     }
 
-    function selectModel() {
-      clearAllPanelsExcept('model')
-      modelBuffer.set(model.value)
-    }
-
     type UpdateAttributeArgs = Parameters<typeof trpc.model.updateAttribute.mutate>[0]
     const updateAttributeMutation = useMutation(
       (args: UpdateAttributeArgs) => trpc.model.updateAttribute.mutate(args),
@@ -904,7 +930,7 @@ export const ModelView = defineComponent({
     }
 
     const updateEntityMutation = useMutation(
-      (entity: EntityData) => trpc.model.updateEntity.mutate(entity),
+      (entity: EntityData) => trpc.model.updateEntity.mutate({ entity }),
       {
         onError: (e) => {
           applyFieldsError(e)
@@ -926,16 +952,19 @@ export const ModelView = defineComponent({
       await updateEntityMutation.run(draft)
     }
 
-    const updateEnumMutation = useMutation((en: EnumData) => trpc.model.updateEnum.mutate(en), {
-      onError: (e) => {
-        applyFieldsError(e)
-        enumBuffer.revert()
-      },
-      onSuccess: (result) => {
-        model.value = result
-        enumBuffer.commit()
-      },
-    })
+    const updateEnumMutation = useMutation(
+      (en: EnumData) => trpc.model.updateEnum.mutate({ enum: en }),
+      {
+        onError: (e) => {
+          applyFieldsError(e)
+          enumBuffer.revert()
+        },
+        onSuccess: (result) => {
+          model.value = result
+          enumBuffer.commit()
+        },
+      }
+    )
 
     async function updateEnum() {
       const draft = enumBuffer.draft.value
@@ -948,7 +977,7 @@ export const ModelView = defineComponent({
     }
 
     const updatePackageMutation = useMutation(
-      (pkg: PackageData) => trpc.model.updatePackage.mutate(pkg),
+      (pkg: PackageData) => trpc.model.updatePackage.mutate({ package: pkg }),
       {
         onError: (e) => {
           applyFieldsError(e)
@@ -970,16 +999,19 @@ export const ModelView = defineComponent({
       await updatePackageMutation.run(draft)
     }
 
-    const saveModelMutation = useMutation((next: Model) => trpc.model.save.mutate(next), {
-      onError: (e) => {
-        applyFieldsError(e)
-        modelBuffer.revert()
-      },
-      onSuccess: (result) => {
-        model.value = result
-        modelBuffer.commit()
-      },
-    })
+    const saveModelMutation = useMutation(
+      (next: Model) => trpc.model.save.mutate({ model: next }),
+      {
+        onError: (e) => {
+          applyFieldsError(e)
+          modelBuffer.revert()
+        },
+        onSuccess: (result) => {
+          model.value = result
+          modelBuffer.commit()
+        },
+      }
+    )
 
     async function updateModelProperties() {
       const draft = modelBuffer.draft.value
@@ -1234,7 +1266,7 @@ export const ModelView = defineComponent({
         if (!id || !model.value) return
         if (findAndSelect(id)) {
           // One-shot: clear the query param so re-clicking the same hit re-fires.
-          void router.replace({ path: '/model', query: {} })
+          void router.replace({ name: ModelRoutes.view, query: {} })
         }
       },
       { immediate: true }
@@ -1278,16 +1310,7 @@ export const ModelView = defineComponent({
                     ariaLabel="Model view options"
                     items={viewMenuItems()}
                   />
-                  <span
-                    onClick={selectModel}
-                    style={{ cursor: 'pointer' }}
-                    class="d-inline-flex align-center ga-2"
-                  >
-                    <span>Model: {model.value?.name}</span>
-                    {model.value?.version ? (
-                      <Version version={model.value.version} prefix="v" chip size="x-small" />
-                    ) : undefined}
-                  </span>
+                  <WorkspaceSelector labelPrefix="Model" />
                   <VBtn
                     prepend-icon={AddIcon}
                     variant="tonal"
@@ -1325,16 +1348,45 @@ export const ModelView = defineComponent({
                 </div>
               )
             },
-            actions: () => (
-              <VBtn
-                prepend-icon={SaveIcon}
-                variant="tonal"
-                color="primary"
-                onClick={() => (commitOpen.value = true)}
-              >
-                Publish
-              </VBtn>
-            ),
+            actions: () => {
+              // Per-model version histories are scoped to the primary model
+              // in v1 (commitVersion throws BAD_REQUEST otherwise — see
+              // model.router.ts). Hide Publish entirely on secondaries; a
+              // disabled chip with a tooltip explains the constraint without
+              // crowding the toolbar.
+              const isSecondary = workspace.activeModel ? !workspace.activeModel.isPrimary : false
+              if (isSecondary) {
+                return (
+                  <VTooltip
+                    text="Per-model version histories are a follow-up — publish from the primary model."
+                    location="bottom"
+                  >
+                    {{
+                      activator: ({ props: tipProps }: { props: Record<string, unknown> }) => (
+                        <VBtn
+                          {...tipProps}
+                          variant="tonal"
+                          disabled
+                          aria-label="Publish disabled for secondary models"
+                        >
+                          Publish
+                        </VBtn>
+                      ),
+                    }}
+                  </VTooltip>
+                )
+              }
+              return (
+                <VBtn
+                  prepend-icon={SaveIcon}
+                  variant="tonal"
+                  color="primary"
+                  onClick={() => (commitOpen.value = true)}
+                >
+                  Publish
+                </VBtn>
+              )
+            },
           }}
         </AppTitleBar>
         <CommitModal

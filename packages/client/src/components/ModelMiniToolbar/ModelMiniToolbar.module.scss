@@ -15,23 +15,10 @@
     0 2px 6px rgba(0, 0, 0, 0.12),
     0 1px 2px rgba(0, 0, 0, 0.08);
   pointer-events: auto;
-  // Soft fade-in/out — the toolbar is conditionally rendered, so this
-  // only animates the initial mount; on hide it disappears instantly.
   // No `top`/`left` transition: the rAF-driven anchor follow updates
   // would otherwise chase a new target every frame and visibly lag the
-  // node during a drag.
-  animation: miniToolbarFadeIn 0.15s ease;
-}
-
-@keyframes miniToolbarFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  // node during a drag. Enter/leave fade is owned by `<VFadeTransition>`
+  // in the TSX — not a hand-rolled @keyframes.
 }
 
 .divider {

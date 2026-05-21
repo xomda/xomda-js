@@ -45,7 +45,7 @@ const pkg = (id: string, partial: Partial<Package> = {}): Package => ({
   ...partial,
 })
 
-async function seedModel(root: string, model: Partial<Model>): Promise<void> {
+async function seedModel(root: string, model: Partial<Model> = {}): Promise<void> {
   const dir = join(root, XOMDA_DIR)
   await mkdir(dir, { recursive: true })
   const full: Model = {
@@ -77,14 +77,16 @@ describe('modelRouter mutations', () => {
     it('replaces a nested entity by id', async () => {
       const eId = newId()
       await seedModel(tmpDir, { packages: [pkg(newId(), { entities: [entity(eId, 'Old')] })] })
-      const updated = await caller.updateEntity({ id: eId, name: 'New', attributes: [] })
+      const updated = await caller.updateEntity({
+        entity: { id: eId, name: 'New', attributes: [] },
+      })
       expect(updated.packages[0].entities[0].name).toBe('New')
     })
 
     it('throws NOT_FOUND when no entity has that id', async () => {
       await seedModel(tmpDir, { packages: [pkg(newId())] })
       await expect(
-        caller.updateEntity({ id: newId(), name: 'Ghost', attributes: [] })
+        caller.updateEntity({ entity: { id: newId(), name: 'Ghost', attributes: [] } })
       ).rejects.toMatchObject({ code: 'NOT_FOUND' })
     })
   })
@@ -93,14 +95,14 @@ describe('modelRouter mutations', () => {
     it('replaces a nested enum by id', async () => {
       const enId = newId()
       await seedModel(tmpDir, { packages: [pkg(newId(), { enums: [enumVal(enId, 'Old')] })] })
-      const updated = await caller.updateEnum({ id: enId, name: 'New', values: [] })
+      const updated = await caller.updateEnum({ enum: { id: enId, name: 'New', values: [] } })
       expect(updated.packages[0].enums[0].name).toBe('New')
     })
 
     it('throws NOT_FOUND when no enum has that id', async () => {
       await seedModel(tmpDir, { packages: [pkg(newId())] })
       await expect(
-        caller.updateEnum({ id: newId(), name: 'Ghost', values: [] })
+        caller.updateEnum({ enum: { id: newId(), name: 'Ghost', values: [] } })
       ).rejects.toMatchObject({ code: 'NOT_FOUND' })
     })
   })
@@ -406,10 +408,12 @@ describe('modelRouter mutations', () => {
       // client/server round-trip actually populates model.json.
       await seedModel(tmpDir, { name: 'Pinned', packages: [pkg(newId())] })
       const first = await caller.save({
-        id: newId(),
-        name: 'Pinned',
-        version: '1.0.0',
-        packages: [pkg(newId())],
+        model: {
+          id: newId(),
+          name: 'Pinned',
+          version: '1.0.0',
+          packages: [pkg(newId())],
+        },
       })
 
       const statBefore = await stat(modelPath())
@@ -421,7 +425,7 @@ describe('modelRouter mutations', () => {
       // Replay the EXACT same model through the router. The dirty check at
       // the storage layer should detect that only `updatedAt` would differ
       // and skip the write entirely.
-      const second = await caller.save(first)
+      const second = await caller.save({ model: first })
 
       expect(second.updatedAt).toBe(first.updatedAt)
       const statAfter = await stat(modelPath())
@@ -437,20 +441,99 @@ describe('modelRouter mutations', () => {
         layout: { [pkgId]: { x: 100, y: 200 } },
       })
       // Touch through the router once so updatedAt + schema defaults settle.
-      const first = await caller.updateLayout({ [pkgId]: { x: 100, y: 200 } })
+      const first = await caller.updateLayout({ layout: { [pkgId]: { x: 100, y: 200 } } })
 
       const statBefore = await stat(modelPath())
       const bytesBefore = await readFile(modelPath(), 'utf-8')
 
       await new Promise((r) => setTimeout(r, 1100))
 
-      const second = await caller.updateLayout({ [pkgId]: { x: 100, y: 200 } })
+      const second = await caller.updateLayout({ layout: { [pkgId]: { x: 100, y: 200 } } })
 
       expect(second.updatedAt).toBe(first.updatedAt)
       const statAfter = await stat(modelPath())
       const bytesAfter = await readFile(modelPath(), 'utf-8')
       expect(statAfter.mtimeMs).toBe(statBefore.mtimeMs)
       expect(bytesAfter).toBe(bytesBefore)
+    })
+  })
+
+  describe('multi-model procedures', () => {
+    it('listModels returns the primary plus any secondaries with isPrimary flagged', async () => {
+      await seedModel(tmpDir, { name: 'Primary' })
+      const secondary = await caller.createModel({ name: 'Alt' })
+
+      const descriptors = await caller.listModels()
+      expect(descriptors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: 'Primary', isPrimary: true }),
+          expect.objectContaining({ id: secondary.id, name: 'Alt', isPrimary: false }),
+        ])
+      )
+    })
+
+    it('createModel + readModel(selector.modelId) round-trips the secondary', async () => {
+      await seedModel(tmpDir, { name: 'Primary' })
+      const created = await caller.createModel({ name: 'Branch' })
+      const model = await caller.get({ modelId: created.id })
+      expect(model.id).toBe(created.id)
+      expect(model.name).toBe('Branch')
+    })
+
+    it('updateEntity targets the secondary when modelId points at one', async () => {
+      const primaryEntityId = newId()
+      await seedModel(tmpDir, {
+        packages: [pkg(newId(), { entities: [entity(primaryEntityId, 'PrimaryEntity')] })],
+      })
+      const secondary = await caller.createModel({ name: 'Branch' })
+
+      // Add an entity to the secondary; the primary must be untouched.
+      const newPackageId = newId()
+      await caller.addPackage({
+        modelId: secondary.id,
+        package: pkg(newPackageId, { entities: [entity(newId(), 'SecondaryEntity')] }),
+      })
+
+      const primaryReloaded = await caller.get({})
+      expect(primaryReloaded.packages[0].entities[0].name).toBe('PrimaryEntity')
+      expect(primaryReloaded.packages).toHaveLength(1)
+
+      const secondaryReloaded = await caller.get({ modelId: secondary.id })
+      expect(secondaryReloaded.packages[0].entities[0].name).toBe('SecondaryEntity')
+    })
+
+    it('renameModel updates the descriptor', async () => {
+      await seedModel(tmpDir)
+      const created = await caller.createModel({ name: 'OldName' })
+      const renamed = await caller.renameModel({ modelId: created.id, name: 'NewName' })
+      expect(renamed.name).toBe('NewName')
+      const fresh = await caller.get({ modelId: created.id })
+      expect(fresh.name).toBe('NewName')
+    })
+
+    it('deleteModel removes a secondary', async () => {
+      await seedModel(tmpDir)
+      const created = await caller.createModel({ name: 'Trash' })
+      const result = await caller.deleteModel({ modelId: created.id })
+      expect(result).toEqual({ ok: true })
+      const list = await caller.listModels()
+      expect(list.some((m) => m.id === created.id)).toBe(false)
+    })
+
+    it('deleteModel rejects deleting the primary while secondaries exist', async () => {
+      await seedModel(tmpDir, { id: '00000000-0000-4000-8000-000000000001' })
+      await caller.createModel({ name: 'Secondary' })
+      await expect(
+        caller.deleteModel({ modelId: '00000000-0000-4000-8000-000000000001' })
+      ).rejects.toMatchObject({ code: 'BAD_REQUEST' })
+    })
+
+    it('commitVersion rejects a non-primary modelId with BAD_REQUEST', async () => {
+      await seedModel(tmpDir, { name: 'Primary', version: '1.0.0' })
+      const secondary = await caller.createModel({ name: 'Sidebar' })
+      await expect(
+        caller.commitVersion({ modelId: secondary.id, upcomingVersion: '1.1.0' })
+      ).rejects.toMatchObject({ code: 'BAD_REQUEST' })
     })
   })
 })

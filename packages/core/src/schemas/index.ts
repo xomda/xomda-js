@@ -15,6 +15,8 @@ export {
   ProjectFileSchema,
   ProjectSettingsSchema,
 } from './project'
+export type { Selector } from './selector'
+export { SelectorSchema } from './selector'
 export type {
   CellType,
   OutputType,

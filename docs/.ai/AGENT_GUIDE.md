@@ -112,6 +112,26 @@ Two questions to answer first:
 If it's a one-off (just one file, not parameterized over the model), write
 it directly. Don't templateize what isn't worth templateizing.
 
+## Workspaces (multi-project + multi-model)
+
+A project can hold more than one model: the **primary** at
+`.xomda/model.json` plus optional **secondary** models under
+`.xomda/models/<id>.json` (same schema). A repository can also contain
+nested `.xomda/` subprojects, walked from the workspace root until a
+project marks itself `settings.isRoot: true` (a workspace boundary).
+The SPA exposes both via a title-bar selector; the CLI defaults to the
+primary model of the current `cwd`, so behaviour is unchanged when
+neither feature is in use.
+
+Templates can iterate across models and projects with two loop sources
+(`loopSource: 'models'` and `loopSource: 'projects'` — see
+`template-format.md`). A `models` loop swaps `execCtx.model` per
+iteration so nested `entities` loops resolve against the iterated
+model; a `projects` loop iterates project descriptors only (use a
+nested `models` loop to descend). Both loops degrade to a one-item
+singleton on single-model / single-project repos, so templates stay
+correct without conditional logic.
+
 ## Where to find more
 
 When this guide doesn't cover what you need, look in:

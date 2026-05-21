@@ -1,0 +1,30 @@
+.selector {
+  // Title-bar host expects a single inline-flex chip that doesn't expand
+  // beyond its content. Height-sized to match the VBtn `small` density so it
+  // sits flush next to the surrounding Add / Snap toolbar buttons.
+  min-width: 0;
+  max-width: 100%;
+}
+
+.skeleton {
+  // Replaces the labelled MenuButton during the initial workspace load.
+  // Width pinned to the average labelled-button footprint so the title bar
+  // doesn't lurch when the real selector swaps in.
+  min-width: 180px;
+  max-width: 220px;
+  height: 28px;
+}
+
+.rootChip {
+  // The ROOT chip is decorative — its tooltip carries the semantics. Keep
+  // it visually quiet next to the model name (Vuetify default chip padding
+  // is fine; only the icon needs to sit tight against the label).
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.errorCluster {
+  // Used by the load-failure fallback so the inline error + retry button
+  // stay aligned with the title-bar baseline.
+  color: rgb(var(--v-theme-error));
+}

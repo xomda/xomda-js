@@ -41,8 +41,15 @@ export interface XomdaModuleNav {
    */
   icon: string
   label: string
-  /** Path to navigate to when clicked (usually the module's primary route). */
-  path: string
+  /**
+   * Name of the route this nav item navigates to (usually the module's
+   * primary route). Always the typed constant from the module's
+   * `routes.ts` — never a raw path string. AppNav builds
+   * `{ name: routeName }` for both navigation and active-route matching,
+   * so wildcard routes (`/files/:dirPath(.*)*`) light up correctly on
+   * every nested path with no startsWith glue.
+   */
+  routeName: string
   /** Lower = earlier in the rail. Defaults to 100. */
   order?: number
 }

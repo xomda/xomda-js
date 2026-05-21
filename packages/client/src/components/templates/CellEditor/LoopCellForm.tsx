@@ -16,6 +16,8 @@ const SOURCE_ITEMS: SourceItem[] = [
   { title: 'Entities', value: 'entities' },
   { title: 'Enums', value: 'enums' },
   { title: 'Packages', value: 'packages' },
+  { title: 'Models', value: 'models' },
+  { title: 'Projects', value: 'projects' },
   { type: 'divider' },
   { title: 'JavaScript generator', value: 'javascript' },
 ]

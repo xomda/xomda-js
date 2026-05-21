@@ -2,6 +2,7 @@ import type { Attribute, Entity, Enum, EnumValue, Model, Package } from '@xomda/
 import { EntityIcon, EnumIcon, ModelIcon, PackageIcon } from '@xomda/icons'
 import type { Router } from 'vue-router'
 
+import { ModelRoutes } from '../../../modules/model'
 import { trpc } from '../../../trpc'
 import type { SearchHit, SearchProvider } from './types'
 import { createCache, scoreMatch } from './types'
@@ -94,7 +95,7 @@ export function createModelProvider(router: Router, onNavigate: () => void): Sea
             onNavigate()
             // Attributes/enum values: select their parent so the side panel opens on it.
             const selectId = e.parentId ?? e.id
-            void router.push({ path: '/model', query: { select: selectId } })
+            void router.push({ name: ModelRoutes.view, query: { select: selectId } })
           },
         })
       }

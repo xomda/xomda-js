@@ -3,19 +3,22 @@ import { useLocalStorageStore, useNotificationsStore } from '@xomda/ui'
 import { getRecentLogs } from '@xomda/util'
 import { computed, defineComponent, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { VBadge, VCard, VIcon, VTooltip } from 'vuetify/components'
+import { VBadge, VCard, VHover, VIcon, VTooltip } from 'vuetify/components'
 
 import { getRegisteredModules, type XomdaModuleNav } from '../../modules'
+import { LogsRoutes } from '../../modules/logs'
+import { SettingsRoutes } from '../../modules/settings'
 import styles from './AppNav.module.scss'
 
 const NAV_WIDTH_COLLAPSED = 56
 const NAV_WIDTH_EXPANDED = 200
 const SNAP_THRESHOLD = 30
+const HOVER_ARM_DELAY_MS = 350
 
 interface NavItem {
   id: string
   icon: XomdaModuleNav['icon']
-  path: string
+  routeName: string
   label: string
 }
 
@@ -30,7 +33,7 @@ function collectNavItems(): NavItem[] {
     items.push({
       id: mod.id,
       icon: mod.nav.icon,
-      path: mod.nav.path,
+      routeName: mod.nav.routeName,
       label: mod.nav.label,
       order: mod.nav.order ?? 100,
     })
@@ -62,13 +65,6 @@ export const AppNav = defineComponent({
     })
     onBeforeUnmount(() => {
       if (logsPollHandle) clearInterval(logsPollHandle)
-      // Hover-arm timer: if the user's pointer was inside the resize divider
-      // and the component unmounted before the 350 ms arm elapsed, the
-      // pending timeout would otherwise fire against a disposed ref.
-      if (hoverTimer !== null) {
-        clearTimeout(hoverTimer)
-        hoverTimer = null
-      }
     })
     /** True when there's anything worth surfacing in the Logs view. */
     const hasLogs = computed(
@@ -87,41 +83,25 @@ export const AppNav = defineComponent({
       set: (v) => (store.navExpanded = v),
     })
 
-    const currentPath = computed(() => route.path)
+    // Name-based active matching: when on `/files/foo/bar`, `route.name` is
+    // `'files.browse'` (the wildcard route's own name), which also matches
+    // the nav item for `/files`. No path-startsWith glue needed.
+    const activeRouteName = computed(() => route.name)
 
     const dragging = ref(false)
     const dragDirection = ref<'neg' | 'pos' | null>(null)
-    const handleVisible = ref(false)
     const handleY = ref(0)
     let dragAnchorX = 0
     let lastX = 0
-    let hoverTimer: ReturnType<typeof setTimeout> | null = null
 
     watchEffect(() => {
       const w = expanded.value ? NAV_WIDTH_EXPANDED : NAV_WIDTH_COLLAPSED
       document.documentElement.style.setProperty('--appnav-width', `${w}px`)
     })
 
-    function onResizePointerEnter() {
-      hoverTimer = setTimeout(() => {
-        handleVisible.value = true
-      }, 350)
-    }
-
-    function onResizePointerLeave() {
-      if (hoverTimer !== null) {
-        clearTimeout(hoverTimer)
-        hoverTimer = null
-      }
-      if (!dragging.value) {
-        handleVisible.value = false
-      }
-    }
-
     function onResizePointerDown(e: PointerEvent) {
       if (e.button !== 0) return
       dragging.value = true
-      handleVisible.value = true
       dragDirection.value = null
       dragAnchorX = e.clientX
       lastX = e.clientX
@@ -149,22 +129,18 @@ export const AppNav = defineComponent({
     function onResizePointerUp() {
       dragging.value = false
       dragDirection.value = null
-      handleVisible.value = false
     }
 
     return () => (
       <VCard class={[styles.nav, expanded.value && styles.navExpanded]} elevation={4} rounded="lg">
         <nav class={styles.items}>
           {navItems.map((item) => {
-            const active =
-              item.path === '/'
-                ? currentPath.value === '/'
-                : currentPath.value === item.path || currentPath.value.startsWith(`${item.path}/`)
+            const active = activeRouteName.value === item.routeName
             const btn = (
               <button
                 key={item.id}
                 class={[styles.navBtn, active && styles.navBtnActive]}
-                onClick={() => router.push(item.path)}
+                onClick={() => router.push({ name: item.routeName })}
                 aria-label={item.label}
               >
                 <VIcon icon={item.icon} size="22" class={styles.navBtnIcon} />
@@ -181,7 +157,7 @@ export const AppNav = defineComponent({
                       {...props}
                       key={item.id}
                       class={[styles.navBtn, active && styles.navBtnActive]}
-                      onClick={() => router.push(item.path)}
+                      onClick={() => router.push({ name: item.routeName })}
                       aria-label={item.label}
                     >
                       <VIcon icon={item.icon} size="22" />
@@ -233,8 +209,7 @@ export const AppNav = defineComponent({
         })()}
         {hasLogs.value &&
           (() => {
-            const logsActive =
-              currentPath.value === '/logs' || currentPath.value.startsWith('/logs/')
+            const logsActive = activeRouteName.value === LogsRoutes.view
             // VBadge wraps the icon: a small primary dot in the top-right
             // signals "there's something to look at" without stealing focus.
             // Hidden once the user navigates to /logs (treats viewing the
@@ -247,7 +222,7 @@ export const AppNav = defineComponent({
             const logsBtn = (
               <button
                 class={[styles.themeToggleBtn, logsActive && styles.navBtnActive]}
-                onClick={() => router.push('/logs')}
+                onClick={() => router.push({ name: LogsRoutes.view })}
                 aria-label="Notifications & Logs"
               >
                 {badgedIcon}
@@ -263,7 +238,7 @@ export const AppNav = defineComponent({
                     <button
                       {...props}
                       class={[styles.themeToggleBtn, logsActive && styles.navBtnActive]}
-                      onClick={() => router.push('/logs')}
+                      onClick={() => router.push({ name: LogsRoutes.view })}
                       aria-label="Notifications & Logs"
                     >
                       {badgedIcon}
@@ -274,12 +249,11 @@ export const AppNav = defineComponent({
             )
           })()}
         {(() => {
-          const settingsActive =
-            currentPath.value === '/settings' || currentPath.value.startsWith('/settings/')
+          const settingsActive = activeRouteName.value === SettingsRoutes.view
           const settingsBtn = (
             <button
               class={[styles.themeToggleBtn, settingsActive && styles.navBtnActive]}
-              onClick={() => router.push('/settings')}
+              onClick={() => router.push({ name: SettingsRoutes.view })}
               aria-label="Preferences"
             >
               <VIcon icon={SettingsIcon} size="22" class={styles.navBtnIcon} />
@@ -295,7 +269,7 @@ export const AppNav = defineComponent({
                   <button
                     {...props}
                     class={[styles.themeToggleBtn, settingsActive && styles.navBtnActive]}
-                    onClick={() => router.push('/settings')}
+                    onClick={() => router.push({ name: SettingsRoutes.view })}
                     aria-label="Preferences"
                   >
                     <VIcon icon={SettingsIcon} size="22" class={styles.navBtnIcon} />
@@ -305,30 +279,49 @@ export const AppNav = defineComponent({
             </VTooltip>
           )
         })()}
-        <div
-          class={[
-            styles.resizeDivider,
-            dragging.value && styles.resizeDividerDragging,
-            dragDirection.value === 'neg' && styles.resizeDividerLeft,
-            dragDirection.value === 'pos' && styles.resizeDividerRight,
-          ]}
-          role="separator"
-          aria-orientation="vertical"
-          aria-label={
-            expanded.value ? 'Drag left to collapse navigation' : 'Drag right to expand navigation'
-          }
-          onPointerenter={onResizePointerEnter}
-          onPointerleave={onResizePointerLeave}
-          onPointerdown={onResizePointerDown}
-          onPointermove={onResizePointerMove}
-          onPointerup={onResizePointerUp}
-          onPointercancel={onResizePointerUp}
-        >
-          <div
-            class={[styles.resizeHandle, handleVisible.value && styles.resizeHandleVisible]}
-            style={{ top: `${handleY.value}px` }}
-          />
-        </div>
+        {/* `openDelay`: VHover replaces the hand-rolled 350 ms setTimeout
+            arm. The handle stays visible while dragging even if the
+            pointer leaves the strip (OR'd with `dragging.value` below). */}
+        <VHover openDelay={HOVER_ARM_DELAY_MS}>
+          {{
+            default: ({
+              isHovering,
+              props: hoverProps,
+            }: {
+              isHovering: boolean
+              props: Record<string, unknown>
+            }) => (
+              <div
+                {...hoverProps}
+                class={[
+                  styles.resizeDivider,
+                  dragging.value && styles.resizeDividerDragging,
+                  dragDirection.value === 'neg' && styles.resizeDividerLeft,
+                  dragDirection.value === 'pos' && styles.resizeDividerRight,
+                ]}
+                role="separator"
+                aria-orientation="vertical"
+                aria-label={
+                  expanded.value
+                    ? 'Drag left to collapse navigation'
+                    : 'Drag right to expand navigation'
+                }
+                onPointerdown={onResizePointerDown}
+                onPointermove={onResizePointerMove}
+                onPointerup={onResizePointerUp}
+                onPointercancel={onResizePointerUp}
+              >
+                <div
+                  class={[
+                    styles.resizeHandle,
+                    (isHovering || dragging.value) && styles.resizeHandleVisible,
+                  ]}
+                  style={{ top: `${handleY.value}px` }}
+                />
+              </div>
+            ),
+          }}
+        </VHover>
       </VCard>
     )
   },

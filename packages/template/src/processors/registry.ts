@@ -14,6 +14,7 @@ import type {
   CellProcessor,
   CellState,
   ExecutionContext,
+  ProjectInfo,
 } from './types'
 import { buildHelpers, CapturedConsole, OutputBuffer } from './utils'
 
@@ -83,7 +84,8 @@ export function createExecutionContext(
   template: Template,
   model: Model,
   scopeContext: Record<string, unknown> = {},
-  diff?: ModelDiff
+  diff?: ModelDiff,
+  workspace?: { allModels?: Model[]; allProjects?: ProjectInfo[] }
 ): ExecutionContext & { files: RenderResult[] } {
   return {
     model,
@@ -94,5 +96,7 @@ export function createExecutionContext(
     variables: {},
     cellBuffers: [],
     files: [],
+    ...(workspace?.allModels !== undefined ? { allModels: workspace.allModels } : {}),
+    ...(workspace?.allProjects !== undefined ? { allProjects: workspace.allProjects } : {}),
   }
 }

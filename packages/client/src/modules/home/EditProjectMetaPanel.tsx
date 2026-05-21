@@ -2,10 +2,15 @@ import { defaultProjectSettings } from '@xomda/core'
 import { EditIcon } from '@xomda/icons'
 import { SidePanel, useAsyncState } from '@xomda/ui'
 import { defineComponent, onMounted, type PropType, ref, watch } from 'vue'
-import { VBtn } from 'vuetify/components'
+import { VBtn, VSlideXReverseTransition } from 'vuetify/components'
 
 import { trpc } from '../../trpc'
 import styles from './EditProjectMetaPanel.module.scss'
+
+// Vuetify's transition prop types don't model the inherited Vue
+// `<Transition>` `appear` prop, so we forward it via attrs. Spreading a
+// typed `Record<string, unknown>` keeps the call site `any`-free.
+const APPEAR_PROPS: Record<string, unknown> = { appear: true }
 
 export interface ProjectMetaInitial {
   name: string
@@ -85,68 +90,72 @@ export const EditProjectMetaPanel = defineComponent({
     }
 
     return () => (
-      <div
-        class={styles.host}
-        role="dialog"
-        aria-label="Edit project"
-        onKeydown={onKeydown}
-        style={{ width: '100%', height: '100%' }}
-      >
-        <SidePanel title="Edit project" icon={EditIcon} onClose={cancel} closeTooltip="Cancel">
-          {{
-            default: () => (
-              <div class="d-flex flex-column ga-3">
-                <div>
-                  <label class="text-caption text-disabled d-block mb-1" for="hero-name">
-                    Project name
-                  </label>
-                  <input
-                    id="hero-name"
-                    ref={nameInput}
-                    type="text"
-                    value={name.value}
-                    onInput={(e) => (name.value = (e.target as HTMLInputElement).value)}
-                    class={styles.input}
-                  />
-                </div>
-                <div>
-                  <label class="text-caption text-disabled d-block mb-1" for="hero-description">
-                    Description (optional)
-                  </label>
-                  <textarea
-                    id="hero-description"
-                    rows={3}
-                    value={description.value}
-                    onInput={(e) => (description.value = (e.target as HTMLTextAreaElement).value)}
-                    class={[styles.input, styles.textarea]}
-                  />
-                </div>
-                {error.value && (
-                  <div class="text-error text-caption" role="alert">
-                    {error.value}
+      <VSlideXReverseTransition {...APPEAR_PROPS}>
+        <div
+          class={styles.host}
+          role="dialog"
+          aria-label="Edit project"
+          onKeydown={onKeydown}
+          style={{ width: '100%', height: '100%' }}
+        >
+          <SidePanel title="Edit project" icon={EditIcon} onClose={cancel} closeTooltip="Cancel">
+            {{
+              default: () => (
+                <div class="d-flex flex-column ga-3">
+                  <div>
+                    <label class="text-caption text-disabled d-block mb-1" for="hero-name">
+                      Project name
+                    </label>
+                    <input
+                      id="hero-name"
+                      ref={nameInput}
+                      type="text"
+                      value={name.value}
+                      onInput={(e) => (name.value = (e.target as HTMLInputElement).value)}
+                      class={styles.input}
+                    />
                   </div>
-                )}
-                <div class="text-caption text-disabled">⌘/Ctrl + Enter to save · Esc to cancel</div>
-              </div>
-            ),
-            footer: () => (
-              <div class="d-flex justify-end ga-2">
-                <VBtn variant="text" onClick={cancel} disabled={loading.value}>
-                  Cancel
-                </VBtn>
-                <VBtn
-                  color="primary"
-                  onClick={save}
-                  disabled={loading.value || name.value.trim().length === 0}
-                  loading={loading.value}
-                >
-                  Save
-                </VBtn>
-              </div>
-            ),
-          }}
-        </SidePanel>
-      </div>
+                  <div>
+                    <label class="text-caption text-disabled d-block mb-1" for="hero-description">
+                      Description (optional)
+                    </label>
+                    <textarea
+                      id="hero-description"
+                      rows={3}
+                      value={description.value}
+                      onInput={(e) => (description.value = (e.target as HTMLTextAreaElement).value)}
+                      class={[styles.input, styles.textarea]}
+                    />
+                  </div>
+                  {error.value && (
+                    <div class="text-error text-caption" role="alert">
+                      {error.value}
+                    </div>
+                  )}
+                  <div class="text-caption text-disabled">
+                    ⌘/Ctrl + Enter to save · Esc to cancel
+                  </div>
+                </div>
+              ),
+              footer: () => (
+                <div class="d-flex justify-end ga-2">
+                  <VBtn variant="text" onClick={cancel} disabled={loading.value}>
+                    Cancel
+                  </VBtn>
+                  <VBtn
+                    color="primary"
+                    onClick={save}
+                    disabled={loading.value || name.value.trim().length === 0}
+                    loading={loading.value}
+                  >
+                    Save
+                  </VBtn>
+                </div>
+              ),
+            }}
+          </SidePanel>
+        </div>
+      </VSlideXReverseTransition>
     )
   },
 })

@@ -239,6 +239,8 @@ implementation in a view or sibling composable is a code-review-blocking issue.
 | Pushing a toast (info / success / warning / error)                              | `useNotificationsStore`                                         | `@xomda/ui`      |
 | Buffered edit state with dirty tracking and revert                              | `useEditBuffer<T>`                                              | `@xomda/ui`      |
 | Pointer-drag-to-reposition for a diagram node                                   | `useNodeDrag`                                                   | `@xomda/diagram` |
+| Delay-to-show hover affordance (e.g. resize handle on a divider)                | `<VHover openDelay>`                                            | Vuetify          |
+| Element enter/leave animation (mount, condition flip, list reflow)              | `<VFadeTransition>` / `<VSlideXReverseTransition>` (+ `group`)  | Vuetify          |
 
 **Bans (anti-patterns).**
 
@@ -440,6 +442,16 @@ Router namespaces: `model.*`, `template.*`, `file.*`, `analysis.*`, `project.*`.
 - **Vuetify global defaults** in `packages/client/src/vuetify.ts`: `size='small'` + `density='comfortable'` for most
   components with a size prop; **`VBtn` uses `density='default'`** (comfortable + small is too tight);
   `density='compact'` for `VList` / `VListItem` / `VListSubheader`. Don't override inline without reason.
+- **Routes are named, never path-strung.** Each module owns a `routes.ts` exporting an `as const` table
+  (e.g. `ModelRoutes.view = 'model.view'`); navigation uses `router.push({ name: ModelRoutes.view })` and
+  `nav.routeName`. Raw `path: '/...'` strings at call sites are review-blocking. Invariants enforced by
+  `packages/client/src/router/__tests__/routes.spec.ts`.
+- **Hand-rolled `setTimeout` hover-arms are banned.** "Show this affordance after the pointer settles" uses
+  `<VHover openDelay={...}>` with the `isHovering` slot prop. Dragging state is OR'd in locally.
+- **Custom `@keyframes` enter/leave animations are banned.** Use `<VFadeTransition>` /
+  `<VSlideXReverseTransition>` (or the matching reverse/scroll variants). For mount-time animation forward
+  Vue's `appear` prop via a typed `Record<string, unknown>` spread — Vuetify's prop types don't model it
+  but the underlying `<Transition>` does (see `LayoutSavePill`, `SceneMiniToolbar`).
 
 ## Full-screen background components
 

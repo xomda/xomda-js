@@ -122,3 +122,31 @@ describe('LoopCellForm — JavaScript generator code resize', () => {
     expect(store.cellHeights[cell.uuid]).toBe(600)
   })
 })
+
+describe('LoopCellForm — loop source list', () => {
+  it('exposes Models and Projects as workspace-level iteration targets', () => {
+    const cell = makeCell({ loopSource: undefined, content: '' })
+    const { wrapper } = makeWrapper({ cell })
+    // VSelect items are read from props; query the actual <select> alternative
+    // via the underlying option list rendered when the menu is open.
+    const select = wrapper.findComponent({ name: 'VSelect' })
+    expect(select.exists()).toBe(true)
+    const items = select.props('items') as Array<{ title?: string; value?: string }>
+    expect(items.some((i) => i.value === 'models' && i.title === 'Models')).toBe(true)
+    expect(items.some((i) => i.value === 'projects' && i.title === 'Projects')).toBe(true)
+    // Existing entries still present (regression pin).
+    for (const v of ['entities', 'enums', 'packages', 'javascript']) {
+      expect(items.some((i) => i.value === v)).toBe(true)
+    }
+  })
+
+  it('does not render the JS editor when Models or Projects is selected', () => {
+    const cell = makeCell({ loopSource: 'models', content: '' })
+    const { wrapper } = makeWrapper({ cell })
+    expect(wrapper.findComponent(CodeEditorStub).exists()).toBe(false)
+
+    const projectsCell = makeCell({ loopSource: 'projects', content: '' })
+    const projectsWrapper = makeWrapper({ cell: projectsCell }).wrapper
+    expect(projectsWrapper.findComponent(CodeEditorStub).exists()).toBe(false)
+  })
+})

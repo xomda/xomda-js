@@ -2,6 +2,7 @@ import type { Version } from '@xomda/core'
 import { HistoryIcon } from '@xomda/icons'
 import type { Router } from 'vue-router'
 
+import { VersionsRoutes } from '../../../modules/versions'
 import { trpc } from '../../../trpc'
 import type { SearchHit, SearchProvider } from './types'
 import { createCache, scoreMatch } from './types'
@@ -36,7 +37,7 @@ export function createVersionProvider(router: Router, onNavigate: () => void): S
           score,
           navigate: () => {
             onNavigate()
-            void router.push({ path: '/versions', query: { select: v.id } })
+            void router.push({ name: VersionsRoutes.view, query: { select: v.id } })
           },
         })
       }

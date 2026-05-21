@@ -1,7 +1,19 @@
-import type { CellType, ModelDiff, Template, TemplateCell } from '@xomda/core'
+import type { CellType, Model, ModelDiff, Template, TemplateCell } from '@xomda/core'
 
 import type { RenderResult } from '../types'
 import type { CapturedConsole, Helpers, OutputBuffer } from './utils'
+
+/**
+ * Workspace-lens descriptor for a project surfaced through the `projects`
+ * loop source. `root` is the absolute path of the project, `models` are
+ * its full Models (so a nested `models` loop can iterate them).
+ */
+export interface ProjectInfo {
+  root: string
+  name: string
+  isRoot: boolean
+  models: Model[]
+}
 
 export interface CellState {
   output: string
@@ -27,6 +39,19 @@ export interface ExecutionContext {
   readonly currentItem?: unknown
   // The parent loop's current iteration index. `0` at top level.
   readonly parentIndex?: number
+  /**
+   * Every model in the active project. Resolved by the renderer; defaults
+   * to `[execCtx.model]` when the caller doesn't supply one. Drives the
+   * `models` loop source.
+   */
+  readonly allModels?: Model[]
+  /**
+   * Every project visible to this render. Defaults to a singleton wrapping
+   * the active project when the caller doesn't supply one. Drives the
+   * `projects` loop source — a project's `.models` field carries every
+   * model in that project so authors can nest a `models` loop inside.
+   */
+  readonly allProjects?: ProjectInfo[]
 }
 
 export interface CellContext extends ExecutionContext {

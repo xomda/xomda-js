@@ -2,6 +2,7 @@ import { ModelIcon } from '@xomda/icons'
 import { defineStore } from 'pinia'
 
 import { registerModule } from '../registry'
+import { ModelRoutes } from './routes'
 
 /**
  * Currently-selected element in the model view. Mirrors the local
@@ -43,10 +44,11 @@ registerModule<ModelModuleApi>({
   routes: [
     {
       path: '/model',
+      name: ModelRoutes.view,
       component: () => import('./ModelView').then(({ ModelView }) => ModelView),
     },
   ],
-  nav: { icon: ModelIcon, label: 'Model', path: '/model', order: 20 },
+  nav: { icon: ModelIcon, label: 'Model', routeName: ModelRoutes.view, order: 20 },
   setup() {
     // Store factory runs inside `setup()` so Pinia is active. The returned
     // store ref is then accessible to other modules via
@@ -54,3 +56,6 @@ registerModule<ModelModuleApi>({
     return { selection: useModelSelectionStore() }
   },
 })
+
+export type { ModelRouteName } from './routes'
+export { ModelRoutes } from './routes'

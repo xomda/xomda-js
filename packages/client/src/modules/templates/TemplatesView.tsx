@@ -45,10 +45,11 @@ import {
   VTooltip,
 } from 'vuetify/components'
 
-import { AppTitleBar, PanelDivider, ViewCardHeader } from '../../components'
+import { AppTitleBar, PanelDivider, ViewCardHeader, WorkspaceSelector } from '../../components'
 import { TemplateEditor } from '../../components/templates/TemplateEditor'
 import { usePanelResize } from '../../composables'
 import { trpc } from '../../trpc'
+import { TemplatesRoutes } from './routes'
 import { duplicateTemplate, findTabsInDeletedFolder, newTemplate } from './TemplatesView.logic'
 import styles from './TemplatesView.module.scss'
 import { TemplateTabs } from './TemplateTabs'
@@ -124,7 +125,7 @@ export const TemplatesView = defineComponent({
 
     const goToFolder = (path: string) => {
       router.push({
-        name: 'templates',
+        name: TemplatesRoutes.view,
         params: { folderPath: folderPathSegments(path) },
         query: {},
       })
@@ -132,7 +133,7 @@ export const TemplatesView = defineComponent({
 
     const updateSelectedInUrl = (uuid: string | null) => {
       router.replace({
-        name: 'templates',
+        name: TemplatesRoutes.view,
         params: { folderPath: folderPathSegments(currentPath.value) },
         query: uuid ? { template: uuid } : {},
       })
@@ -195,7 +196,7 @@ export const TemplatesView = defineComponent({
     // returned `mutation.loading`. No more inline try/catch with console.error.
 
     const saveTemplateMutation = useMutation(
-      async (template: Template) => trpc.template.save.mutate(template),
+      async (template: Template) => trpc.template.save.mutate({ template }),
       {
         successMessage: 'Template saved',
         onSuccess: async (_, template) => {
@@ -281,7 +282,7 @@ export const TemplatesView = defineComponent({
 
     const addTemplateMutation = useMutation(
       async (template: Template) => {
-        await trpc.template.save.mutate(template)
+        await trpc.template.save.mutate({ template })
         return template
       },
       {
@@ -300,7 +301,7 @@ export const TemplatesView = defineComponent({
 
     const duplicateTemplateMutation = useMutation(
       async (template: Template) => {
-        await trpc.template.save.mutate(template)
+        await trpc.template.save.mutate({ template })
         return template
       },
       {
@@ -319,7 +320,8 @@ export const TemplatesView = defineComponent({
     }
 
     const saveFolderMutation = useMutation(
-      async (input: { path: string; name: string }) => trpc.template.saveFolder.mutate(input),
+      async (input: { path: string; name: string }) =>
+        trpc.template.saveFolder.mutate({ folder: input }),
       { successMessage: 'Folder created', onSuccess: () => loadData() }
     )
 
@@ -361,7 +363,7 @@ export const TemplatesView = defineComponent({
 
     const renameTemplateMutation = useMutation(
       async (updated: Template) => {
-        await trpc.template.save.mutate(updated)
+        await trpc.template.save.mutate({ template: updated })
         return updated
       },
       {
@@ -444,7 +446,7 @@ export const TemplatesView = defineComponent({
 
     const deleteTemplateMutation = useMutation(
       async (t: Template) => {
-        await trpc.template.delete.mutate(t.uuid)
+        await trpc.template.delete.mutate({ uuid: t.uuid })
         return t
       },
       {
@@ -749,6 +751,7 @@ export const TemplatesView = defineComponent({
           {{
             title: () => (
               <div class="d-flex align-center ga-3">
+                <WorkspaceSelector labelPrefix="Templates" />
                 <div class="d-flex align-center">
                   {breadcrumbs.value.map((crumb, index) => (
                     <>

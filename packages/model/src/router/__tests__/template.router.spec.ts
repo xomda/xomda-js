@@ -58,40 +58,42 @@ describe('templateRouter', () => {
 
     it('save persists a template that list / get can read back', async () => {
       const t = makeTemplate({ name: 'Alpha' })
-      await caller.save(t)
+      await caller.save({ template: t })
       const all = await caller.list()
       expect(all.map((x) => x.uuid)).toEqual([t.uuid])
-      const single = await caller.get(t.uuid)
+      const single = await caller.get({ uuid: t.uuid })
       expect(single.name).toBe('Alpha')
     })
 
     it('save can update an existing template (same uuid)', async () => {
       const t = makeTemplate({ name: 'V1' })
-      await caller.save(t)
-      await caller.save({ ...t, name: 'V2' })
-      const reread = await caller.get(t.uuid)
+      await caller.save({ template: t })
+      await caller.save({ template: { ...t, name: 'V2' } })
+      const reread = await caller.get({ uuid: t.uuid })
       expect(reread.name).toBe('V2')
     })
 
     it('delete removes a template', async () => {
       const t = makeTemplate()
-      await caller.save(t)
-      await caller.delete(t.uuid)
+      await caller.save({ template: t })
+      await caller.delete({ uuid: t.uuid })
       expect(await caller.list()).toEqual([])
     })
 
     it('get throws for an unknown uuid', async () => {
-      await expect(caller.get(newId())).rejects.toThrow(/not found/i)
+      await expect(caller.get({ uuid: newId() })).rejects.toThrow(/not found/i)
     })
   })
 
   describe('folder operations', () => {
     it('saveFolder + listFolders round-trip with metadata preserved', async () => {
       await caller.saveFolder({
-        path: 'shared/utils',
-        name: 'Utilities',
-        description: 'misc',
-        tags: ['core'],
+        folder: {
+          path: 'shared/utils',
+          name: 'Utilities',
+          description: 'misc',
+          tags: ['core'],
+        },
       })
       const folders = await caller.listFolders()
       expect(folders.map((f) => f.path)).toContain('shared/utils')
@@ -103,15 +105,15 @@ describe('templateRouter', () => {
 
     it('move places a template inside a folder', async () => {
       const t = makeTemplate({ name: 'movable' })
-      await caller.save(t)
-      await caller.saveFolder({ path: 'archive', name: 'Archive' })
+      await caller.save({ template: t })
+      await caller.saveFolder({ folder: { path: 'archive', name: 'Archive' } })
       await caller.move({ uuid: t.uuid, folder: 'archive' })
-      const reread = await caller.get(t.uuid)
+      const reread = await caller.get({ uuid: t.uuid })
       expect(reread.folder).toBe('archive')
     })
 
     it('moveFolder renames a folder', async () => {
-      await caller.saveFolder({ path: 'old', name: 'Old' })
+      await caller.saveFolder({ folder: { path: 'old', name: 'Old' } })
       await caller.moveFolder({ from: 'old', to: 'new/path' })
       const folders = await caller.listFolders()
       expect(folders.map((f) => f.path)).toContain('new/path')
@@ -119,9 +121,9 @@ describe('templateRouter', () => {
     })
 
     it('deleteFolder removes a folder and any templates inside', async () => {
-      await caller.saveFolder({ path: 'gone', name: 'Gone' })
+      await caller.saveFolder({ folder: { path: 'gone', name: 'Gone' } })
       const t = makeTemplate()
-      await caller.save(t)
+      await caller.save({ template: t })
       await caller.move({ uuid: t.uuid, folder: 'gone' })
 
       await caller.deleteFolder({ path: 'gone' })
@@ -154,13 +156,15 @@ describe('templateRouter', () => {
           outputFilename: 'out.txt',
         },
       ]
-      await caller.save({ uuid: newId(), name: 'active', version: '1.0.0', cells })
+      await caller.save({ template: { uuid: newId(), name: 'active', version: '1.0.0', cells } })
       await caller.save({
-        uuid: newId(),
-        name: 'disabled',
-        version: '1.0.0',
-        cells,
-        disabled: true,
+        template: {
+          uuid: newId(),
+          name: 'disabled',
+          version: '1.0.0',
+          cells,
+          disabled: true,
+        },
       })
 
       const results = await caller.preview()
@@ -171,19 +175,21 @@ describe('templateRouter', () => {
     it('generate writes rendered results to disk and returns them', async () => {
       await seedModel(tmpDir)
       await caller.save({
-        uuid: newId(),
-        name: 'gen',
-        version: '1.0.0',
-        cells: [
-          { uuid: newId(), type: 'logic', content: "$out.write('persisted body')" },
-          {
-            uuid: newId(),
-            type: 'output',
-            content: '',
-            outputType: 'file',
-            outputFilename: 'generated/out.txt',
-          },
-        ],
+        template: {
+          uuid: newId(),
+          name: 'gen',
+          version: '1.0.0',
+          cells: [
+            { uuid: newId(), type: 'logic', content: "$out.write('persisted body')" },
+            {
+              uuid: newId(),
+              type: 'output',
+              content: '',
+              outputType: 'file',
+              outputFilename: 'generated/out.txt',
+            },
+          ],
+        },
       })
 
       const results = await caller.generate()

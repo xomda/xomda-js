@@ -41,7 +41,8 @@
   line-height: 1.35;
   max-width: 100%;
   overflow: hidden;
-  animation: slideIn 0.16s ease-out;
+  // Enter/leave slide is owned by `<VSlideXReverseTransition group>` in
+  // the TSX (each toast animates in/out around the others).
 }
 
 .toastInfo {
@@ -94,15 +95,4 @@
   align-items: center;
   gap: 0;
   padding-right: 4px;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(8px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
 }

@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { diff, generate, preview, wrapper } from '@xomda/cli'
+import { diff, generate, generateRecursive, preview, previewRecursive, wrapper } from '@xomda/cli'
 import { PortUnavailableError, startServer } from '@xomda/node'
 import { colors } from '@xomda/util'
 import { program } from 'commander'
@@ -70,12 +70,37 @@ program
   .command('generate')
   .description('Run all templates and write generated files to disk')
   .option('-r, --root <path>', 'project root directory', process.cwd())
-  .action(async (opts: { root: string }) => {
+  .option(
+    '-R, --recursive',
+    'walk every .xomda/ subproject under <root>; stop at settings.isRoot boundaries',
+    false
+  )
+  .action(async (opts: { root: string; recursive: boolean }) => {
     try {
-      const results = await generate(opts.root)
-      console.log(colors.green(`Generated ${results.length} file(s):`))
-      for (const r of results) {
-        console.log(`  ${colors.dim(r.outputPath)}`)
+      if (opts.recursive) {
+        const projects = await generateRecursive(opts.root, { recursive: true })
+        let total = 0
+        for (const project of projects) {
+          total += project.results.length
+          console.log(colors.cyan(colors.bold(`=== ${project.root} ===`)))
+          console.log(colors.green(`Generated ${project.results.length} file(s):`))
+          for (const r of project.results) {
+            console.log(`  ${colors.dim(r.outputPath)}`)
+          }
+          if (project.skippedRoots && project.skippedRoots.length > 0) {
+            console.log(colors.dim('Skipped (independent workspaces — settings.isRoot=true):'))
+            for (const s of project.skippedRoots) {
+              console.log(`  ${colors.dim(`${s.path} (${s.name})`)}`)
+            }
+          }
+        }
+        console.log(colors.green(`\n${total} file(s) total across ${projects.length} project(s).`))
+      } else {
+        const results = await generate(opts.root)
+        console.log(colors.green(`Generated ${results.length} file(s):`))
+        for (const r of results) {
+          console.log(`  ${colors.dim(r.outputPath)}`)
+        }
       }
     } catch (err) {
       printError(err)
@@ -87,16 +112,42 @@ program
   .command('preview')
   .description('Preview generated output without writing to disk')
   .option('-r, --root <path>', 'project root directory', process.cwd())
+  .option(
+    '-R, --recursive',
+    'walk every .xomda/ subproject under <root>; stop at settings.isRoot boundaries',
+    false
+  )
   .option('--json', 'output results as JSON')
-  .action(async (opts: { root: string; json?: boolean }) => {
+  .action(async (opts: { root: string; recursive: boolean; json?: boolean }) => {
     try {
-      const results = await preview(opts.root)
-      if (opts.json) {
-        console.log(JSON.stringify(results, null, 2))
+      if (opts.recursive) {
+        const projects = await previewRecursive(opts.root)
+        if (opts.json) {
+          console.log(JSON.stringify(projects, null, 2))
+          return
+        }
+        for (const project of projects) {
+          console.log(colors.cyan(colors.bold(`\n=== project: ${project.root} ===`)))
+          for (const r of project.results) {
+            console.log(`\n${colors.cyan(colors.bold(`--- ${r.outputPath} ---`))}`)
+            console.log(r.content)
+          }
+          if (project.skippedRoots && project.skippedRoots.length > 0) {
+            console.log(colors.dim('\nSkipped (independent workspaces — settings.isRoot=true):'))
+            for (const s of project.skippedRoots) {
+              console.log(`  ${colors.dim(`${s.path} (${s.name})`)}`)
+            }
+          }
+        }
       } else {
-        for (const r of results) {
-          console.log(`\n${colors.cyan(colors.bold(`=== ${r.outputPath} ===`))}`)
-          console.log(r.content)
+        const results = await preview(opts.root)
+        if (opts.json) {
+          console.log(JSON.stringify(results, null, 2))
+        } else {
+          for (const r of results) {
+            console.log(`\n${colors.cyan(colors.bold(`=== ${r.outputPath} ===`))}`)
+            console.log(r.content)
+          }
         }
       }
     } catch (err) {

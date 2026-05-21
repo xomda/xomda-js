@@ -57,10 +57,20 @@ Runs every template against the model and writes generated files to disk.
 ```bash
 xomda generate                       # write to <cwd>/<output paths>
 xomda generate --root ../app         # write rooted at ../app
+xomda generate -R                    # recursive: walk every .xomda/ subproject
+xomda generate --recursive           # same as -R
 ```
 
 Reads `.xomda/model.json` and `.xomda/templates/**/*.template.json`. Writes
 files at paths declared by `output` cells.
+
+**Recursive mode (`-R / --recursive`)** walks down from `--root`, generating
+once per `.xomda/`-rooted subproject. Subprojects whose `project.json`
+declares `settings.isRoot: true` are listed (their independence is logged)
+but their own descendants are NOT descended into — they are independent
+workspaces and must be generated explicitly. The walker honours
+`settings.excludeFromScan` (defaults skip `node_modules`, `.git`, build
+outputs, etc.).
 
 Exit code `0` on success, non-zero with a message on failure.
 
@@ -71,9 +81,13 @@ Runs every template but writes nothing — prints what would be generated.
 ```bash
 xomda preview                        # human-readable output
 xomda preview --json                 # machine-readable, parseable
+xomda preview -R                     # recursive: include every .xomda/ subproject
 ```
 
-The JSON form is `Array<{ outputPath: string; content: string }>`.
+The JSON form for the single-project case is
+`Array<{ outputPath: string; content: string }>`. With `-R`, the JSON form
+is `Array<{ root: string; results: …; skippedRoots?: … }>` — one entry
+per project walked.
 
 ### `xomda diff`
 

@@ -15,7 +15,18 @@ export const CellTypeSchema = z.enum([
 export const OUTPUT_TYPES = ['file', 'context'] as const
 export const OutputTypeSchema = z.enum(OUTPUT_TYPES)
 
-export const LOOP_SOURCES = ['entities', 'enums', 'packages', 'javascript'] as const
+export const LOOP_SOURCES = [
+  'entities',
+  'enums',
+  'packages',
+  // Workspace lens: iterate every model in the active project, or every
+  // project in the workspace (root + discovered subprojects). The engine
+  // swaps `execCtx.model` per iteration when looping `models` so nested
+  // entity/enum/package loops resolve against the iterated model.
+  'models',
+  'projects',
+  'javascript',
+] as const
 
 export const DIFF_LOOP_SOURCES = [
   'diff-added-entities',

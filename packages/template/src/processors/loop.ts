@@ -2,6 +2,7 @@ import type { Model, ModelDiff } from '@xomda/core'
 import { getAllEntities, getAllEnums, getAllPackages } from '@xomda/core'
 
 import { defineProcessor } from './defineProcessor'
+import type { ProjectInfo } from './types'
 import { createTemplateFn } from './utils'
 
 export type LoopItem = Record<string, unknown>
@@ -79,6 +80,18 @@ export interface CollectLoopOptions {
    * (entities, packages, diff-*, javascript, ...). Empty string = no filter.
    */
   filter?: string
+  /**
+   * Workspace lens: every model in the active project. Drives the `models`
+   * loop source. Falls back to `[model]` when omitted so a `models` loop in
+   * a single-model project iterates exactly once.
+   */
+  allModels?: Model[]
+  /**
+   * Workspace lens: every project visible to this render. Drives the
+   * `projects` loop source. Falls back to a singleton wrapping the active
+   * project so a `projects` loop in a single-project repo iterates once.
+   */
+  allProjects?: ProjectInfo[]
 }
 
 export async function collectLoopItems(options: CollectLoopOptions): Promise<unknown[]> {
@@ -92,13 +105,28 @@ export async function collectLoopItems(options: CollectLoopOptions): Promise<unk
     parentIndex = 0,
     ctx = {},
     filter,
+    allModels,
+    allProjects,
   } = options
 
   let items: unknown[]
   if (source === 'entities') items = getAllEntities(model)
   else if (source === 'enums') items = getAllEnums(model)
   else if (source === 'packages') items = getAllPackages(model)
-  else if (source && source.startsWith('diff-')) items = collectDiffItems(source, diff)
+  else if (source === 'models') {
+    // Default to the singleton when the caller didn't surface the
+    // workspace lens. A `models` loop in a single-model project
+    // iterates exactly once — matches the user's mental model of "loop
+    // over my models" producing one pass per model, not zero.
+    items = (allModels ?? [model]) as unknown[]
+  } else if (source === 'projects') {
+    // Singleton fallback for the same reason as `models`. Wrap the
+    // active model under a synthetic project so the `.models` shape is
+    // available for inner loops even when no workspace was supplied.
+    items =
+      allProjects ??
+      ([{ root: '.', name: 'current', isRoot: true, models: [model] }] as ProjectInfo[])
+  } else if (source && source.startsWith('diff-')) items = collectDiffItems(source, diff)
   else if (source === 'javascript' && content.trim()) {
     // The user's code is the *body* of an outer function. Its return value is
     // either an iterable (used as-is) or a function (called with the
