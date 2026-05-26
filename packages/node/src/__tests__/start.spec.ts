@@ -16,12 +16,16 @@ describe('startServer', () => {
     writeFileSync(join(staticDir, 'index.html'), '<!doctype html><html>spa</html>')
 
     vendorRoot = mkdtempSync(join(tmpdir(), 'xomda-start-vendor-'))
-    const vueDir = join(vendorRoot, 'vue')
+    const vueDir = join(vendorRoot, 'node_modules', 'fake-vue')
     mkdirSync(vueDir, { recursive: true })
+    writeFileSync(
+      join(vueDir, 'package.json'),
+      JSON.stringify({ name: 'fake-vue', main: 'index.js' })
+    )
     writeFileSync(join(vueDir, 'index.js'), 'export const vue = 1')
 
     vendorManifestPath = join(vendorRoot, 'vendor.manifest.json')
-    writeFileSync(vendorManifestPath, JSON.stringify({ vue: vueDir }))
+    writeFileSync(vendorManifestPath, JSON.stringify(['fake-vue']))
   })
 
   let running: Awaited<ReturnType<typeof startServer>> | undefined
@@ -54,7 +58,7 @@ describe('startServer', () => {
       banner: false,
       keypress: false,
     })
-    const r = await fetch(`http://localhost:${running.port}/vendor/vue/index.js`)
+    const r = await fetch(`http://localhost:${running.port}/vendor/fake-vue/index.js`)
     expect(r.status).toBe(200)
     expect(await r.text()).toBe('export const vue = 1')
   })

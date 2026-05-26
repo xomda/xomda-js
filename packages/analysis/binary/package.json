@@ -1,6 +1,6 @@
 {
   "name": "@xomda/plugin-analysis-binary",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "Baseline file-type plugin for common binary, image, font, and media files",
   "keywords": [

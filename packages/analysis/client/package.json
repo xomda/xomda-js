@@ -1,6 +1,6 @@
 {
   "name": "@xomda/analysis-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "Client-side counterpart of @xomda/analysis-core — icons, preview components, registry",
   "keywords": [

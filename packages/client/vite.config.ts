@@ -18,9 +18,7 @@ export default defineConfig(({ mode }) => {
   // Absolute path — vite-plugin-vuetify hands this to sass, whose cwd /
   // path resolution differs across platforms (Windows in particular fails
   // a relative `../ui/src/...` lookup with "system cannot find the file").
-  const uiStylesSettings = fileURLToPath(
-    new URL('../ui/src/styles/settings.scss', import.meta.url)
-  )
+  const uiStylesSettings = fileURLToPath(new URL('../ui/src/styles/settings.scss', import.meta.url))
 
   return {
     plugins: [

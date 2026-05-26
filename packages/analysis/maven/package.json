@@ -1,6 +1,6 @@
 {
   "name": "@xomda/plugin-analysis-maven",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "Maven detector for xomda analysis",
   "keywords": [

@@ -1,6 +1,6 @@
 {
   "name": "xomda",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "Bundle harness for the published `xomda` npm package",
   "author": "Joris Aerts, 3611758+JorisAerts@users.noreply.github.com",

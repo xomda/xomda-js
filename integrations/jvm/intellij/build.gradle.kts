@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "org.xomda"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.2-SNAPSHOT"
 
 // Pin build output to ./build/ so the IDE never picks an adjacent
 // folder (e.g. `lib/`) as a default sink.
@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.xomda:xomda-generator-core:0.0.1-SNAPSHOT")
+    implementation("org.xomda:xomda-generator-core:0.0.2-SNAPSHOT")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
 
     intellijPlatform {

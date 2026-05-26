@@ -128,13 +128,20 @@ describe('buildPublishArtifact', () => {
       expect(existsSync(resolve(STAGE_DIR, 'client', 'index.html'))).toBe(true)
     })
 
-    it('ships the SPA vendor manifest', async () => {
+    it('ships the SPA vendor manifest as a portable list of names (no absolute paths)', async () => {
       const manifestPath = resolve(STAGE_DIR, 'client', 'vendor.manifest.json')
       expect(existsSync(manifestPath)).toBe(true)
-      const manifest = JSON.parse(await readFile(manifestPath, 'utf8')) as Record<string, string>
+      const raw = await readFile(manifestPath, 'utf8')
+      const manifest = JSON.parse(raw) as unknown
+      // Must be an array of bare specifiers, never an object with machine-local
+      // absolute paths — those would 404 every vendor request on consumer installs.
+      expect(Array.isArray(manifest)).toBe(true)
+      const names = manifest as string[]
       for (const ext of PUBLISH_EXTERNALS) {
-        expect(manifest[ext], `${ext} missing from vendor.manifest.json`).toBeDefined()
+        expect(names, `${ext} missing from vendor.manifest.json`).toContain(ext)
       }
+      // Sanity: no value in the manifest references the builder's filesystem.
+      expect(raw).not.toMatch(/node_modules/)
     })
 
     it('ships the LICENSE', () => {

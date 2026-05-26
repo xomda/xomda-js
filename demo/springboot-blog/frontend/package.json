@@ -1,6 +1,6 @@
 {
   "name": "@xomda/demo-springboot-blog-frontend",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "Tiny Vue 3 frontend for the springboot-blog demo. Consumes the TypeScript DTOs xomda emits from the same .xomda/model.json that drives the Spring Boot backend — one model, both halves.",
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "@xomda/analysis-plugins",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "Aggregator that imports every xomda analysis plugin so they self-register",
   "keywords": [

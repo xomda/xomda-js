@@ -1,6 +1,8 @@
 import { existsSync, promises as fsp, readFileSync } from 'node:fs'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { resolve, sep } from 'node:path'
+import { createRequire } from 'node:module'
+import { dirname, resolve, sep } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 import { sendFile } from './static'
 
@@ -12,23 +14,36 @@ export type VendorHandler = (req: IncomingMessage, res: ServerResponse) => Promi
 /**
  * Serves third-party packages externalized from the SPA bundle.
  *
- * The manifest maps a bare package specifier (e.g. `"vue"`, `"@vueuse/core"`) to the
- * absolute path of that package's directory inside the running install's
- * `node_modules`. The SPA's `<script type="importmap">` rewrites bare specifiers to
- * `/vendor/<pkg>/<deep-path>` URLs that this handler resolves back to on-disk files.
+ * The manifest is a JSON array of bare package specifiers (e.g.
+ * `["lodash-es", "@vueuse/core"]`). Each package's on-disk root is resolved at
+ * server startup via `createRequire(manifestPath)`, so the manifest stays
+ * portable — only the consumer's `node_modules` layout matters, not the
+ * builder's. The SPA's `<script type="importmap">` rewrites bare specifiers to
+ * `/vendor/<pkg>/<deep-path>` URLs that this handler resolves back to files
+ * inside each package root.
  *
- * Security: only paths inside a known package root are served. Path traversal returns
- * `false` (handler did not handle); requesting the manifest itself returns 404.
+ * Security: only paths inside a known package root are served. Path traversal
+ * returns `false` (handler did not handle); requesting the manifest itself
+ * returns 404.
  */
 export function createVendorHandler(manifestPath: string): VendorHandler | undefined {
   if (!existsSync(manifestPath)) return undefined
 
-  const raw = readFileSync(manifestPath, 'utf8')
-  const parsed = JSON.parse(raw) as Record<string, string>
+  const names = parseManifest(manifestPath)
+  const requireFromManifest = createRequire(pathToFileURL(manifestPath))
 
   const roots = new Map<string, string>()
-  for (const [pkg, dir] of Object.entries(parsed)) {
-    roots.set(pkg, resolve(dir))
+  for (const pkg of names) {
+    let pkgJson: string
+    try {
+      pkgJson = requireFromManifest.resolve(`${pkg}/package.json`)
+    } catch (err) {
+      throw new Error(
+        `vendor manifest lists "${pkg}" but the package is not installed beside ${manifestPath}: ${(err as Error).message}`,
+        { cause: err }
+      )
+    }
+    roots.set(pkg, resolve(dirname(pkgJson)))
   }
 
   const sortedKeys = [...roots.keys()].sort((a, b) => b.length - a.length)
@@ -78,4 +93,18 @@ export function createVendorHandler(manifestPath: string): VendorHandler | undef
     res.end('Not Found')
     return true
   }
+}
+
+/**
+ * Accepts the canonical array shape `["pkg-a", "pkg-b"]`. Also accepts the
+ * legacy object shape `{ "pkg-a": "<ignored>" }` so a tarball built before
+ * this fix still boots — only the keys are honored; baked-in absolute paths
+ * are discarded in favor of runtime resolution.
+ */
+function parseManifest(manifestPath: string): string[] {
+  const raw = readFileSync(manifestPath, 'utf8')
+  const parsed = JSON.parse(raw) as unknown
+  if (Array.isArray(parsed)) return parsed.filter((x): x is string => typeof x === 'string')
+  if (parsed && typeof parsed === 'object') return Object.keys(parsed as Record<string, unknown>)
+  throw new Error(`vendor manifest at ${manifestPath} is neither an array nor an object`)
 }

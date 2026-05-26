@@ -1,6 +1,6 @@
 {
   "name": "@xomda/demo-vue-blog",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "xomda Vue 3 demo — small Vite SPA that consumes the Zod schemas xomda generates from a Blog domain model. Generation is driven by the XomdaPlugin Vite plugin.",
   "type": "module",

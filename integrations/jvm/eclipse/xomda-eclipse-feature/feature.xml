@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature id="org.xomda.eclipse.feature"
          label="xomda"
-         version="0.0.1.qualifier"
+         version="0.0.2.qualifier"
          provider-name="Joris Aerts">
 
     <description>Edit xomda models and templates directly in Eclipse.</description>

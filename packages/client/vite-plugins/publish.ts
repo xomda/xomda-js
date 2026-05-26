@@ -8,13 +8,22 @@ import { PUBLISH_EXTERNALS } from './externals'
 const require = createRequire(import.meta.url)
 
 /**
+ * The vendor manifest emitted next to the SPA. Plain array of bare specifiers —
+ * the runtime server resolves each one against its own install's
+ * `node_modules`, so this file stays portable across machines.
+ */
+export type VendorManifest = readonly string[]
+
+/**
  * Activated when `XOMDA_BUILD=publish` is set.
  *
  * Externalizes packages listed in `PUBLISH_EXTERNALS` so the SPA bundle stops
  * inlining their code. Injects a `<script type="importmap">` into `index.html`
  * pointing each bare specifier at `/vendor/<pkg>/<entry>`. Emits a sibling
- * `vendor.manifest.json` that the runtime server reads to map `/vendor/*`
- * requests back to absolute files inside its own `node_modules`.
+ * `vendor.manifest.json` (a JSON array of the externalized package names) that
+ * the runtime server reads and resolves against its own install's
+ * `node_modules` — so the manifest is portable and contains no
+ * builder-specific absolute paths.
  *
  * The publish plugin is a no-op when `PUBLISH_EXTERNALS` is empty; the rails
  * stay quiet until step 4 starts populating it.
@@ -41,7 +50,7 @@ export function xomdaPublishPlugin(): Plugin {
       return html.replace('</head>', `  ${tag}\n  </head>`)
     },
     generateBundle() {
-      const manifest = buildVendorManifest(externals)
+      const manifest: VendorManifest = [...externals]
       this.emitFile({
         type: 'asset',
         fileName: 'vendor.manifest.json',
@@ -59,14 +68,6 @@ function buildImportMap(externals: readonly string[]): Record<string, string> {
     imports[`${pkg}/`] = `/vendor/${pkg}/`
   }
   return imports
-}
-
-function buildVendorManifest(externals: readonly string[]): Record<string, string> {
-  const out: Record<string, string> = {}
-  for (const pkg of externals) {
-    out[pkg] = dirname(require.resolve(`${pkg}/package.json`))
-  }
-  return out
 }
 
 /**

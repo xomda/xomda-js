@@ -15,16 +15,33 @@ describe('createVendorHandler', () => {
   let port: number
 
   beforeAll(async () => {
+    // Lay out the published artifact's runtime shape:
+    //   <root>/client/vendor.manifest.json   ← manifest lives next to the SPA
+    //   <root>/node_modules/<pkg>/...        ← packages resolved via npm/pnpm
+    //
+    // The manifest only lists package *names*; the handler resolves each one
+    // against the manifest's location at runtime. Baking absolute paths into
+    // the manifest at build time would point at the *builder's* filesystem
+    // and 404 on every consumer machine.
     rootDir = mkdtempSync(join(tmpdir(), 'xomda-vendor-'))
-    const vueDir = join(rootDir, 'vue')
-    const vueusePkg = join(rootDir, '@vueuse', 'core')
+    const clientDir = join(rootDir, 'client')
+    mkdirSync(clientDir, { recursive: true })
+
+    const vueDir = join(rootDir, 'node_modules', 'vue')
+    const vueusePkg = join(rootDir, 'node_modules', '@vueuse', 'core')
     mkdirSync(join(vueDir, 'dist'), { recursive: true })
     mkdirSync(vueusePkg, { recursive: true })
+    writeFileSync(join(vueDir, 'package.json'), JSON.stringify({ name: 'vue', main: 'index.js' }))
+    writeFileSync(join(vueDir, 'index.js'), 'export const vue = 0')
     writeFileSync(join(vueDir, 'dist', 'vue.runtime.esm-browser.js'), 'export const vue = 1')
+    writeFileSync(
+      join(vueusePkg, 'package.json'),
+      JSON.stringify({ name: '@vueuse/core', main: 'index.mjs' })
+    )
     writeFileSync(join(vueusePkg, 'index.mjs'), 'export const useThing = 2')
 
-    manifestPath = join(rootDir, 'vendor.manifest.json')
-    writeFileSync(manifestPath, JSON.stringify({ vue: vueDir, '@vueuse/core': vueusePkg }, null, 2))
+    manifestPath = join(clientDir, 'vendor.manifest.json')
+    writeFileSync(manifestPath, JSON.stringify(['vue', '@vueuse/core']))
 
     const handler = createVendorHandler(manifestPath)
     if (!handler) throw new Error('handler was not created')
@@ -92,5 +109,19 @@ describe('createVendorHandler', () => {
   it('returns undefined when the manifest file does not exist', () => {
     const handler = createVendorHandler(join(rootDir, 'missing.json'))
     expect(handler).toBeUndefined()
+  })
+
+  it('returns undefined when a listed package cannot be resolved from the manifest location', () => {
+    // Reproduces the original "absolute paths from the build machine" regression:
+    // if the manifest names a package that isn't installed beside it, the handler
+    // must fail loudly at startup rather than silently 404 every request.
+    const orphanRoot = mkdtempSync(join(tmpdir(), 'xomda-vendor-orphan-'))
+    try {
+      const orphanManifest = join(orphanRoot, 'vendor.manifest.json')
+      writeFileSync(orphanManifest, JSON.stringify(['no-such-package']))
+      expect(() => createVendorHandler(orphanManifest)).toThrow(/no-such-package/)
+    } finally {
+      rmSync(orphanRoot, { recursive: true, force: true })
+    }
   })
 })

@@ -1,6 +1,6 @@
 {
   "name": "@xomda/analysis-core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "Project analysis framework for xomda",
   "keywords": [

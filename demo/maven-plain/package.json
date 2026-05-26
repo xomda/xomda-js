@@ -1,6 +1,6 @@
 {
   "name": "@xomda/demo-maven-plain",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "Plain Java + Maven + JUnit 5 demo — pins the layout convention every JVM demo follows.",
   "type": "module",

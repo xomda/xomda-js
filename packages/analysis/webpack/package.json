@@ -1,6 +1,6 @@
 {
   "name": "@xomda/plugin-analysis-webpack",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "Webpack detector for xomda analysis",
   "keywords": [
