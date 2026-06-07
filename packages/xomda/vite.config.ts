@@ -60,7 +60,12 @@ export default defineConfig({
       // dependencies of the published `xomda` package.json. Everything else
       // (including all @xomda/* workspace packages) is inlined. All `node:*`
       // built-ins stay external.
-      external: [/^node:/, /^@trpc\//, 'commander'],
+      // picocolors is externalized (not inlined) because Vite 8's default
+      // "client" build environment honors picocolors' legacy `browser`
+      // package.json field and would substitute the no-op stub (every color
+      // becomes `String`), stripping all CLI color output. Keeping it as a
+      // runtime dep sidesteps the resolution and is ~2 KB on disk.
+      external: [/^node:/, /^@trpc\//, 'commander', 'picocolors'],
       // Two entries (`cli.js` + `index.js`) means Rollup may hoist shared code
       // into chunk files alongside them. That's fine — the whole `dist/` ships
       // together in the tarball. We don't need `inlineDynamicImports` (which

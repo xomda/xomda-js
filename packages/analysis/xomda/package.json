@@ -1,6 +1,6 @@
 {
   "name": "@xomda/plugin-analysis-xomda",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "xomda project detector for xomda analysis",
   "keywords": [

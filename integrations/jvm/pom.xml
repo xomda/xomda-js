@@ -5,7 +5,7 @@
 
   <groupId>org.xomda</groupId>
   <artifactId>xomda-jvm-aggregator</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>xomda JVM integrations aggregator</name>

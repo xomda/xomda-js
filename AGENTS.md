@@ -170,7 +170,8 @@ integrations/jvm/{gradle,maven,intellij,eclipse} → integrations/jvm/generator-
     `eslint.config.mjs`, `.stylelintrc.json`.
 14. **Commit per logical unit, autonomously.** One coherent step (file, feature, passing-tests milestone) = one commit,
     made *before* starting the next step; task authorisation covers its commits — don't ask. N independent changes ≈ N
-    commits, never one batched commit at the end. Push only on user request.
+    commits, never one batched commit at the end. Push only on user request. **No AI attribution in commit
+    messages** — no `Co-Authored-By` trailer, no agent/tool tag; author is the human only.
 15. **Centralize reusable logic.** A component file should read like a component, not half a program:
 
 - **Shared across components** → composable (`use*.ts`) or utility in the most fitting package.

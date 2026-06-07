@@ -1,6 +1,6 @@
 {
   "name": "@xomda/util",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Utility functions for xomda",
   "keywords": [
