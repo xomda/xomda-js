@@ -51,7 +51,7 @@
     "@vue/test-utils": "2.4.10",
     "unplugin-xomda": "workspace:*",
     "happy-dom": "20.9.0",
-    "vite": "8.0.14",
+    "vite": "8.0.16",
     "vite-plugin-vuetify": "^2.1.3"
   }
 }
