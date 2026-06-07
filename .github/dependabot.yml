@@ -69,6 +69,11 @@ updates:
     schedule:
       interval: 'weekly'
     groups:
+      storybook:
+        patterns:
+          - 'storybook'
+          - '*-storybook'
+          - '@storybook/'
       prettier:
         patterns:
           - 'prettier'
