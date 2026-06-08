@@ -1,6 +1,6 @@
 {
   "name": "@xomda/analysis-client",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Client-side counterpart of @xomda/analysis-core — icons, preview components, registry",
   "keywords": [
@@ -24,10 +24,10 @@
     "vue": "3.5.35"
   },
   "devDependencies": {
-    "@types/node": "25.9.1",
-    "@vue/test-utils": "2.4.10",
-    "happy-dom": "20.9.0",
+    "@types/node": "25.9.2",
+    "@vue/test-utils": "2.4.11",
+    "happy-dom": "20.10.2",
     "typescript": "6.0.3",
-    "vitest": "4.1.7"
+    "vitest": "4.1.8"
   }
 }

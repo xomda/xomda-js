@@ -1,6 +1,6 @@
 {
   "name": "@xomda/demo-vue-blog",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "xomda Vue 3 demo — small Vite SPA that consumes the Zod schemas xomda generates from a Blog domain model. Generation is driven by the XomdaPlugin Vite plugin.",
   "type": "module",
@@ -21,13 +21,13 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@types/node": "25.9.1",
+    "@types/node": "25.9.2",
     "@vitejs/plugin-vue-jsx": "5.1.5",
-    "@vue/test-utils": "2.4.10",
-    "happy-dom": "20.9.0",
-    "tsx": "4.22.3",
+    "@vue/test-utils": "2.4.11",
+    "happy-dom": "20.10.2",
+    "tsx": "4.22.4",
     "unplugin-xomda": "workspace:*",
     "vite": "8.0.16",
-    "vitest": "4.1.7"
+    "vitest": "4.1.8"
   }
 }

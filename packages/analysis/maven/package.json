@@ -1,6 +1,6 @@
 {
   "name": "@xomda/plugin-analysis-maven",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Maven detector for xomda analysis",
   "keywords": [
@@ -27,11 +27,11 @@
     "@xomda/analysis-core": "workspace:*",
     "@xomda/icons": "workspace:*",
     "vue": "3.5.35",
-    "vuetify": "4.0.8"
+    "vuetify": "4.1.1"
   },
   "devDependencies": {
-    "@types/node": "25.9.1",
+    "@types/node": "25.9.2",
     "typescript": "6.0.3",
-    "vitest": "4.1.7"
+    "vitest": "4.1.8"
   }
 }

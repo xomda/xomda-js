@@ -1,6 +1,6 @@
 {
   "name": "@xomda/e2e-tests",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "End-to-end tests for xomda",
   "keywords": [
     "xomda",
@@ -24,8 +24,8 @@
   },
   "devDependencies": {
     "cypress": "15.16.0",
-    "start-server-and-test": "3.0.5",
-    "tsx": "4.22.3",
-    "vitest": "4.1.7"
+    "start-server-and-test": "3.0.8",
+    "tsx": "4.22.4",
+    "vitest": "4.1.8"
   }
 }

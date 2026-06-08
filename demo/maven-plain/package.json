@@ -1,6 +1,6 @@
 {
   "name": "@xomda/demo-maven-plain",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Plain Java + Maven + JUnit 5 demo — pins the layout convention every JVM demo follows.",
   "type": "module",
@@ -13,8 +13,8 @@
     "xomda": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "25.9.1",
-    "tsx": "4.22.3",
-    "vitest": "4.1.7"
+    "@types/node": "25.9.2",
+    "tsx": "4.22.4",
+    "vitest": "4.1.8"
   }
 }

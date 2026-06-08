@@ -1,6 +1,6 @@
 {
   "name": "@xomda/codeeditor",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Code editor component for xomda",
   "keywords": [

@@ -1,6 +1,6 @@
 {
   "name": "@xomda/cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "CLI for xomda code generation",
   "keywords": [
@@ -28,7 +28,7 @@
     "commander": "15.0.0"
   },
   "devDependencies": {
-    "@types/node": "25.9.1",
-    "vitest": "4.1.7"
+    "@types/node": "25.9.2",
+    "vitest": "4.1.8"
   }
 }
