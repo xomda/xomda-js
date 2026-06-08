@@ -131,6 +131,49 @@ describe.runIf(!process.env.XOMDA_SKIP_INSTALL_SMOKE)('install smoke', () => {
     expect(r.stdout).toContain('wrapper')
   })
 
+  it('`xomda wrapper` succeeds and writes xomdaw scripts (version self-resolved)', async () => {
+    // Regression guard: readOwnCliVersion() previously only accepted package
+    // names '@xomda/cli' and 'xomda', so in the published tarball (named
+    // 'xomda-js') the version could never be determined and `wrapper` always
+    // threw "could not determine xomda version".
+    const wrapperDir = join(installDir, 'wrapper-test')
+    const { mkdirSync } = await import('node:fs')
+    mkdirSync(wrapperDir, { recursive: true })
+    const r = spawnSync(xomdaBin, ['wrapper', '--root', wrapperDir], {
+      cwd: installDir,
+      encoding: 'utf8',
+      env: { ...process.env, NO_COLOR: '1' },
+      shell: SHELL_ON_WIN,
+    })
+    expect(r.status, `wrapper failed:\n${r.stderr}`).toBe(0)
+    expect(r.stdout).toContain('xomdaw pinned to')
+    expect(existsSync(join(wrapperDir, 'xomdaw'))).toBe(true)
+    expect(existsSync(join(wrapperDir, 'xomdaw.cmd'))).toBe(true)
+  })
+
+  it('emits ANSI color codes when color is forced (picocolors not stubbed)', () => {
+    // Regression guard for the colorless-output bug: Vite's default "client"
+    // build environment honors picocolors' legacy `browser` package.json
+    // field, which is a no-op stub where every color function returns the raw
+    // string — silently stripping all CLI coloring. We mark picocolors
+    // external so the real Node implementation resolves at runtime; this test
+    // proves it from the *installed* tarball, exactly as an end user gets it.
+    //
+    // picocolors only emits ANSI when it believes color is supported, so we
+    // force it via FORCE_COLOR (and clear NO_COLOR, which the other smoke
+    // tests set). The `wrapper` command colors both its success (green/bold)
+    // and error (red) paths, so we assert on the combined output and don't
+    // care which branch ran — only that it's colored.
+    const r = spawnSync(xomdaBin, ['wrapper'], {
+      cwd: installDir,
+      encoding: 'utf8',
+      env: { ...process.env, FORCE_COLOR: '1', NO_COLOR: '' },
+      shell: SHELL_ON_WIN,
+    })
+    // eslint-disable-next-line no-control-regex
+    expect(`${r.stdout}${r.stderr}`).toMatch(/\x1b\[\d+m/)
+  })
+
   describe('serving (default command)', () => {
     let server: ChildProcess | undefined
     let port: number | undefined

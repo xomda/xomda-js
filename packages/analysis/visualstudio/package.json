@@ -1,6 +1,6 @@
 {
   "name": "@xomda/plugin-analysis-visualstudio",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Visual Studio project detector for xomda analysis",
   "keywords": [

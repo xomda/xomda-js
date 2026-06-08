@@ -1,6 +1,6 @@
 {
   "name": "@xomda/plugin-analysis-gradle",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Gradle detector for xomda analysis",
   "keywords": [

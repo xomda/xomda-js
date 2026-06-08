@@ -1,6 +1,6 @@
 {
   "name": "@xomda/demo-gradle-plain",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Plain Java + Gradle + JUnit 5 demo — same model as maven-plain, different build tool, pins the regenerate-then-build-then-test loop for Gradle consumers.",
   "type": "module",

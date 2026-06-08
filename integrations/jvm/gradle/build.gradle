@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'org.xomda'
-version = '0.0.2-SNAPSHOT'
+version = '0.0.3-SNAPSHOT'
 
 // Pin build output to ./build/ explicitly so the IDE never picks an
 // unrelated folder name (e.g. `lib/`) as a default sink.
@@ -29,7 +29,7 @@ repositories {
 }
 
 dependencies {
-  implementation 'org.xomda:xomda-generator-core:0.0.2-SNAPSHOT'
+  implementation 'org.xomda:xomda-generator-core:0.0.3-SNAPSHOT'
   testImplementation 'org.spockframework:spock-core:2.4-M5-groovy-4.0'
   testImplementation gradleTestKit()
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'

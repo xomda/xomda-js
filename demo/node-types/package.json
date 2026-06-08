@@ -1,6 +1,6 @@
 {
   "name": "@xomda/demo-node-types",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Minimal package.json-driven demo: hand-written `.xomda/model.json` + `xomda generate` from an npm script + vitest assertions on the emitted TypeScript types. No `tsx` glue, no Vite, no JVM — the smallest possible loop.",
   "type": "module",
