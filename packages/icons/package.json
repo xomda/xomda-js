@@ -1,6 +1,6 @@
 {
   "name": "@xomda/icons",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Icons for xomda",
   "keywords": [
@@ -24,9 +24,9 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "@iconify-json/material-symbols-light": "1.2.75",
+    "@iconify-json/material-symbols-light": "1.2.76",
     "devicon": "2.17.0",
     "typescript": "6.0.3",
-    "vitest": "4.1.7"
+    "vitest": "4.1.8"
   }
 }

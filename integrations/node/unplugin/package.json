@@ -1,6 +1,6 @@
 {
   "name": "unplugin-xomda",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Vite / Rollup / webpack plugin for xomda code generation",
   "keywords": [
@@ -30,8 +30,8 @@
     "unplugin": "^3.0.0"
   },
   "devDependencies": {
-    "@types/node": "25.9.1",
-    "vitest": "4.1.7"
+    "@types/node": "25.9.2",
+    "vitest": "4.1.8"
   },
   "peerDependencies": {
     "rollup": ">=3",

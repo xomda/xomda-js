@@ -45,9 +45,17 @@ export async function wrapper(root: string, options: WrapperOptions = {}): Promi
   return { posixScriptPath, windowsScriptPath, configPath, version, wroteScripts }
 }
 
-async function readOwnCliVersion(): Promise<string | undefined> {
-  const here = dirname(fileURLToPath(import.meta.url))
+/** @internal exported for unit testing only */
+export async function readOwnCliVersion(startDir?: string): Promise<string | undefined> {
+  const here = startDir ?? dirname(fileURLToPath(import.meta.url))
   for (const candidate of [
+    // Published bundle: import.meta.url resolves to dist/<chunk>.js, so
+    // `here` is the `dist/` directory.  One level up reaches package.json:
+    //   node_modules/xomda-js/dist/../package.json = node_modules/xomda-js/package.json
+    join(here, '..', 'package.json'),
+    // Dev workspace: import.meta.url is packages/cli/src/commands/wrapper.ts,
+    // so `here` is packages/cli/src/commands/.  Two levels up reaches:
+    //   packages/cli/src/commands/../../package.json = packages/cli/package.json
     join(here, '..', '..', 'package.json'),
     join(here, '..', '..', '..', 'package.json'),
   ]) {
@@ -56,7 +64,9 @@ async function readOwnCliVersion(): Promise<string | undefined> {
         name?: string
         version?: string
       }
-      if (pkg.name === '@xomda/cli' || pkg.name === 'xomda') return pkg.version
+      // Accept any xomda package: '@xomda/cli' (dev workspace, scoped),
+      // 'xomda' (legacy), or 'xomda-js' (the published npm package name).
+      if (pkg.version && /^(@xomda\/|xomda)/.test(pkg.name ?? '')) return pkg.version
     } catch {
       // try next candidate
     }

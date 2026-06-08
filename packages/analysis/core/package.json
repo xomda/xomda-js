@@ -1,6 +1,6 @@
 {
   "name": "@xomda/analysis-core",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Project analysis framework for xomda",
   "keywords": [
@@ -23,8 +23,8 @@
     "@xomda/util": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "25.9.1",
+    "@types/node": "25.9.2",
     "typescript": "6.0.3",
-    "vitest": "4.1.7"
+    "vitest": "4.1.8"
   }
 }

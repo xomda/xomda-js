@@ -1,6 +1,6 @@
 {
   "name": "@xomda/core",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Core functionality for xomda",
   "keywords": [
@@ -25,6 +25,6 @@
   },
   "devDependencies": {
     "typescript": "6.0.3",
-    "vitest": "4.1.7"
+    "vitest": "4.1.8"
   }
 }
