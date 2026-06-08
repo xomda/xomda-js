@@ -21,11 +21,11 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@types/node": "25.9.1",
+    "@types/node": "25.9.2",
     "@vitejs/plugin-vue-jsx": "5.1.5",
-    "@vue/test-utils": "2.4.10",
+    "@vue/test-utils": "2.4.11",
     "happy-dom": "20.10.2",
-    "tsx": "4.22.3",
+    "tsx": "4.22.4",
     "unplugin-xomda": "workspace:*",
     "vite": "8.0.16",
     "vitest": "4.1.8"
