@@ -63,8 +63,8 @@ importers:
         specifier: 40.0.0
         version: 40.0.0(stylelint@17.12.0(supports-color@8.1.1)(typescript@6.0.3))
       type-fest:
-        specifier: ^5.6.0
-        version: 5.6.0
+        specifier: ^5.7.0
+        version: 5.7.0
       typescript:
         specifier: 6.0.3
         version: 6.0.3
@@ -989,8 +989,8 @@ importers:
         specifier: 10.4.1
         version: 10.4.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@testing-library/dom@10.4.0)(@types/react@19.2.14)(prettier@3.8.3)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       type-fest:
-        specifier: ^5.6.0
-        version: 5.6.0
+        specifier: ^5.7.0
+        version: 5.7.0
       vite:
         specifier: 8.0.16
         version: 8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(sass@1.100.0)(terser@5.46.2)(tsx@4.22.3)(yaml@2.9.0)
@@ -1014,7 +1014,7 @@ importers:
         version: 15.16.0
       start-server-and-test:
         specifier: 3.0.8
-        version: 3.0.8
+        version: 3.0.8(supports-color@8.1.1)
       tsx:
         specifier: 4.22.3
         version: 4.22.3
@@ -1106,8 +1106,8 @@ importers:
         specifier: 25.9.1
         version: 25.9.1
       type-fest:
-        specifier: ^5.6.0
-        version: 5.6.0
+        specifier: ^5.7.0
+        version: 5.7.0
       vitest:
         specifier: 4.1.7
         version: 4.1.7(@types/node@25.9.1)(@vitest/coverage-v8@4.1.7)(happy-dom@20.9.0)(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(sass@1.100.0)(terser@5.46.2)(tsx@4.22.3)(yaml@2.9.0))
@@ -1170,8 +1170,8 @@ importers:
         specifier: 10.4.1
         version: 10.4.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@testing-library/dom@10.4.0)(@types/react@19.2.14)(prettier@3.8.3)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       type-fest:
-        specifier: ^5.6.0
-        version: 5.6.0
+        specifier: ^5.7.0
+        version: 5.7.0
       vite:
         specifier: 8.0.16
         version: 8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(sass@1.100.0)(terser@5.46.2)(tsx@4.22.3)(yaml@2.9.0)
@@ -5874,8 +5874,8 @@ packages:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
     engines: {node: '>=16'}
 
-  type-fest@5.6.0:
-    resolution: {integrity: sha512-8ZiHFm91orbSAe2PSAiSVBVko18pbhbiB3U9GglSzF/zCGkR+rxpHx6sEMCUm4kxY4LjDIUGgCfUMtwfZfjfUA==}
+  type-fest@5.7.0:
+    resolution: {integrity: sha512-1URUxUqfHFM1c+zfSPsa3gnkO7Aq21qyH75SIduNYz4SzY964rn1X2vCMQaHSHhktiw+0kPa2iyb6PUpXqB6Vg==}
     engines: {node: '>=20'}
 
   typed-rest-client@1.8.11:
@@ -8391,7 +8391,7 @@ snapshots:
       '@vueuse/shared': 14.3.0(vue@3.5.35(typescript@6.0.3))
       vue: 3.5.35(typescript@6.0.3)
     optionalDependencies:
-      axios: 1.17.0(debug@4.4.3)
+      axios: 1.17.0(debug@4.4.3(supports-color@8.1.1))
       change-case: 5.4.4
       sortablejs: 1.15.7
 
@@ -8610,9 +8610,9 @@ snapshots:
 
   axe-core@4.11.4: {}
 
-  axios@1.17.0(debug@4.4.3):
+  axios@1.17.0(debug@4.4.3(supports-color@8.1.1)):
     dependencies:
-      follow-redirects: 1.16.0(debug@4.4.3)
+      follow-redirects: 1.16.0(debug@4.4.3(supports-color@8.1.1))
       form-data: 4.0.5
       https-proxy-agent: 5.0.1
       proxy-from-env: 2.1.0
@@ -9408,7 +9408,7 @@ snapshots:
 
   flatted@3.4.2: {}
 
-  follow-redirects@1.16.0(debug@4.4.3):
+  follow-redirects@1.16.0(debug@4.4.3(supports-color@8.1.1)):
     optionalDependencies:
       debug: 4.4.3(supports-color@8.1.1)
 
@@ -10877,7 +10877,7 @@ snapshots:
 
   stackback@0.0.2: {}
 
-  start-server-and-test@3.0.8:
+  start-server-and-test@3.0.8(supports-color@8.1.1):
     dependencies:
       arg: 5.0.2
       check-more-types: 2.24.0
@@ -10885,7 +10885,7 @@ snapshots:
       execa: 5.1.1
       lazy-ass: 2.0.3
       tree-kill: 1.2.2
-      wait-on: 9.0.10(debug@4.4.3)
+      wait-on: 9.0.10(debug@4.4.3(supports-color@8.1.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -11194,7 +11194,7 @@ snapshots:
 
   type-fest@4.41.0: {}
 
-  type-fest@5.6.0:
+  type-fest@5.7.0:
     dependencies:
       tagged-tag: 1.0.0
 
@@ -11469,9 +11469,9 @@ snapshots:
       typescript: 6.0.3
       vite-plugin-vuetify: 2.1.3(supports-color@8.1.1)(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(sass@1.100.0)(terser@5.46.2)(tsx@4.22.3)(yaml@2.9.0))(vue@3.5.35(typescript@6.0.3))(vuetify@4.0.8)
 
-  wait-on@9.0.10(debug@4.4.3):
+  wait-on@9.0.10(debug@4.4.3(supports-color@8.1.1)):
     dependencies:
-      axios: 1.17.0(debug@4.4.3)
+      axios: 1.17.0(debug@4.4.3(supports-color@8.1.1))
       joi: 18.2.1
       lodash: 4.18.1
       minimist: 1.2.8
