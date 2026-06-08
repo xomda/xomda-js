@@ -58,7 +58,7 @@
     <dependency>
       <groupId>org.xomda</groupId>
       <artifactId>xomda-generator-core</artifactId>
-      <version>0.0.2-SNAPSHOT</version>
+      <version>0.0.3-SNAPSHOT</version>
     </dependency>
 
     <dependency>
@@ -102,7 +102,7 @@
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>10.21.0</version>
+            <version>13.5.0</version>
           </dependency>
         </dependencies>
         <configuration>

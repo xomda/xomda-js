@@ -110,15 +110,15 @@ interface UpdateCandidate {
 A tRPC mutation on the model router writes the new ranges. Manifest writes go
 through the existing idempotent file-storage layer so a no-op write does not
 dirty `model.json` or `package.json`
-(see [feedback_model_save_idempotency](../../.claude/projects/-Users-joris-dev-modelman/memory/feedback_model_save_idempotency.md)
+(see [feedback_model_save_idempotency](../../.claude/projects/-Users-joris-dev-xomda-js/memory/feedback_model_save_idempotency.md)
 in user memory).
 
 ## Implementation steps
 
 Each step is intended to land as its own commit, per the
-[commit-regularly](../../.claude/projects/-Users-joris-dev-modelman/memory/feedback_commit_regularly.md)
+[commit-regularly](../../.claude/projects/-Users-joris-dev-xomda-js/memory/feedback_commit_regularly.md)
 rule. Tests ship with the step that adds the behaviour
-(see [feedback_testing](../../.claude/projects/-Users-joris-dev-modelman/memory/feedback_testing.md)).
+(see [feedback_testing](../../.claude/projects/-Users-joris-dev-xomda-js/memory/feedback_testing.md)).
 
 ### 1. Switch to packument + abbreviated `Accept` header
 

@@ -1,9 +1,9 @@
 ---
-description: General overview of the Modelman (xomda.js) project structure and purpose.
+description: General overview of the xomda.js project structure and purpose.
 globs: **/*
 ---
 
-# Project Overview: Modelman (xomda.js)
+# Project Overview: xomda.js
 
 **xomda.js** is a full-stack TypeScript monorepo for data model design and code generation. It enables users to design database schemas visually and automatically generate code artifacts from customizable cell-based templates (logic / handlebars / output / loop cells, organised as a tree).
 
@@ -53,7 +53,7 @@ Browser/CLI
 ## Project Structure
 
 ```
-modelman/
+xomda-js/
 ├── packages/
 │   ├── analysis/           # Technology detection plugins
 │   │   ├── core/           # Analysis framework

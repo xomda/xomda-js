@@ -1,6 +1,6 @@
 {
   "name": "@xomda/model",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "Data models for xomda",
   "keywords": [
@@ -32,7 +32,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@types/node": "25.9.1",
-    "vitest": "4.1.7"
+    "@types/node": "25.9.2",
+    "vitest": "4.1.8"
   }
 }

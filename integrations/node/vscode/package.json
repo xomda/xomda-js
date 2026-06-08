@@ -2,7 +2,7 @@
   "name": "xomda-vscode",
   "displayName": "xomda",
   "description": "Edit xomda models and templates directly in VS Code. Auto-detects the .xomda folder in your workspace.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "xomda",
   "private": true,
   "type": "module",
@@ -110,12 +110,12 @@
     "@xomda/util": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "25.9.1",
+    "@types/node": "25.9.2",
     "@types/vscode": "1.120.0",
     "@vscode/test-cli": "0.0.12",
-    "@vscode/vsce": "3.9.1",
-    "rolldown": "1.0.3",
+    "@vscode/vsce": "3.9.2",
+    "rolldown": "1.1.0",
     "typescript": "6.0.3",
-    "vitest": "4.1.7"
+    "vitest": "4.1.8"
   }
 }
