@@ -50,7 +50,7 @@
     "@vitejs/plugin-vue-jsx": "5.1.5",
     "@vue/test-utils": "2.4.10",
     "unplugin-xomda": "workspace:*",
-    "happy-dom": "20.9.0",
+    "happy-dom": "20.10.2",
     "vite": "8.0.16",
     "vite-plugin-vuetify": "^2.1.3"
   }
