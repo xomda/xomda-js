@@ -2,15 +2,14 @@ packages:
   - 'packages/*'
   - 'packages/analysis/*'
   - 'integrations/node/*'
-  - 'demo/*'
-  - 'demo/springboot-blog/frontend'
+  - 'demo/**'
+
 allowBuilds:
   '@parcel/watcher': true
   '@vscode/vsce-sign': false
   cypress: true
   esbuild: true
   keytar: false
-
 
 minimumReleaseAge: 120
 
