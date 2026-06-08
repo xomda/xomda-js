@@ -69,11 +69,15 @@ updates:
     schedule:
       interval: 'weekly'
     groups:
+      tiptap:
+        patterns:
+          - '@tiptap/*'
+          - 'tiptap-*'
       storybook:
         patterns:
           - 'storybook'
+          - '@storybook/*'
           - '*-storybook'
-          - '@storybook/'
       prettier:
         patterns:
           - 'prettier'
