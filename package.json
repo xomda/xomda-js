@@ -39,7 +39,7 @@
     "test": "pnpm -r test",
     "test:all": "pnpm -r test && pnpm test:jvm && pnpm test:demo",
     "test:demo": "pnpm test:demo:vitest && pnpm test:demo:jvm",
-    "test:demo:jvm": "pnpm -F @xomda/demo-maven-plain generate && mvn -f demo/maven-plain test && pnpm -F @xomda/demo-gradle-plain generate && gradle -p demo/gradle-plain test && pnpm -F @xomda/demo-springboot-blog generate && mvn -f demo/springboot-blog test && pnpm -F @xomda/demo-quarkus-todos generate && mvn -f demo/quarkus-todos test",
+    "test:demo:jvm": "pnpm -F @xomda/demo-maven-plain generate && mvn -f demo/maven-plain clean test && pnpm -F @xomda/demo-gradle-plain generate && gradle -p demo/gradle-plain clean test && pnpm -F @xomda/demo-springboot-blog generate && mvn -f demo/springboot-blog clean test && pnpm -F @xomda/demo-quarkus-todos generate && mvn -f demo/quarkus-todos clean test",
     "test:demo:vitest": "pnpm -F '@xomda/demo-*' test",
     "test:jvm": "pnpm test:jvm:install-core && pnpm test:jvm:maven && pnpm test:jvm:gradle-plugin && pnpm test:jvm:intellij && pnpm test:jvm:eclipse",
     "test:jvm:eclipse": "MAVEN_OPTS=\"$MAVEN_OPTS -Djdk.xml.maxGeneralEntitySizeLimit=0 -Djdk.xml.totalEntitySizeLimit=0\" mvn -f integrations/jvm/eclipse verify -Dmaven.repo.local=$PWD/integrations/jvm/.m2-repo",
