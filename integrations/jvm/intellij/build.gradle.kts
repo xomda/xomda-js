@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.1.20"
+    kotlin("jvm") version "2.4.0"
     id("org.jetbrains.intellij.platform") version "2.2.1"
 }
 
@@ -32,7 +32,7 @@ repositories {
 
 dependencies {
     implementation("org.xomda:xomda-generator-core:0.0.3-SNAPSHOT")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.0")
 
     intellijPlatform {
         intellijIdeaCommunity("2024.2.4")

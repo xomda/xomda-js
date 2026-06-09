@@ -42,17 +42,17 @@
     "@xomda/icons": "workspace:*"
   },
   "devDependencies": {
-    "@storybook/vue3": "10.4.1",
-    "@storybook/vue3-vite": "10.4.1",
+    "@storybook/vue3": "10.4.2",
+    "@storybook/vue3-vite": "10.4.2",
     "@vitejs/plugin-vue-jsx": "5.1.5",
-    "@vue/test-utils": "2.4.10",
-    "happy-dom": "20.9.0",
-    "storybook": "10.4.1",
-    "type-fest": "^5.6.0",
-    "vite": "8.0.14",
-    "vite-plugin-dts": "5.0.1",
-    "vitest": "4.1.7",
+    "@vue/test-utils": "2.4.11",
+    "happy-dom": "20.10.2",
+    "storybook": "10.4.2",
+    "type-fest": "^5.7.0",
+    "vite": "8.0.16",
+    "vite-plugin-dts": "5.0.2",
+    "vitest": "4.1.8",
     "vue": "3.5.35",
-    "vuetify": "4.0.8"
+    "vuetify": "4.1.1"
   }
 }

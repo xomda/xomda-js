@@ -62,6 +62,12 @@ target/
 integrations/jvm/**/build/
 integrations/jvm/**/.gradle/
 integrations/jvm/**/bin/
+# Gradle build/cache output under demo/* (also keeps lint/format tools — which
+# read this root .gitignore via --ignore-path — out of generated test reports,
+# e.g. demo/gradle-plain/build/reports/.../base-style.css). The demo's own
+# nested .gitignore covers git, but stylelint only honors this root file.
+demo/**/build/
+demo/**/.gradle/
 # IntelliJ Platform Gradle plugin caches
 integrations/jvm/**/.intellijPlatform/
 integrations/jvm/**/.kotlin/

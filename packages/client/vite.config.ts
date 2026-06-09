@@ -105,11 +105,16 @@ export default defineConfig(({ mode }) => {
           inline: [/vuetify/],
         },
       },
-      // Patches `ClipboardItem` to swallow Monaco's
-      // installWebKitWriteTextWorkaround inner-promise cancellation —
-      // see the file header for the full why. Runs once per vitest
-      // worker before any test module imports `@xomda/codeeditor`.
-      setupFiles: ['./src/__tests__/setup-monaco-clipboard-filter.ts'],
+      // setup-monaco-mock: globally stubs `@xomda/codeeditor`'s `./monaco`
+      //   wrapper so no test loads real `monaco-editor` (whose lazy submodule
+      //   imports race test-env teardown and flake the run under load).
+      // setup-monaco-clipboard-filter: swallows Monaco's
+      //   installWebKitWriteTextWorkaround inner-promise cancellation — see the
+      //   file header for the full why. Kept as a belt-and-braces net.
+      setupFiles: [
+        './src/__tests__/setup-monaco-mock.ts',
+        './src/__tests__/setup-monaco-clipboard-filter.ts',
+      ],
       include: ['src/**/__tests__/**/*.{spec,spec-d}.{ts,tsx}'],
       typecheck: {
         tsconfig: './tsconfig.test.json',
