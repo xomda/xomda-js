@@ -23,7 +23,7 @@
     "test:open": "pnpm build:app && pnpm setup:sandbox && start-server-and-test 'pnpm start:app' http-get://localhost:6440/trpc/template.list 'cypress open'"
   },
   "devDependencies": {
-    "cypress": "15.16.0",
+    "cypress": "15.18.0",
     "start-server-and-test": "3.0.8",
     "tsx": "4.22.4",
     "vitest": "4.1.8"
