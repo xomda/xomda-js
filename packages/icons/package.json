@@ -24,7 +24,7 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "@iconify-json/material-symbols-light": "1.2.76",
+    "@iconify-json/material-symbols-light": "1.2.82",
     "devicon": "2.17.0",
     "typescript": "6.0.3",
     "vitest": "4.1.8"
