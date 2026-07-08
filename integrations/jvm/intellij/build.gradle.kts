@@ -32,7 +32,7 @@ repositories {
 
 dependencies {
     implementation("org.xomda:xomda-generator-core:0.0.3-SNAPSHOT")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.1")
 
     intellijPlatform {
         intellijIdeaCommunity("2024.2.4")
