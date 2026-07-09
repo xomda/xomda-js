@@ -23,7 +23,7 @@
   "dependencies": {
     "@fontsource-variable/mulish": "5.2.8",
     "@fontsource-variable/source-code-pro": "5.2.7",
-    "@trpc/client": "11.17.0",
+    "@trpc/client": "11.18.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/integrations": "^14.3.0",
     "@xomda/analysis-client": "workspace:*",
