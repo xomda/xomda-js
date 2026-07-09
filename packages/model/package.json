@@ -23,7 +23,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@trpc/server": "11.17.0",
+    "@trpc/server": "11.18.0",
     "@xomda/analysis-core": "workspace:*",
     "@xomda/analysis-plugins": "workspace:*",
     "@xomda/core": "workspace:*",

@@ -1040,8 +1040,8 @@ importers:
   packages/model:
     dependencies:
       '@trpc/server':
-        specifier: 11.17.0
-        version: 11.17.0(typescript@6.0.3)
+        specifier: 11.18.0
+        version: 11.18.0(typescript@6.0.3)
       '@xomda/analysis-core':
         specifier: workspace:*
         version: link:../analysis/core
@@ -1071,8 +1071,8 @@ importers:
   packages/node:
     dependencies:
       '@trpc/server':
-        specifier: 11.17.0
-        version: 11.17.0(typescript@6.0.3)
+        specifier: 11.18.0
+        version: 11.18.0(typescript@6.0.3)
       '@xomda/model':
         specifier: workspace:*
         version: link:../model
@@ -1213,8 +1213,8 @@ importers:
   packages/xomda:
     dependencies:
       '@trpc/server':
-        specifier: 11.17.0
-        version: 11.17.0(typescript@6.0.3)
+        specifier: 11.18.0
+        version: 11.18.0(typescript@6.0.3)
       '@xomda/cli':
         specifier: workspace:*
         version: link:../cli
@@ -2851,6 +2851,12 @@ packages:
 
   '@trpc/server@11.17.0':
     resolution: {integrity: sha512-jbAOUe0PpUTCYqziyu+8vYXZdDXPudZgnEhWCQ2NjKnVEjfE93RqHTt1oycZJv/HNf51YlRXfEEwSIAbb161rw==}
+    hasBin: true
+    peerDependencies:
+      typescript: '>=5.7.2'
+
+  '@trpc/server@11.18.0':
+    resolution: {integrity: sha512-JAvXOuNTxgXjIDfQaOvDq1j66LMNfDJUH1IU7Slfn8EvRv2EkH6ehu3A7zpYhjO0syHHiYg77v2lG2JFJgvw7Q==}
     hasBin: true
     peerDependencies:
       typescript: '>=5.7.2'
@@ -5063,8 +5069,8 @@ packages:
     resolution: {integrity: sha512-Uzmd6LXpouKo8EUK68IjH4+E01w/hXyV3R3g/geCJo+rXLNfh1xucB+LOzYEOQPSiUK3h/xZf0cQGcSsmyL2Og==}
     engines: {node: '>=18'}
 
-  node-releases@2.0.50:
-    resolution: {integrity: sha512-J6l92tKHX6w8Jy5nO1Vuc01NoIiRGi/d6qBKVxh+IQ8Cr3b6HbVNfKiF8ZpFKufTwpwxMmce2W3iQZ861ZRyTg==}
+  node-releases@2.0.51:
+    resolution: {integrity: sha512-wRNIrw4DmVLKQlbgOMdkMx27Wrpzes2hh5Jtbi2bjPd+4wJstWIqP5A+lscnqbm0xxmT5Bpg8Lec5ItEBwx6BQ==}
     engines: {node: '>=18'}
 
   node-sarif-builder@3.4.0:
@@ -7783,6 +7789,10 @@ snapshots:
     dependencies:
       typescript: 6.0.3
 
+  '@trpc/server@11.18.0(typescript@6.0.3)':
+    dependencies:
+      typescript: 6.0.3
+
   '@tsconfig/node24@24.0.4': {}
 
   '@tybys/wasm-util@0.10.2':
@@ -8683,7 +8693,7 @@ snapshots:
       baseline-browser-mapping: 2.10.42
       caniuse-lite: 1.0.30001803
       electron-to-chromium: 1.5.389
-      node-releases: 2.0.50
+      node-releases: 2.0.51
       update-browserslist-db: 1.2.3(browserslist@4.28.5)
 
   buffer-crc32@0.2.13: {}
@@ -10193,7 +10203,7 @@ snapshots:
 
   node-releases@2.0.47: {}
 
-  node-releases@2.0.50: {}
+  node-releases@2.0.51: {}
 
   node-sarif-builder@3.4.0:
     dependencies:
