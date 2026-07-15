@@ -115,7 +115,7 @@
     "@vscode/test-cli": "0.0.12",
     "@vscode/vsce": "3.9.2",
     "rolldown": "1.1.0",
-    "typescript": "6.0.3",
+    "typescript": "7.0.2",
     "vitest": "4.1.8"
   }
 }
