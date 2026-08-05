@@ -838,8 +838,8 @@ importers:
         specifier: 5.2.8
         version: 5.2.8
       '@fontsource-variable/source-code-pro':
-        specifier: 5.2.7
-        version: 5.2.7
+        specifier: 5.3.0
+        version: 5.3.0
       '@trpc/client':
         specifier: 11.17.0
         version: 11.17.0(@trpc/server@11.17.0(typescript@6.0.3))(typescript@6.0.3)
@@ -1134,8 +1134,8 @@ importers:
         specifier: 5.2.8
         version: 5.2.8
       '@fontsource-variable/source-code-pro':
-        specifier: 5.2.7
-        version: 5.2.7
+        specifier: 5.3.0
+        version: 5.3.0
       '@storybook/addon-a11y':
         specifier: 10.4.2
         version: 10.4.2(storybook@10.4.2(@testing-library/dom@10.4.0)(@types/react@19.2.14)(prettier@3.8.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))
@@ -1892,8 +1892,8 @@ packages:
   '@fontsource-variable/mulish@5.2.8':
     resolution: {integrity: sha512-WK2SG2nQhQD+9dPOEw6V6tFgs8b5SodnUB5fuPOLj+2HIR2uPlwj+sUHMfMDGkz57us6xhEiJDaxRy8omad/DA==}
 
-  '@fontsource-variable/source-code-pro@5.2.7':
-    resolution: {integrity: sha512-kZ0VNwnhvSA7vu5MaiO52eicQ4zC+k+8HBLZb+1js0MK/RngLy25NEUFB1y/AKd0ZMwru88T433QBcFf9m/huw==}
+  '@fontsource-variable/source-code-pro@5.3.0':
+    resolution: {integrity: sha512-CxzAbqtNrQ6EQXTb9ovRZIRiOhFPcBQhNKla58K5UV6IMoL/ROkWxXDSBOa/frIDLuV4B5PLHI4R1e9SWVinYg==}
 
   '@hapi/address@5.1.1':
     resolution: {integrity: sha512-A+po2d/dVoY7cYajycYI43ZbYMXukuopIsqCjh5QzsBCipDtdofHntljDlpccMjIfTy6UOkg+5KPriwYch2bXA==}
@@ -7047,7 +7047,7 @@ snapshots:
 
   '@fontsource-variable/mulish@5.2.8': {}
 
-  '@fontsource-variable/source-code-pro@5.2.7': {}
+  '@fontsource-variable/source-code-pro@5.3.0': {}
 
   '@hapi/address@5.1.1':
     dependencies:
