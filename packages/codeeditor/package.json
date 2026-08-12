@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@xomda/util": "workspace:*",
-    "monaco-editor": "0.55.1"
+    "monaco-editor": "0.56.0"
   },
   "peerDependencies": {
     "vue": ">=3.5.0"
