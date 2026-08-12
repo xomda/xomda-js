@@ -21,7 +21,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@types/node": "25.9.2",
+    "@types/node": "26.2.0",
     "@vitejs/plugin-vue-jsx": "5.1.5",
     "@vue/test-utils": "2.4.11",
     "happy-dom": "20.10.2",
