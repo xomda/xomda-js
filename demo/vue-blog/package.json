@@ -22,12 +22,12 @@
   },
   "devDependencies": {
     "@types/node": "25.9.2",
-    "@vitejs/plugin-vue-jsx": "5.1.5",
+    "@vitejs/plugin-vue-jsx": "5.1.6",
     "@vue/test-utils": "2.4.11",
     "happy-dom": "20.10.2",
     "tsx": "4.22.4",
     "unplugin-xomda": "workspace:*",
-    "vite": "8.0.16",
+    "vite": "8.2.1",
     "vitest": "4.1.8"
   }
 }
