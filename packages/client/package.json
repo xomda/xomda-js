@@ -21,7 +21,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@fontsource-variable/mulish": "5.2.8",
+    "@fontsource-variable/mulish": "5.3.0",
     "@fontsource-variable/source-code-pro": "5.2.7",
     "@trpc/client": "11.17.0",
     "@vueuse/core": "^14.3.0",
