@@ -28,6 +28,6 @@
     "tsx": "4.22.4",
     "unplugin-xomda": "workspace:*",
     "vite": "8.0.16",
-    "vitest": "4.1.8"
+    "vitest": "4.1.10"
   }
 }
